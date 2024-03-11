@@ -9,7 +9,14 @@ class Home extends StatefulWidget {
 
 class _MyWidgetState extends State<Home> {
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    Size c_size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.purple.shade100,
       body: SingleChildScrollView(
@@ -19,9 +26,9 @@ class _MyWidgetState extends State<Home> {
               height: 50,
             ),
             Container(
-              width: MediaQuery.of(context).size.width * 1,
-              height: MediaQuery.of(context).size.height * 0.1,
-              color: Colors.purple.shade100,
+              width: c_size.width * 1,
+              height: c_size.height * 0.1,
+              color: Colors.white,
               child: Center(
                 child: Text(
                   "coffe beans",
@@ -30,9 +37,66 @@ class _MyWidgetState extends State<Home> {
               ),
             ),
             Container(
-              width: MediaQuery.of(context).size.width * 1,
-              height: MediaQuery.of(context).size.height * 0.9,
+              width: c_size.width * 1,
+              height: c_size.height * 0.9,
               color: Colors.purple.shade100,
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: c_size.height * 0.03,
+                  ),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        // 아래 컨테이너를 3개 만들지말고 1개의 메소드로 만들 수 있을듯.
+                        // 그리고 이게 좌우로 스크롤해서 이동이 되면 좋겠는데.
+                        // Listveiw 쓰면 되넹
+                        Container(
+                          width: c_size.width * 0.25,
+                          height: c_size.height * 0.15,
+                          color: Colors.white,
+                        ),
+                        SizedBox(
+                          width: c_size.width * 0.03,
+                        ),
+                        Container(
+                          width: c_size.width * 0.25,
+                          height: c_size.height * 0.15,
+                          color: Colors.white,
+                        ),
+                        SizedBox(
+                          width: c_size.width * 0.03,
+                        ),
+                        Container(
+                          width: c_size.width * 0.25,
+                          height: c_size.height * 0.15,
+                          color: Colors.white,
+                        ),
+                        SizedBox(
+                          width: c_size.width * 0.03,
+                        ),
+                        Container(
+                          width: c_size.width * 0.25,
+                          height: c_size.height * 0.15,
+                          color: Colors.white,
+                        ),
+                        SizedBox(
+                          width: c_size.width * 0.03,
+                        ),
+                        Container(
+                          width: c_size.width * 0.25,
+                          height: c_size.height * 0.15,
+                          color: Colors.white,
+                        ),
+                        SizedBox(
+                          width: c_size.width * 0.03,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             )
           ],
         ),
