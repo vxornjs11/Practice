@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:practice_01_app/Mainpage.dart';
-import 'package:practice_01_app/Settings.dart';
+import 'package:practice_01_app/screen/Calendar.dart';
+import 'package:practice_01_app/screen/Mainpage.dart';
+import 'package:practice_01_app/screen/Settings.dart';
 
 // class home extends StatelessWidget {
 //   final int tf = 1;
@@ -12,14 +13,14 @@ import 'package:practice_01_app/Settings.dart';
 //   }
 // }
 
-class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+class home extends StatefulWidget {
+  const home({super.key});
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
+  State<home> createState() => _SettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
+class _SettingsScreenState extends State<home> {
   late int currentPageIndex;
   late TabController controller;
 
@@ -37,6 +38,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
         destinations: const [
           NavigationDestination(
             icon: Icon(
+              Icons.calendar_month,
+            ),
+            label: 'calendar',
+          ),
+          NavigationDestination(
+            icon: Icon(
               Icons.home,
             ),
             label: 'home',
@@ -45,13 +52,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             icon: Icon(
               Icons.settings,
             ),
-            label: 'setting',
-          ),
-          NavigationDestination(
-            icon: Icon(
-              Icons.person,
-            ),
-            label: 'Quiz',
+            label: 'settings',
           ),
         ],
         selectedIndex: currentPageIndex,
@@ -66,6 +67,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         elevation: 1,
       ),
       body: <Widget>[
+        const calendar(),
         const Mainpage(),
         const Settings(),
         // const ChatListPage(),

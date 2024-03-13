@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 import 'package:practice_01_app/provinder/count_provinder.dart';
 import 'package:provider/provider.dart';
 
@@ -12,6 +12,7 @@ class Mainpage extends StatefulWidget {
 
 class _MyWidgetState extends State<Mainpage> {
   final List<String> week = ["월", "화", "수", "목", "금", "토", "일"];
+
   @override
   void initState() {
     // TODO: implement initState
@@ -22,7 +23,10 @@ class _MyWidgetState extends State<Mainpage> {
 
   @override
   Widget build(BuildContext context) {
+    DateTime now = DateTime.now();
+    String formattedWeekday = DateFormat('E', 'ko_KO').format(now);
     CounterProvider counter = Provider.of<CounterProvider>(context);
+    print(formattedWeekday);
     var c_size = MediaQuery.of(context).size;
     return Scaffold(
       body: SingleChildScrollView(
@@ -31,7 +35,7 @@ class _MyWidgetState extends State<Mainpage> {
             SizedBox(
               height: c_size.height * 0.06,
             ),
-            Container(
+            SizedBox(
               width: c_size.width * 1,
               height: c_size.height * 0.06,
               child: Row(
@@ -40,11 +44,11 @@ class _MyWidgetState extends State<Mainpage> {
                     width: c_size.width * 1,
                     height: c_size.height * 0.05,
                     child: ListView.builder(
+                        // 여기 오늘이 몇 요일인지 표시해주면 좋을듯?
+                        // 빨간색 동그라미 띄우거나 아니면 글자 색을 바꾸거나.
                         scrollDirection: Axis.horizontal,
                         itemCount: week.length,
                         itemBuilder: (context, index) {
-                          print("week.length");
-                          print(week.length);
                           return Padding(
                             padding: const EdgeInsets.all(1.0),
                             child: Container(
@@ -55,9 +59,15 @@ class _MyWidgetState extends State<Mainpage> {
                                   width: 1.0, // 원하는 선의 두께를 지정
                                 ),
                               ),
-                              child: Text("${week[index]}"),
                               width: c_size.width * 0.135,
                               height: c_size.height * 0.1,
+                              child: Text(
+                                week[index],
+                                style: TextStyle(
+                                    color: week[index] == formattedWeekday
+                                        ? Colors.red
+                                        : Colors.black),
+                              ),
                             ),
                           );
                         }),
@@ -65,16 +75,34 @@ class _MyWidgetState extends State<Mainpage> {
                 ],
               ), // Row 끝
             ),
-            Container(
-              width: c_size.width * 1,
-              height: c_size.height * 0.6,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.black, // 원하는 색상을 지정
-                  width: 1.0, // 원하는 선의 두께를 지정
+            Padding(
+              padding: const EdgeInsets.all(1.0),
+              child: Container(
+                width: c_size.width * 1,
+                height: c_size.height * 0.6,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.black, // 원하는 색상을 지정
+                    width: 1.0, // 원하는 선의 두께를 지정
+                  ),
                 ),
+                child: Text("오늘 체크리스트 할일"),
+                // 여기가 문제임.
+                // 리스트로 짝짝 들어가야 되는데
+                // 할일 설정을 어떻게 할지 정해야 함.
+                // ListView로 컨테이너 쌓아서 체크리스트 처럼 만들지
+                // 그게 또 재밌게 움직이면 좋겠지만 그건 일단 보류
+                // 일정 만들기 < 있어야 되고
+                // 만약 아무것도 설정 안해놧으면 [ 일정 설정하기 ] 띄우고
+                // 설정된게 있으면 리스트 뷰로 나오는거임.
+                // 거기서 일정 예시 보여주고 하나하나 등록하면
+                // 오늘 일정이 나오는거지.
+                // 매일 매일 할 것이랑 특정 날짜만 할 것들 정해서 보여주면 좋을듯.
+                // 이거 매일매일 일정 설정하면 귀찮을거 같은데.
+                // 이번 주 일정 정하기 이렇게 해서 매주 일요일마다 새로 하게 만들자.
+                // 반복 일정, 특별 일정 이렇게 정하고
+                // 알람 설정도 할 수 있음 좋은데 일단 보류하고.
               ),
-              child: Text("오늘 체크리스트 할일"),
             ),
             Row(
               children: [
