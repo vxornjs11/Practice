@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_core/get_core.dart';
+import 'package:get/get_navigation/get_navigation.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_01_app/provinder/count_provinder.dart';
+import 'package:practice_01_app/screen/Set_schedule.dart';
 import 'package:provider/provider.dart';
 
 class Mainpage extends StatefulWidget {
@@ -12,6 +15,7 @@ class Mainpage extends StatefulWidget {
 
 class _MyWidgetState extends State<Mainpage> {
   final List<String> week = ["월", "화", "수", "목", "금", "토", "일"];
+  final int ListCount = 1;
 
   @override
   void initState() {
@@ -86,7 +90,44 @@ class _MyWidgetState extends State<Mainpage> {
                     width: 1.0, // 원하는 선의 두께를 지정
                   ),
                 ),
-                child: Text("오늘 체크리스트 할일"),
+                child: ListCount > 1
+                    ? ListView.builder(
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.all(3.0),
+                            child: Container(
+                              height: c_size.height * 0.1,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20.0),
+                                color: Colors.blue.shade100,
+                              ),
+                            ),
+                          );
+                        },
+                        itemCount: 5,
+                      )
+                    : Center(
+                        child: Container(
+                          // decoration: BoxDecoration(
+                          //   border: Border.all(
+                          //     color: Colors.red, // 원하는 색상을 지정
+                          //     width: 1.0, // 원하는 선의 두께를 지정
+                          //   ),
+                          // ),
+                          child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Set_schedul(
+                                            // 넘어가야 할 정보.
+                                            )));
+                              },
+                              child: Text("일정을 등록하세요")),
+                        ),
+                      )
+                // Text("오늘 체크리스트 할일")
+                ,
                 // 여기가 문제임.
                 // 리스트로 짝짝 들어가야 되는데
                 // 할일 설정을 어떻게 할지 정해야 함.

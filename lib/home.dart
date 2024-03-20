@@ -38,15 +38,15 @@ class _SettingsScreenState extends State<home> {
         destinations: const [
           NavigationDestination(
             icon: Icon(
-              Icons.calendar_month,
-            ),
-            label: 'calendar',
-          ),
-          NavigationDestination(
-            icon: Icon(
               Icons.home,
             ),
             label: 'home',
+          ),
+          NavigationDestination(
+            icon: Icon(
+              Icons.calendar_month,
+            ),
+            label: 'calendar',
           ),
           NavigationDestination(
             icon: Icon(
@@ -67,8 +67,8 @@ class _SettingsScreenState extends State<home> {
         elevation: 1,
       ),
       body: <Widget>[
-        const calendar(),
         const Mainpage(),
+        const calendar(),
         const Settings(),
         // const ChatListPage(),
         // const MyPage(),
