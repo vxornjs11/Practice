@@ -58,6 +58,9 @@ class _MyWidgetState extends State<Mainpage> {
                             child: Container(
                               // color: Colors.white,
                               decoration: BoxDecoration(
+                                color: week[index] == formattedWeekday
+                                    ? Colors.blue.shade100
+                                    : Colors.white, // 색 지정.
                                 border: Border.all(
                                   color: Colors.black, // 원하는 색상을 지정
                                   width: 1.0, // 원하는 선의 두께를 지정
@@ -168,7 +171,7 @@ class _MyWidgetState extends State<Mainpage> {
                       width: 1.0, // 원하는 선의 두께를 지정
                     ),
                   ),
-                  child: Text("달력"),
+                  child: Text("통계"),
                 )
               ],
             )
