@@ -8,6 +8,12 @@ class Set_schedul extends StatefulWidget {
 }
 
 class __Set_schedulState extends State<Set_schedul> {
+  DateTime selectedDate = DateTime.utc(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,11 +45,23 @@ class __Set_schedulState extends State<Set_schedul> {
       // {
       //     "user_id": {
       //       "schedule_id": {
-      //         "title": "물을 마신다.",
+      // 연도 : 선택한 연도
+      // 달 : 달,일,요일
+      // 요일 :
+      // 할일 : [걍 리스트로 하면 됨.]
+      // 근데 할일을 반복으로 할 거라면?
+      // 반복일정은 따로 빼놔서 그 일정에 싹다 add로 수정해서 넣어버리면 안되나?
+      // 알림설정 : 트루/펄스
+      // - 트루로 설정시 따로 알림설정 만들어서 해당 화면에서 완료 누르면
+      // - 알림설정 관련 메소드 발동하게 하면 될듯.
+      //
+      //         "title": "물을 마신다."
+      //         "day": 1. 이런식으로 날짜 - 요일이 같이 자동으로 들어가게 하면 되겠는디.
       //         "repeat": "Monday-Friday",
       //         "time": "09:00",
       //         "exceptional": {"title": "여행을 가다", "repeat": "Monday"}
       //       }
+      // 이렇게 하면 1월 1일(월) 약먹기랑 1월 11일(월) 여행가기 을 어떻게 구분하지.
       //     }
       //   }
     );
