@@ -119,10 +119,17 @@ class _MyWidgetState extends State<Mainpage> {
                           // ),
                           child: ElevatedButton(
                               onPressed: () {
+                                // Future.delayed(Duration(seconds: 1), () {
+                                //   Navigator.push(
+                                //     context,
+                                //     MaterialPageRoute(
+                                //         builder: (context) => Set_schedul()),
+                                //   );
+                                // });
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => Set_schedul(
+                                        builder: (context) => const Set_schedul(
                                             // 넘어가야 할 정보.
                                             )));
                               },
