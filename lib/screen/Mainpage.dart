@@ -29,7 +29,7 @@ class _MyWidgetState extends State<Mainpage> {
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
     String formattedWeekday = DateFormat('E', 'ko_KO').format(now);
-    CounterProvider counter = Provider.of<CounterProvider>(context);
+    // CounterProvider counter = Provider.of<CounterProvider>(context);
     print(formattedWeekday);
     var c_size = MediaQuery.of(context).size;
     return Scaffold(

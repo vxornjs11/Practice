@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:practice_01_app/provinder/count_provinder.dart';
 import 'package:practice_01_app/style/style.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class Set_schedul extends StatefulWidget {
@@ -13,6 +15,7 @@ class Set_schedul extends StatefulWidget {
 class __Set_schedulState extends State<Set_schedul> {
   // SureStlye sureStyle = SureStlye();
   late TextEditingController titlecontroller;
+  late String textdate;
 
   DateTime selectedDate = DateTime.utc(
     DateTime.now().year,
@@ -24,10 +27,14 @@ class __Set_schedulState extends State<Set_schedul> {
     // TODO: implement initState
     super.initState();
     titlecontroller = TextEditingController();
+    textdate = "";
   }
 
   @override
   Widget build(BuildContext context) {
+    // CounterProvider counter1 = Provider.of<CounterProvider>(context);
+
+    String textdate = "";
     var size = MediaQuery.of(context).size;
     // TextEditingController text_title;
     var styles = TextStyle(
@@ -50,6 +57,25 @@ class __Set_schedulState extends State<Set_schedul> {
                   lastDay: DateTime.utc(2030, 3, 14),
                   focusedDay: DateTime.now(),
                 ),
+                Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12.0),
+                      color: Colors.grey.shade200),
+                  width: size.width * 1,
+                  height: size.height * 0.05,
+                  child: textdate != ""
+                      // 근데 textdate는 항상 ""아닌가?
+                      // 프로바이더로 바꿔도 얘가 그걸 어케암.
+                      ? Consumer<CounterProvider>(
+                          builder: (context, value, child) {
+                            return Column(
+                              children: [Text(textdate)],
+                            );
+                          },
+                        )
+                      : Text("data"),
+                ),
+                // -- 구분 --
                 Container(
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12.0),
@@ -79,10 +105,13 @@ class __Set_schedulState extends State<Set_schedul> {
   void onDaySelected(DateTime selectedDate, DateTime focusedDate) {
     setState(() {
       this.selectedDate = selectedDate;
+      print("${selectedDate.month}월,${selectedDate.day}일");
+      textdate = selectedDate.month.toString();
+      print(textdate);
+      Provider.of(context, listen: false).add(textdate);
     });
   }
 }
-
 
 // {
 //     "user_id": {
