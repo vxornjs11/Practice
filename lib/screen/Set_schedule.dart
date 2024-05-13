@@ -32,8 +32,6 @@ class __Set_schedulState extends State<Set_schedul> {
 
   @override
   Widget build(BuildContext context) {
-    // CounterProvider counter1 = Provider.of<CounterProvider>(context);
-
     String textdate = "";
     var size = MediaQuery.of(context).size;
     // TextEditingController text_title;
@@ -107,8 +105,11 @@ class __Set_schedulState extends State<Set_schedul> {
       this.selectedDate = selectedDate;
       print("${selectedDate.month}월,${selectedDate.day}일");
       textdate = selectedDate.month.toString();
+      print("textdate 눌럿을때");
       print(textdate);
-      Provider.of(context, listen: false).add(textdate);
+      //  Provider.of<CounterProvider>(context
+      Provider.of<CounterProvider>(context, listen: false).add(textdate);
+      print("textdate 누른 뒤");
     });
   }
 }
