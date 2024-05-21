@@ -12,7 +12,9 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider(
+      create: (BuildContext context) => CounterProvider(),
+      child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -35,10 +37,7 @@ class MyApp extends StatelessWidget {
         Locale('ko'), // 한국어
         Locale('ja'), // 일본어
       ],
-      home: ChangeNotifierProvider(
-        create: (BuildContext context) => CounterProvider(),
-        child: home(),
-      ),
+      home: home(),
     );
   }
 }

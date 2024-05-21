@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:practice_01_app/provinder/count_provinder.dart';
-import 'package:practice_01_app/style/style.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -47,7 +45,14 @@ class __Set_schedulState extends State<Set_schedul> {
             child: Column(
               children: [
                 TableCalendar(
+                  // onDayLongPressed: ,
+                  // context.read<CounterProvider>.add(newText1:textdate);
+                  // onDaySelected: onDaySelected,
                   onDaySelected: onDaySelected,
+                  // setState(() {
+                  //   context.read<CounterProvider>().ChangeText(newText1: textdate);
+                  // });
+
                   selectedDayPredicate: (date) {
                     return isSameDay(selectedDate, date);
                   },
@@ -67,11 +72,11 @@ class __Set_schedulState extends State<Set_schedul> {
                       ? Consumer<CounterProvider>(
                           builder: (context, value, child) {
                             return Column(
-                              children: [Text(textdate)],
+                              children: [Text(value.Text1)],
                             );
                           },
                         )
-                      : Text("data"),
+                      : Text(context.watch<CounterProvider>().Text1),
                 ),
                 // -- 구분 --
                 Container(
@@ -104,11 +109,12 @@ class __Set_schedulState extends State<Set_schedul> {
     setState(() {
       this.selectedDate = selectedDate;
       print("${selectedDate.month}월,${selectedDate.day}일");
-      textdate = selectedDate.month.toString();
+      textdate = selectedDate.day.toString();
       print("textdate 눌럿을때");
+      context.read<CounterProvider>().ChangeText(newText1: textdate);
       print(textdate);
       //  Provider.of<CounterProvider>(context
-      Provider.of<CounterProvider>(context, listen: false).add(textdate);
+      // Provider.of<CounterProvider>(context, listen: false).add(textdate);
       print("textdate 누른 뒤");
     });
   }
