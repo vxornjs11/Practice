@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:practice_01_app/provinder/count_provinder.dart';
+import 'package:practice_01_app/provinder/widget_provinder.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -14,6 +15,7 @@ class __Set_schedulState extends State<Set_schedul> {
   // SureStlye sureStyle = SureStlye();
   late TextEditingController titlecontroller;
   late String textdate;
+  late bool _isSwitch;
 
   DateTime selectedDate = DateTime.utc(
     DateTime.now().year,
@@ -26,13 +28,14 @@ class __Set_schedulState extends State<Set_schedul> {
     super.initState();
     titlecontroller = TextEditingController();
     textdate = "";
+    _isSwitch = false;
   }
 
   @override
   Widget build(BuildContext context) {
     String textdate = "";
     var size = MediaQuery.of(context).size;
-    // TextEditingController text_title;
+    TextEditingController text_title;
     var styles = TextStyle(
         fontSize: 16, color: Colors.grey.shade600, fontWeight: FontWeight.w500);
     return Scaffold(
@@ -44,21 +47,22 @@ class __Set_schedulState extends State<Set_schedul> {
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
-                TableCalendar(
-                  // onDayLongPressed: ,
-                  // context.read<CounterProvider>.add(newText1:textdate);
-                  // onDaySelected: onDaySelected,
-                  onDaySelected: onDaySelected,
-                  // setState(() {
-                  //   context.read<CounterProvider>().ChangeText(newText1: textdate);
-                  // });
-
-                  selectedDayPredicate: (date) {
-                    return isSameDay(selectedDate, date);
-                  },
-                  firstDay: DateTime.utc(2010, 10, 16),
-                  lastDay: DateTime.utc(2030, 3, 14),
-                  focusedDay: DateTime.now(),
+                Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12.0),
+                      color: Colors.grey.shade200),
+                  child: TableCalendar(
+                    onDaySelected: onDaySelected,
+                    selectedDayPredicate: (date) {
+                      return isSameDay(selectedDate, date);
+                    },
+                    firstDay: DateTime.utc(2010, 10, 16),
+                    lastDay: DateTime.utc(2030, 3, 14),
+                    focusedDay: DateTime.now(),
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
                 ),
                 Container(
                   decoration: BoxDecoration(
@@ -66,19 +70,24 @@ class __Set_schedulState extends State<Set_schedul> {
                       color: Colors.grey.shade200),
                   width: size.width * 1,
                   height: size.height * 0.05,
-                  child: textdate != ""
+                  child: context.watch<CounterProvider>().day != ""
                       // 근데 textdate는 항상 ""아닌가?
                       // 프로바이더로 바꿔도 얘가 그걸 어케암.
                       ? Consumer<CounterProvider>(
                           builder: (context, value, child) {
                             return Column(
-                              children: [Text(value.Text1)],
+                              children: [
+                                Text(value.month + "월" + value.day + "일")
+                              ],
                             );
                           },
                         )
-                      : Text(context.watch<CounterProvider>().Text1),
+                      : Text(context.watch<CounterProvider>().day),
                 ),
                 // -- 구분 --
+                const SizedBox(
+                  height: 5,
+                ),
                 Container(
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12.0),
@@ -98,7 +107,30 @@ class __Set_schedulState extends State<Set_schedul> {
                     },
                   ),
                 ),
-                //
+                Text("알림설정"),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _isSwitch = !_isSwitch;
+                          // if (_isSwitch == false) {
+                          //   context
+                          //       .read<widget_Provider>()
+                          //       .ChangeWidget_button(pressButtonText: "false");
+                          // } else {
+                          //   context
+                          //       .read<widget_Provider>()
+                          //       .ChangeWidget_button(pressButtonText: "true");
+                          // }
+                          // print(context.watch<widget_Provider>().buttonText);
+                        });
+                      },
+                      child: Text(_isSwitch ? "ON" : "OFF"),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -109,9 +141,13 @@ class __Set_schedulState extends State<Set_schedul> {
     setState(() {
       this.selectedDate = selectedDate;
       print("${selectedDate.month}월,${selectedDate.day}일");
-      textdate = selectedDate.day.toString();
+      textdate =
+          "${selectedDate.year.toString() + selectedDate.month.toString() + selectedDate.day.toString()}";
       print("textdate 눌럿을때");
-      context.read<CounterProvider>().ChangeText(newText1: textdate);
+      context.read<CounterProvider>().ChangeText(
+          newYear: selectedDate.year.toString(),
+          newMonth: selectedDate.month.toString(),
+          newDay: selectedDate.day.toString());
       print(textdate);
       //  Provider.of<CounterProvider>(context
       // Provider.of<CounterProvider>(context, listen: false).add(textdate);

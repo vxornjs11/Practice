@@ -3,18 +3,26 @@ import 'package:flutter/material.dart';
 class CounterProvider extends ChangeNotifier {
   //
   // int _count = 0; // 상태
-  String Text1 = "2";
+  String year = "";
+  String month = "";
+  String day = "";
 
   // String get Text_T => Text1;
 
   CounterProvider({
-    this.Text1 = "2",
+    this.year = "",
+    this.month = "",
+    this.day = "",
   });
 
   void ChangeText({
-    required String newText1,
+    required String newYear,
+    required String newMonth,
+    required String newDay,
   }) async {
-    Text1 = newText1;
+    year = newYear;
+    month = newMonth;
+    day = newDay;
     notifyListeners();
   }
 
