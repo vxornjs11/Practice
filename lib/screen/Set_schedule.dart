@@ -1,4 +1,8 @@
+import 'dart:ffi';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:practice_01_app/provinder/count_provinder.dart';
 import 'package:practice_01_app/provinder/widget_provinder.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +20,13 @@ class __Set_schedulState extends State<Set_schedul> {
   late TextEditingController titlecontroller;
   late String textdate;
   late bool _isSwitch;
+  late int _selectedHour;
+  late int _selectedMinute;
+  late int _selectedSeconds;
+
+  final List<int> Hour = List<int>.generate(24, (int index) => index);
+  final List<int> minute = List<int>.generate(60, (int index) => index);
+  final List<int> seconds = List<int>.generate(60, (int index) => index);
 
   DateTime selectedDate = DateTime.utc(
     DateTime.now().year,
@@ -29,6 +40,9 @@ class __Set_schedulState extends State<Set_schedul> {
     titlecontroller = TextEditingController();
     textdate = "";
     _isSwitch = false;
+    _selectedHour = 0;
+    _selectedMinute = 0;
+    _selectedSeconds = 0;
   }
 
   @override
@@ -107,29 +121,46 @@ class __Set_schedulState extends State<Set_schedul> {
                     },
                   ),
                 ),
-                Text("알림설정"),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          _isSwitch = !_isSwitch;
-                          // if (_isSwitch == false) {
-                          //   context
-                          //       .read<widget_Provider>()
-                          //       .ChangeWidget_button(pressButtonText: "false");
-                          // } else {
-                          //   context
-                          //       .read<widget_Provider>()
-                          //       .ChangeWidget_button(pressButtonText: "true");
-                          // }
-                          // print(context.watch<widget_Provider>().buttonText);
-                        });
-                      },
-                      child: Text(_isSwitch ? "ON" : "OFF"),
-                    ),
-                  ],
+                Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "알람",
+                        style: TextStyle(fontSize: 15),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              _isSwitch = !_isSwitch;
+                              if (_isSwitch == false) {
+                                // context
+                                //     .read<widget_Provider>()
+                                //     .ChangeWidget_button(pressButtonText: "false");
+                              } else {
+                                AlertDialog();
+                                print("true");
+                                // context
+                                //     .read<widget_Provider>()
+                                //     .ChangeWidget_button(pressButtonText: "true");
+                              }
+                              // print(context.watch<widget_Provider>().buttonText);
+                            });
+                          },
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: _isSwitch
+                                  ? Colors.blue.shade100
+                                  : Colors.red.shade100),
+                          child: _isSwitch
+                              ? Icon(Icons.alarm)
+                              : Icon(Icons.alarm_off)
+                          //  Text(_isSwitch ? "ON" : "OFF"),
+                          ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -153,6 +184,118 @@ class __Set_schedulState extends State<Set_schedul> {
       // Provider.of<CounterProvider>(context, listen: false).add(textdate);
       print("textdate 누른 뒤");
     });
+  }
+
+  Future<void> AlertDialog() {
+    return showDialog<Void>(
+        barrierColor: Colors.black.withOpacity(0.8),
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return Dialog(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                color: Colors.white,
+                height: 200,
+                width: 300,
+                child: Column(
+                  children: [
+                    Text(
+                      "알림 시간 설정",
+                      style: TextStyle(fontSize: 30),
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.05,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 80,
+                            child: CupertinoPicker(
+                              scrollController:
+                                  FixedExtentScrollController(initialItem: 0),
+                              itemExtent: 30,
+                              onSelectedItemChanged: (int index) {
+                                setState(() {
+                                  _selectedHour = Hour[index];
+                                  print(_selectedHour);
+                                });
+                              },
+                              children: Hour.map((int value) {
+                                return Center(child: Text('$value'));
+                              }).toList(),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 80,
+                            child: CupertinoPicker(
+                              scrollController:
+                                  FixedExtentScrollController(initialItem: 0),
+                              itemExtent: 30,
+                              onSelectedItemChanged: (int index) {
+                                setState(() {
+                                  _selectedMinute = minute[index];
+                                  print(_selectedMinute);
+                                });
+                              },
+                              children: minute.map((int value) {
+                                return Center(child: Text('$value'));
+                              }).toList(),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 80,
+                            child: CupertinoPicker(
+                              scrollController:
+                                  FixedExtentScrollController(initialItem: 0),
+                              itemExtent: 30,
+                              onSelectedItemChanged: (int index) {
+                                setState(() {
+                                  _selectedSeconds = seconds[index];
+                                  print(_selectedSeconds);
+                                });
+                              },
+                              children: seconds.map((int value) {
+                                return Center(child: Text('$value'));
+                              }).toList(),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.005,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text("OK"),
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.1,
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text("back"),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
   }
 }
 
