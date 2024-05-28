@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:practice_01_app/provinder/count_provinder.dart';
 import 'package:practice_01_app/provinder/widget_provinder.dart';
+import 'package:practice_01_app/screen/Refresh.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -17,9 +18,11 @@ class Set_schedul extends StatefulWidget {
 
 class __Set_schedulState extends State<Set_schedul> {
   // SureStlye sureStyle = SureStlye();
+  late String schedule_Write;
   late TextEditingController titlecontroller;
   late String textdate;
   late bool _isSwitch;
+  late bool _isCheck;
   late int _selectedHour;
   late int _selectedMinute;
   late int _selectedSeconds;
@@ -43,6 +46,8 @@ class __Set_schedulState extends State<Set_schedul> {
     _selectedHour = 0;
     _selectedMinute = 0;
     _selectedSeconds = 0;
+    schedule_Write = "";
+    _isCheck = false;
   }
 
   @override
@@ -99,6 +104,12 @@ class __Set_schedulState extends State<Set_schedul> {
                       : Text(context.watch<CounterProvider>().day),
                 ),
                 // -- 구분 --
+                // 처음에 아무것도 없는 빈칸이다가
+                // 일정 하나 등록하면 1줄씩 생기는거임.
+                // 그리고 밑으로 하나씩 밀어.
+                // 대충 5개정도가 최대치로?
+                // 아니면 몇줄 이상이면 스크롤 뷰로 해도될듯.
+                Text(schedule_Write),
                 const SizedBox(
                   height: 5,
                 ),
@@ -109,59 +120,152 @@ class __Set_schedulState extends State<Set_schedul> {
                   width: size.width * 1,
                   height: size.height * 0.05,
                   child: TextField(
-                    decoration: InputDecoration(
-                      hintText: '예) 채소 사오기',
+                    // textAlignVertical: TextAlignVertical.center,
+                    decoration: const InputDecoration(
+                      hintStyle: TextStyle(
+                        fontSize: 20,
+                        color: Colors.black,
+                      ),
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 0.0, horizontal: 10.0),
+                      hintText: '일정을 등록하세요',
+                      border: InputBorder.none,
+                      // suffixIcon: IconButton(
+                      //     onPressed: () {
+                      //       setState(() {
+                      //         _isSwitch = !_isSwitch;
+                      //         if (_isSwitch == false) {
+                      //         } else {
+                      //           AlertDialog();
+                      //         }
+                      //       });
+                      //     },
+                      //     style: ElevatedButton.styleFrom(
+                      //         backgroundColor: _isSwitch
+                      //             ? Colors.grey.shade200
+                      //             : Colors.grey.shade200),
+                      //     icon: _isSwitch
+                      //         ? Icon(Icons.notifications_active_outlined)
+                      //         : Icon(Icons.notifications_off_outlined)
+                      //     //  Text(_isSwitch ? "ON" : "OFF"),
+                      //     ),
                     ),
                     controller: titlecontroller,
                     onChanged: (value) {
                       setState(() {
-                        // StaticUserName.title = titlecontroller.text;
+                        schedule_Write = titlecontroller.text;
                         // checkDuplicateTitle(); // 중복 확인 함수 호출
                       });
                     },
                   ),
                 ),
-                Container(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        "알람",
-                        style: TextStyle(fontSize: 15),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              _isSwitch = !_isSwitch;
-                              if (_isSwitch == false) {
-                                // context
-                                //     .read<widget_Provider>()
-                                //     .ChangeWidget_button(pressButtonText: "false");
-                              } else {
-                                AlertDialog();
-                                print("true");
-                                // context
-                                //     .read<widget_Provider>()
-                                //     .ChangeWidget_button(pressButtonText: "true");
-                              }
-                              // print(context.watch<widget_Provider>().buttonText);
-                            });
-                          },
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: _isSwitch
-                                  ? Colors.blue.shade100
-                                  : Colors.red.shade100),
-                          child: _isSwitch
-                              ? Icon(Icons.alarm)
-                              : Icon(Icons.alarm_off)
-                          //  Text(_isSwitch ? "ON" : "OFF"),
-                          ),
-                    ],
-                  ),
+                const SizedBox(
+                  height: 10,
                 ),
+                Row(
+                  children: [
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    _isSwitch
+                        ? const Icon(
+                            Icons.notifications_active_outlined,
+                            size: 25,
+                            color: Colors.black54,
+                          )
+                        : const Icon(
+                            Icons.notifications_off_outlined,
+                            size: 25,
+                            color: Colors.black54,
+                          ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _isSwitch = !_isSwitch;
+                          if (_isSwitch == false) {
+                          } else {
+                            AlertDialog();
+                          }
+                        });
+                      },
+                      child: Container(
+                        width: size.width * 0.8,
+                        height: size.height * 0.045,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12.0),
+                            color: Colors.white),
+                        child: const Padding(
+                          padding: EdgeInsets.all(4.0),
+                          child: Text(
+                            "알림 없음",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w100,
+                              // fontFamily: 'roboto'
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  children: [
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    const Icon(
+                      Icons.refresh,
+                      size: 25,
+                      color: Colors.black54,
+                    ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          // _isSwitch = !_isSwitch;
+                          // if (_isSwitch == false) {
+                          // } else {
+                          //   AlertDialog();
+                          // }
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => (Refresh()),
+                            ),
+                          );
+                          // AlertDialog_Refresh();
+                        });
+                      },
+                      child: Container(
+                        width: size.width * 0.8,
+                        height: size.height * 0.045,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12.0),
+                            color: Colors.white),
+                        child: const Padding(
+                          padding: EdgeInsets.all(4.0),
+                          child: Text(
+                            "반복 안 함",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w100,
+                              // fontFamily: 'roboto'
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
               ],
             ),
           ),
@@ -171,18 +275,12 @@ class __Set_schedulState extends State<Set_schedul> {
   void onDaySelected(DateTime selectedDate, DateTime focusedDate) {
     setState(() {
       this.selectedDate = selectedDate;
-      print("${selectedDate.month}월,${selectedDate.day}일");
       textdate =
           "${selectedDate.year.toString() + selectedDate.month.toString() + selectedDate.day.toString()}";
-      print("textdate 눌럿을때");
       context.read<CounterProvider>().ChangeText(
           newYear: selectedDate.year.toString(),
           newMonth: selectedDate.month.toString(),
           newDay: selectedDate.day.toString());
-      print(textdate);
-      //  Provider.of<CounterProvider>(context
-      // Provider.of<CounterProvider>(context, listen: false).add(textdate);
-      print("textdate 누른 뒤");
     });
   }
 
@@ -201,7 +299,7 @@ class __Set_schedulState extends State<Set_schedul> {
                 width: 300,
                 child: Column(
                   children: [
-                    Text(
+                    const Text(
                       "알림 시간 설정",
                       style: TextStyle(fontSize: 30),
                     ),
@@ -276,6 +374,7 @@ class __Set_schedulState extends State<Set_schedul> {
                         ElevatedButton(
                           onPressed: () {
                             Navigator.pop(context);
+                            // 시간대 설정 메소드 들어가야한다.
                           },
                           child: Text("OK"),
                         ),
@@ -297,7 +396,132 @@ class __Set_schedulState extends State<Set_schedul> {
           );
         });
   }
-}
+
+  Future<void> AlertDialog_Refresh() {
+    return showDialog<Void>(
+        barrierColor: Colors.black.withOpacity(0.8),
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return Dialog(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                color: Colors.white,
+                height: 500,
+                width: 300,
+                child: Column(
+                  children: [
+                    const Text(
+                      "알림 시간 설정",
+                      style: TextStyle(fontSize: 30),
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.05,
+                    ),
+                    Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Text("반복 안함"),
+                                Checkbox(
+                                    checkColor: Colors.black,
+                                    fillColor:
+                                        MaterialStateProperty.resolveWith<
+                                            Color>((Set<MaterialState> states) {
+                                      if (states
+                                          .contains(MaterialState.disabled)) {
+                                        return Colors.orange.withOpacity(.32);
+                                      }
+                                      if (states
+                                          .contains(MaterialState.selected)) {
+                                        return Colors.blue; // 선택 시 파란색 배경
+                                      }
+                                      return Colors.white; // 선택하지 않았을 때 하얀색 배경
+                                    }),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(15)),
+                                    value: _isCheck,
+                                    onChanged: (bool? value) {
+                                      setState(() {
+                                        _isCheck = value ?? false;
+                                        print(_isCheck);
+                                      });
+                                    })
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Text("매일"),
+                                Checkbox(
+                                    checkColor: Colors.black,
+                                    fillColor:
+                                        MaterialStateProperty.resolveWith<
+                                            Color>((Set<MaterialState> states) {
+                                      if (states
+                                          .contains(MaterialState.disabled)) {
+                                        return Colors.orange.withOpacity(.32);
+                                      }
+                                      if (states
+                                          .contains(MaterialState.selected)) {
+                                        return Colors.blue; // 선택 시 파란색 배경
+                                      }
+                                      return Colors.white; // 선택하지 않았을 때 하얀색 배경
+                                    }),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(15)),
+                                    value: _isCheck,
+                                    onChanged: (bool? value) {
+                                      setState(() {
+                                        _isCheck = value ?? false;
+                                        print(_isCheck);
+                                      });
+                                    })
+                              ],
+                            ),
+                            Text("매주"),
+                            Text("주중"),
+                            Text("주말"),
+                            Text("한달"),
+                            Text("1년"),
+                          ],
+                        )),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.005,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            // 시간대 설정 메소드 들어가야한다.
+                          },
+                          child: Text("OK"),
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.1,
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text("back"),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+  }
+}// end
 
 // {
 //     "user_id": {
