@@ -239,7 +239,7 @@ class __Set_schedulState extends State<Set_schedul> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => (Refresh()),
+                              builder: (context) => (Repeat()),
                             ),
                           );
                           // AlertDialog_Refresh();

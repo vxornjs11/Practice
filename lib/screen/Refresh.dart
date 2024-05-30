@@ -1,19 +1,32 @@
+import 'dart:ffi';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
-class Refresh extends StatefulWidget {
-  const Refresh({super.key});
+class Repeat extends StatefulWidget {
+  const Repeat({super.key});
 
   @override
-  State<Refresh> createState() => _RefreshState();
+  State<Repeat> createState() => _RepeatState();
 }
 
-class _RefreshState extends State<Refresh> {
+class _RepeatState extends State<Repeat> {
   late bool _isCheck;
+  List<String> repeatOptions = [
+    "반복 안함",
+    "매일",
+    "주중",
+    "주말",
+    "한달",
+    "1년",
+  ];
+  late List<bool> repeatCheckList = [];
 
   @override
   void initState() {
     // TODO: implement initState
+    repeatCheckList = List.filled(6, false);
 
     _isCheck = false;
   }
@@ -21,78 +34,31 @@ class _RefreshState extends State<Refresh> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "반복",
+          style: TextStyle(fontSize: 30),
+        ),
+      ),
       body: Column(
         children: [
-          const Text(
-            "알림 시간 설정",
-            style: TextStyle(fontSize: 30),
-          ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.05,
-          ),
-          Padding(
+          // SizedBox(
+          //   height: MediaQuery.of(context).size.height * 0.05,
+          // ),
+          Flexible(
+            child: Padding(
               padding: const EdgeInsets.all(10.0),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Text("반복 안함"),
-                      Checkbox(
-                          checkColor: Colors.black,
-                          fillColor: MaterialStateProperty.resolveWith<Color>(
-                              (Set<MaterialState> states) {
-                            if (states.contains(MaterialState.disabled)) {
-                              return Colors.orange.withOpacity(.32);
-                            }
-                            if (states.contains(MaterialState.selected)) {
-                              return Colors.blue; // 선택 시 파란색 배경
-                            }
-                            return Colors.white; // 선택하지 않았을 때 하얀색 배경
-                          }),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15)),
-                          value: _isCheck,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              _isCheck = value ?? false;
-                              print(_isCheck);
-                            });
-                          })
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Text("매일"),
-                      Checkbox(
-                          checkColor: Colors.black,
-                          fillColor: MaterialStateProperty.resolveWith<Color>(
-                              (Set<MaterialState> states) {
-                            if (states.contains(MaterialState.disabled)) {
-                              return Colors.orange.withOpacity(.32);
-                            }
-                            if (states.contains(MaterialState.selected)) {
-                              return Colors.blue; // 선택 시 파란색 배경
-                            }
-                            return Colors.white; // 선택하지 않았을 때 하얀색 배경
-                          }),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15)),
-                          value: _isCheck,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              _isCheck = value ?? false;
-                              print(_isCheck);
-                            });
-                          })
-                    ],
-                  ),
-                  Text("매주"),
-                  Text("주중"),
-                  Text("주말"),
-                  Text("한달"),
-                  Text("1년"),
-                ],
-              )),
+              child: Container(
+                height: MediaQuery.of(context).size.height * 0.4,
+                child: ListView.builder(
+                  itemCount: repeatOptions.length,
+                  itemBuilder: (context, index) {
+                    return row_Repeat(index);
+                  },
+                ),
+              ),
+            ),
+          ),
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.005,
           ),
@@ -121,4 +87,38 @@ class _RefreshState extends State<Refresh> {
       ),
     );
   }
-}
+
+  Widget row_Repeat(int index) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          repeatOptions[index],
+          style: TextStyle(fontSize: 20),
+        ),
+        Checkbox(
+            checkColor: Colors.black,
+            fillColor: MaterialStateProperty.resolveWith<Color>(
+                (Set<MaterialState> states) {
+              if (states.contains(MaterialState.disabled)) {
+                return Colors.orange.withOpacity(.32);
+              }
+              if (states.contains(MaterialState.selected)) {
+                return Colors.blue; // 선택 시 파란색 배경
+              }
+              return Colors.white; // 선택하지 않았을 때 하얀색 배경
+            }),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            value: repeatCheckList[index],
+            onChanged: (bool? value) {
+              setState(() {
+                _isCheck = value ?? false;
+                // print(repaetCheck);
+                // print("_isCheck$_isCheck");
+              });
+            })
+      ],
+    );
+  }
+} // end
