@@ -130,7 +130,8 @@ class _MyWidgetState extends State<Mainpage> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => const Set_schedul(
-                                            // 넘어가야 할 정보.
+                                              option: '',
+                                              // 넘어가야 할 정보.
                                             )));
                               },
                               child: Text("일정을 등록하세요")),

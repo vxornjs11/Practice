@@ -10,14 +10,17 @@ import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class Set_schedul extends StatefulWidget {
-  const Set_schedul({super.key});
+  final String option;
+  const Set_schedul({super.key, required this.option});
 
   @override
   State<Set_schedul> createState() => __Set_schedulState();
 }
 
 class __Set_schedulState extends State<Set_schedul> {
-  // SureStlye sureStyle = SureStlye();
+  // SureStlye sureStyle = SureStlye()
+  late String option = "";
+  // late String option;
   late String schedule_Write;
   late TextEditingController titlecontroller;
   late String textdate;
@@ -48,6 +51,7 @@ class __Set_schedulState extends State<Set_schedul> {
     _selectedSeconds = 0;
     schedule_Write = "";
     _isCheck = false;
+    option = widget.option;
   }
 
   @override
@@ -251,16 +255,25 @@ class __Set_schedulState extends State<Set_schedul> {
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12.0),
                             color: Colors.white),
-                        child: const Padding(
+                        child: Padding(
                           padding: EdgeInsets.all(4.0),
-                          child: Text(
-                            "반복 안 함",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w100,
-                              // fontFamily: 'roboto'
-                            ),
-                          ),
+                          child: option == ""
+                              ? Text(
+                                  "반복 안 함",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w100,
+                                    // fontFamily: 'roboto'
+                                  ),
+                                )
+                              : Text(
+                                  option,
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w100,
+                                    // fontFamily: 'roboto'
+                                  ),
+                                ),
                         ),
                       ),
                     ),

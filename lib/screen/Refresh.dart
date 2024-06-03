@@ -1,8 +1,10 @@
-import 'dart:ffi';
+// import 'dart:ffi';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
+import 'package:practice_01_app/screen/Set_schedule.dart';
 
 class Repeat extends StatefulWidget {
   const Repeat({super.key});
@@ -13,6 +15,7 @@ class Repeat extends StatefulWidget {
 
 class _RepeatState extends State<Repeat> {
   late bool _isCheck;
+  String option = "";
   List<String> repeatOptions = [
     "반복 안함",
     "매일",
@@ -67,8 +70,15 @@ class _RepeatState extends State<Repeat> {
             children: [
               ElevatedButton(
                 onPressed: () {
-                  Navigator.pop(context);
-                  // 시간대 설정 메소드 들어가야한다.
+                  Get.off(Set_schedul(option: option));
+                  // 야 이거 페이지 이동으로 해놧더니 달력이 그대로 돌아간다.
+                  // 다행이 저장해놓은건 남는데 보기가 이상하구만.
+                  // Get
+                  // Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //         builder: (context) => Set_schedul(option: option)));
+                  // // 시간대 설정 메소드 들어가야한다.
                 },
                 child: Text("OK"),
               ),
@@ -113,9 +123,13 @@ class _RepeatState extends State<Repeat> {
             value: repeatCheckList[index],
             onChanged: (bool? value) {
               setState(() {
-                _isCheck = value ?? false;
-                // print(repaetCheck);
-                // print("_isCheck$_isCheck");
+                // 모든 체크박스를 해제하고 선택한 체크박스만 true로 설정
+                for (int i = 0; i < repeatCheckList.length; i++) {
+                  repeatCheckList[i] = (i == index) ? (value ?? false) : false;
+                }
+                // 그리고 이제 체크한게 뭔지 저장해서 넘기면 됨.
+                option = repeatOptions[index];
+                print(option);
               });
             })
       ],
