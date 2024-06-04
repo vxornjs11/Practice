@@ -2,23 +2,26 @@ import 'dart:ffi';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
 import 'package:practice_01_app/provinder/count_provinder.dart';
-import 'package:practice_01_app/provinder/widget_provinder.dart';
+import 'package:practice_01_app/screen/Mainpage.dart';
 import 'package:practice_01_app/screen/Refresh.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class Set_schedul extends StatefulWidget {
   final String option;
-  const Set_schedul({super.key, required this.option});
+  final DateTime selectedDate_;
+  const Set_schedul(
+      {super.key, required this.option, required this.selectedDate_});
 
   @override
   State<Set_schedul> createState() => __Set_schedulState();
 }
 
 class __Set_schedulState extends State<Set_schedul> {
-  // SureStlye sureStyle = SureStlye()
+  // SureStlye sureStyle = SureStlye();
+  late DateTime selectedDate_;
   late String option = "";
   // late String option;
   late String schedule_Write;
@@ -30,9 +33,9 @@ class __Set_schedulState extends State<Set_schedul> {
   late int _selectedMinute;
   late int _selectedSeconds;
 
-  final List<int> Hour = List<int>.generate(24, (int index) => index);
-  final List<int> minute = List<int>.generate(60, (int index) => index);
-  final List<int> seconds = List<int>.generate(60, (int index) => index);
+  final List<int> Hour = List<int>.generate(25, (int index) => index);
+  final List<int> minute = List<int>.generate(61, (int index) => index);
+  final List<int> seconds = List<int>.generate(61, (int index) => index);
 
   DateTime selectedDate = DateTime.utc(
     DateTime.now().year,
@@ -43,6 +46,7 @@ class __Set_schedulState extends State<Set_schedul> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    selectedDate_ = widget.selectedDate_;
     titlecontroller = TextEditingController();
     textdate = "";
     _isSwitch = false;
@@ -64,6 +68,13 @@ class __Set_schedulState extends State<Set_schedul> {
     return Scaffold(
         appBar: AppBar(
           title: Text("일정 등록"),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              // 커스텀 동작을 수행하거나 원하는 페이지로 이동
+              Get.offAll(() => Mainpage()); // 홈 페이지로 이동, 이전 페이지 스택을 모두 제거
+            },
+          ),
         ),
         body: SingleChildScrollView(
           child: Padding(
@@ -77,7 +88,7 @@ class __Set_schedulState extends State<Set_schedul> {
                   child: TableCalendar(
                     onDaySelected: onDaySelected,
                     selectedDayPredicate: (date) {
-                      return isSameDay(selectedDate, date);
+                      return isSameDay(selectedDate_, date);
                     },
                     firstDay: DateTime.utc(2010, 10, 16),
                     lastDay: DateTime.utc(2030, 3, 14),
@@ -243,7 +254,8 @@ class __Set_schedulState extends State<Set_schedul> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => (Repeat()),
+                              builder: (context) =>
+                                  (Repeat(selectedDate_: selectedDate_)),
                             ),
                           );
                           // AlertDialog_Refresh();
@@ -288,6 +300,8 @@ class __Set_schedulState extends State<Set_schedul> {
   void onDaySelected(DateTime selectedDate, DateTime focusedDate) {
     setState(() {
       this.selectedDate = selectedDate;
+      selectedDate_ = selectedDate;
+      print("selectedDate$selectedDate");
       textdate =
           "${selectedDate.year.toString() + selectedDate.month.toString() + selectedDate.day.toString()}";
       context.read<CounterProvider>().ChangeText(
@@ -308,13 +322,16 @@ class __Set_schedulState extends State<Set_schedul> {
               borderRadius: BorderRadius.circular(12),
               child: Container(
                 color: Colors.white,
-                height: 200,
-                width: 300,
+                height: 300,
+                width: 500,
                 child: Column(
                   children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.05,
+                    ),
                     const Text(
-                      "알림 시간 설정",
-                      style: TextStyle(fontSize: 30),
+                      "알림 추가",
+                      style: TextStyle(fontSize: 20),
                     ),
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.05,
@@ -325,11 +342,18 @@ class __Set_schedulState extends State<Set_schedul> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           SizedBox(
+                              width: 80,
+                              child: _selectedHour < 12
+                                  ? Text("오전")
+                                  : Text("오후후")),
+
+                          SizedBox(
                             width: 80,
+                            height: 100,
                             child: CupertinoPicker(
                               scrollController:
-                                  FixedExtentScrollController(initialItem: 0),
-                              itemExtent: 30,
+                                  FixedExtentScrollController(initialItem: 1),
+                              itemExtent: 50,
                               onSelectedItemChanged: (int index) {
                                 setState(() {
                                   _selectedHour = Hour[index];
@@ -343,10 +367,11 @@ class __Set_schedulState extends State<Set_schedul> {
                           ),
                           SizedBox(
                             width: 80,
+                            height: 100,
                             child: CupertinoPicker(
                               scrollController:
-                                  FixedExtentScrollController(initialItem: 0),
-                              itemExtent: 30,
+                                  FixedExtentScrollController(initialItem: 1),
+                              itemExtent: 50,
                               onSelectedItemChanged: (int index) {
                                 setState(() {
                                   _selectedMinute = minute[index];
@@ -358,23 +383,23 @@ class __Set_schedulState extends State<Set_schedul> {
                               }).toList(),
                             ),
                           ),
-                          SizedBox(
-                            width: 80,
-                            child: CupertinoPicker(
-                              scrollController:
-                                  FixedExtentScrollController(initialItem: 0),
-                              itemExtent: 30,
-                              onSelectedItemChanged: (int index) {
-                                setState(() {
-                                  _selectedSeconds = seconds[index];
-                                  print(_selectedSeconds);
-                                });
-                              },
-                              children: seconds.map((int value) {
-                                return Center(child: Text('$value'));
-                              }).toList(),
-                            ),
-                          ),
+                          // SizedBox(
+                          //   width: 80,
+                          //   child: CupertinoPicker(
+                          //     scrollController:
+                          //         FixedExtentScrollController(initialItem: 0),
+                          //     itemExtent: 30,
+                          //     onSelectedItemChanged: (int index) {
+                          //       setState(() {
+                          //         _selectedSeconds = seconds[index];
+                          //         print(_selectedSeconds);
+                          //       });
+                          //     },
+                          //     children: seconds.map((int value) {
+                          //       return Center(child: Text('$value'));
+                          //     }).toList(),
+                          //   ),
+                          // ),
                         ],
                       ),
                     ),

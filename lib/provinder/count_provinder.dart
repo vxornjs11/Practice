@@ -6,6 +6,7 @@ class CounterProvider extends ChangeNotifier {
   String year = "";
   String month = "";
   String day = "";
+  // DateTime selectedDate = DateTime.now();
 
   // String get Text_T => Text1;
 
@@ -13,6 +14,7 @@ class CounterProvider extends ChangeNotifier {
     this.year = "",
     this.month = "",
     this.day = "",
+    // this.selectedDate=DateTime.now();
   });
 
   void ChangeText({

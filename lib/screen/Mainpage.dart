@@ -129,8 +129,9 @@ class _MyWidgetState extends State<Mainpage> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => const Set_schedul(
+                                        builder: (context) => Set_schedul(
                                               option: '',
+                                              selectedDate_: DateTime.now(),
                                               // 넘어가야 할 정보.
                                             )));
                               },

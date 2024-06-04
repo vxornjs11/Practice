@@ -7,13 +7,15 @@ import 'package:get/get.dart';
 import 'package:practice_01_app/screen/Set_schedule.dart';
 
 class Repeat extends StatefulWidget {
-  const Repeat({super.key});
+  final DateTime selectedDate_;
+  const Repeat({super.key, required this.selectedDate_});
 
   @override
   State<Repeat> createState() => _RepeatState();
 }
 
 class _RepeatState extends State<Repeat> {
+  late DateTime selectedDate_ = widget.selectedDate_;
   late bool _isCheck;
   String option = "";
   List<String> repeatOptions = [
@@ -70,7 +72,9 @@ class _RepeatState extends State<Repeat> {
             children: [
               ElevatedButton(
                 onPressed: () {
-                  Get.off(Set_schedul(option: option));
+                  // Get.off(Set_schedul(option: option));
+                  Get.off(() => Set_schedul(
+                      option: option, selectedDate_: selectedDate_));
                   // 야 이거 페이지 이동으로 해놧더니 달력이 그대로 돌아간다.
                   // 다행이 저장해놓은건 남는데 보기가 이상하구만.
                   // Get
