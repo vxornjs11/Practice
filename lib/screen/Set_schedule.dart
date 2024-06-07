@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:practice_01_app/provinder/count_provinder.dart';
+import 'package:practice_01_app/provinder/widget_provinder.dart';
 import 'package:practice_01_app/screen/Mainpage.dart';
 import 'package:practice_01_app/screen/Refresh.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +21,10 @@ class Set_schedul extends StatefulWidget {
 }
 
 class __Set_schedulState extends State<Set_schedul> {
+  // String get timeText {
+  //   return _selectedHour < 12 ? "오전" : "오후";
+  // }
+
   // SureStlye sureStyle = SureStlye();
   late DateTime selectedDate_;
   late String option = "";
@@ -32,6 +37,8 @@ class __Set_schedulState extends State<Set_schedul> {
   late int _selectedHour;
   late int _selectedMinute;
   late int _selectedSeconds;
+  String timeText_1 = "오전";
+  late String timeText_2;
 
   final List<int> Hour = List<int>.generate(25, (int index) => index);
   final List<int> minute = List<int>.generate(61, (int index) => index);
@@ -56,6 +63,8 @@ class __Set_schedulState extends State<Set_schedul> {
     schedule_Write = "";
     _isCheck = false;
     option = widget.option;
+    timeText_1 = "오전";
+    timeText_2 = "오후";
   }
 
   @override
@@ -312,6 +321,7 @@ class __Set_schedulState extends State<Set_schedul> {
   }
 
   Future<void> AlertDialog() {
+    // late String timeText_1 = "오전";
     return showDialog<Void>(
         barrierColor: Colors.black.withOpacity(0.8),
         barrierDismissible: false,
@@ -326,9 +336,7 @@ class __Set_schedulState extends State<Set_schedul> {
                 width: 500,
                 child: Column(
                   children: [
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.05,
-                    ),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.03),
                     const Text(
                       "알림 추가",
                       style: TextStyle(fontSize: 20),
@@ -343,14 +351,13 @@ class __Set_schedulState extends State<Set_schedul> {
                         children: [
                           SizedBox(
                               width: 80,
-                              child: _selectedHour < 12
-                                  ? Text("오전")
-                                  : Text("오후후")),
-
+                              child: Text(
+                                  context.watch<widget_Provider>().buttonText)),
                           SizedBox(
                             width: 80,
                             height: 100,
                             child: CupertinoPicker(
+                              backgroundColor: Colors.white,
                               scrollController:
                                   FixedExtentScrollController(initialItem: 1),
                               itemExtent: 50,
@@ -358,6 +365,20 @@ class __Set_schedulState extends State<Set_schedul> {
                                 setState(() {
                                   _selectedHour = Hour[index];
                                   print(_selectedHour);
+                                  if (_selectedHour > 12) {
+                                    timeText_1 = "오후";
+                                    context
+                                        .read<widget_Provider>()
+                                        .ChangeWidget_Text(
+                                            timeText: timeText_1);
+                                  } else {
+                                    timeText_1 = "오전";
+                                    context
+                                        .read<widget_Provider>()
+                                        .ChangeWidget_Text(
+                                            timeText: timeText_1);
+                                  }
+                                  print(timeText_2);
                                 });
                               },
                               children: Hour.map((int value) {
