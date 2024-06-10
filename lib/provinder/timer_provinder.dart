@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-class widget_Provider extends ChangeNotifier {
-  String buttonText = "오전";
+class Timer_Provider extends ChangeNotifier {
+  String TimerText = "오전";
 
-  widget_Provider({
-    this.buttonText = "오전",
+  Timer_Provider({
+    this.TimerText = "오전",
   });
 
-  void ChangeWidget_Text({required String timeText}) async {
-    buttonText = timeText;
+  void ChangeTimer_Text({required String timeText}) async {
+    TimerText = timeText;
     notifyListeners();
   }
 

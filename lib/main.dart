@@ -4,7 +4,7 @@ import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:practice_01_app/firebase_options.dart';
 import 'package:practice_01_app/home.dart';
 import 'package:practice_01_app/provinder/count_provinder.dart';
-import 'package:practice_01_app/provinder/widget_provinder.dart';
+import 'package:practice_01_app/provinder/timer_provinder.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -13,6 +13,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
   runApp(const MyApp());
 }
 
@@ -27,9 +28,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
             create: (BuildContext context) => CounterProvider()),
         ChangeNotifierProvider(
-            create: (BuildContext context) => widget_Provider()),
+            create: (BuildContext context) => Timer_Provider()),
       ],
-      child: GetMaterialApp(
+      child: const GetMaterialApp(
         title: 'Flutter Provider Demo',
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,

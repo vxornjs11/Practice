@@ -76,7 +76,7 @@ class _RepeatState extends State<Repeat> {
                   Get.off(() => Set_schedul(
                       option: option, selectedDate_: selectedDate_));
                   // 야 이거 페이지 이동으로 해놧더니 달력이 그대로 돌아간다.
-                  // 다행이 저장해놓은건 남는데 보기가 이상하구만.
+                  // 다행이 저장해놓은건 남는데 보기가 이상하구만. - 해결.
                   // Get
                   // Navigator.push(
                   //     context,

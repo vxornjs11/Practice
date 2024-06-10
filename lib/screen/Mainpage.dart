@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get_core/get_core.dart';
-import 'package:get/get_navigation/get_navigation.dart';
 import 'package:intl/intl.dart';
-import 'package:practice_01_app/provinder/count_provinder.dart';
 import 'package:practice_01_app/screen/Set_schedule.dart';
-import 'package:provider/provider.dart';
 
 class Mainpage extends StatefulWidget {
   const Mainpage({super.key});

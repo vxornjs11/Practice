@@ -1,10 +1,11 @@
 import 'dart:ffi';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:practice_01_app/provinder/count_provinder.dart';
-import 'package:practice_01_app/provinder/widget_provinder.dart';
+import 'package:practice_01_app/provinder/timer_provinder.dart';
 import 'package:practice_01_app/screen/Mainpage.dart';
 import 'package:practice_01_app/screen/Refresh.dart';
 import 'package:provider/provider.dart';
@@ -24,7 +25,7 @@ class __Set_schedulState extends State<Set_schedul> {
   // String get timeText {
   //   return _selectedHour < 12 ? "오전" : "오후";
   // }
-
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   // SureStlye sureStyle = SureStlye();
   late DateTime selectedDate_;
   late String option = "";
@@ -36,13 +37,15 @@ class __Set_schedulState extends State<Set_schedul> {
   late bool _isCheck;
   late int _selectedHour;
   late int _selectedMinute;
-  late int _selectedSeconds;
+  // late int _selectedSeconds;
   String timeText_1 = "오전";
   late String timeText_2;
 
-  final List<int> Hour = List<int>.generate(25, (int index) => index);
-  final List<int> minute = List<int>.generate(61, (int index) => index);
-  final List<int> seconds = List<int>.generate(61, (int index) => index);
+  final List<int> Hour = List<int>.generate(24, (int index) => index + 1);
+  // final List<int> minute = List<int>.generate(60, (int index) => index);
+  final List<int> seconds = List<int>.generate(60, (int index) => index);
+  final List<String> minute = List<String>.generate(
+      60, (int index) => index.toString().padLeft(2, '0'));
 
   DateTime selectedDate = DateTime.utc(
     DateTime.now().year,
@@ -59,12 +62,24 @@ class __Set_schedulState extends State<Set_schedul> {
     _isSwitch = false;
     _selectedHour = 0;
     _selectedMinute = 0;
-    _selectedSeconds = 0;
+    // _selectedSeconds = 0;
     schedule_Write = "";
     _isCheck = false;
     option = widget.option;
     timeText_1 = "오전";
     timeText_2 = "오후";
+  }
+
+  Future<void> _addNewDocument(String newTitle) async {
+    try {
+      await _firestore.collection('newCollection').add({
+        'title': newTitle,
+        // 'created_at': Timestamp.now(),
+      });
+      print('새 문서가 성공적으로 추가되었습니다.');
+    } catch (e) {
+      print('문서 추가 중 오류가 발생했습니다: $e');
+    }
   }
 
   @override
@@ -299,7 +314,18 @@ class __Set_schedulState extends State<Set_schedul> {
                       ),
                     ),
                   ],
-                )
+                ),
+                ElevatedButton(
+                    onPressed: () async {
+                      await _firestore.collection("cars").doc().set(
+                        {
+                          "brand": "Genesis",
+                          "name": "G80",
+                          "price": 7000,
+                        },
+                      );
+                    },
+                    child: Text("test"))
               ],
             ),
           ),
@@ -352,7 +378,7 @@ class __Set_schedulState extends State<Set_schedul> {
                           SizedBox(
                               width: 80,
                               child: Text(
-                                  context.watch<widget_Provider>().buttonText)),
+                                  context.watch<Timer_Provider>().TimerText)),
                           SizedBox(
                             width: 80,
                             height: 100,
@@ -368,17 +394,14 @@ class __Set_schedulState extends State<Set_schedul> {
                                   if (_selectedHour > 12) {
                                     timeText_1 = "오후";
                                     context
-                                        .read<widget_Provider>()
-                                        .ChangeWidget_Text(
-                                            timeText: timeText_1);
+                                        .read<Timer_Provider>()
+                                        .ChangeTimer_Text(timeText: timeText_1);
                                   } else {
                                     timeText_1 = "오전";
                                     context
-                                        .read<widget_Provider>()
-                                        .ChangeWidget_Text(
-                                            timeText: timeText_1);
+                                        .read<Timer_Provider>()
+                                        .ChangeTimer_Text(timeText: timeText_1);
                                   }
-                                  print(timeText_2);
                                 });
                               },
                               children: Hour.map((int value) {
@@ -395,13 +418,13 @@ class __Set_schedulState extends State<Set_schedul> {
                               itemExtent: 50,
                               onSelectedItemChanged: (int index) {
                                 setState(() {
-                                  _selectedMinute = minute[index];
-                                  print(_selectedMinute);
+                                  _selectedMinute = index % minute.length;
                                 });
                               },
-                              children: minute.map((int value) {
-                                return Center(child: Text('$value'));
-                              }).toList(),
+                              children: List<Widget>.generate(120, (index) {
+                                return Center(
+                                    child: Text(minute[index % minute.length]));
+                              }),
                             ),
                           ),
                           // SizedBox(
@@ -454,6 +477,16 @@ class __Set_schedulState extends State<Set_schedul> {
             ),
           );
         });
+  }
+
+  Future<void> addNew_schedule() async {
+    await _firestore.collection("cars").doc().set(
+      {
+        "brand": "Genesis",
+        "name": "G80",
+        "price": 7000,
+      },
+    );
   }
 
   Future<void> AlertDialog_Refresh() {

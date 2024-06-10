@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -30,10 +27,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.macOS:
         return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -65,10 +59,30 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyCEHjgcssFskHyQBTOXaR-wbvq4SqJVj10',
-    appId: '1:599743330966:ios:150eac444ed653ec31a0b7',
+    appId: '1:599743330966:ios:1e49e2d49d9fce1631a0b7',
     messagingSenderId: '599743330966',
     projectId: 'project0-93f4c',
     storageBucket: 'project0-93f4c.appspot.com',
-    iosBundleId: 'com.example.practice01App.RunnerTests',
+    iosBundleId: 'com.example.practice01App',
+  );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyAiTIV52KFBvaHPdb9K867wgQXFyGErq4w',
+    appId: '1:599743330966:web:e84fd28ba76efc2a31a0b7',
+    messagingSenderId: '599743330966',
+    projectId: 'project0-93f4c',
+    authDomain: 'project0-93f4c.firebaseapp.com',
+    storageBucket: 'project0-93f4c.appspot.com',
+    measurementId: 'G-836NC8B9LG',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyAiTIV52KFBvaHPdb9K867wgQXFyGErq4w',
+    appId: '1:599743330966:web:03fe1becb32ba51531a0b7',
+    messagingSenderId: '599743330966',
+    projectId: 'project0-93f4c',
+    authDomain: 'project0-93f4c.firebaseapp.com',
+    storageBucket: 'project0-93f4c.appspot.com',
+    measurementId: 'G-LVCRK92QTW',
   );
 }
