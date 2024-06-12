@@ -236,16 +236,27 @@ class __Set_schedulState extends State<Set_schedul> {
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12.0),
                             color: Colors.white),
-                        child: const Padding(
-                          padding: EdgeInsets.all(4.0),
-                          child: Text(
-                            "알림 없음",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w100,
-                              // fontFamily: 'roboto'
-                            ),
-                          ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: _selectedHour == 0
+                              ? const Text(
+                                  "알림 없음",
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w200,
+                                      color: Colors.black
+                                      // fontFamily: 'roboto'
+                                      ),
+                                )
+                              : Text(
+                                  "$_selectedHour시$_selectedMinute분",
+                                  style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w400,
+                                      color: Colors.black
+                                      // fontFamily: 'roboto'
+                                      ),
+                                ),
                         ),
                       ),
                     ),
@@ -270,11 +281,6 @@ class __Set_schedulState extends State<Set_schedul> {
                     GestureDetector(
                       onTap: () {
                         setState(() {
-                          // _isSwitch = !_isSwitch;
-                          // if (_isSwitch == false) {
-                          // } else {
-                          //   AlertDialog();
-                          // }
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -294,7 +300,7 @@ class __Set_schedulState extends State<Set_schedul> {
                         child: Padding(
                           padding: EdgeInsets.all(4.0),
                           child: option == ""
-                              ? Text(
+                              ? const Text(
                                   "반복 안 함",
                                   style: TextStyle(
                                     fontSize: 20,
@@ -304,7 +310,7 @@ class __Set_schedulState extends State<Set_schedul> {
                                 )
                               : Text(
                                   option,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.w100,
                                     // fontFamily: 'roboto'
@@ -317,11 +323,17 @@ class __Set_schedulState extends State<Set_schedul> {
                 ),
                 ElevatedButton(
                     onPressed: () async {
+                      String day = context.read<CounterProvider>().day;
+
+                      // String day = context.watch<CounterProvider>().day;
                       await _firestore.collection("cars").doc().set(
                         {
-                          "brand": "Genesis",
-                          "name": "G80",
+                          "brand": schedule_Write,
+                          "day": day,
                           "price": 7000,
+                          "hour": _selectedHour,
+                          "minit": _selectedMinute,
+                          // "option": option
                         },
                       );
                     },
