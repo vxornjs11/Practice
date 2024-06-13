@@ -8,7 +8,15 @@ import 'package:practice_01_app/screen/Set_schedule.dart';
 
 class Repeat extends StatefulWidget {
   final DateTime selectedDate_;
-  const Repeat({super.key, required this.selectedDate_});
+  final String schedule_Write;
+  final int selectedHour;
+  final int selectedMinute;
+  const Repeat(
+      {super.key,
+      required this.selectedDate_,
+      required this.schedule_Write,
+      required this.selectedHour,
+      required this.selectedMinute});
 
   @override
   State<Repeat> createState() => _RepeatState();
@@ -16,6 +24,10 @@ class Repeat extends StatefulWidget {
 
 class _RepeatState extends State<Repeat> {
   late DateTime selectedDate_ = widget.selectedDate_;
+  late String schedule_Write = widget.schedule_Write;
+  late int _selectedHour = widget.selectedHour;
+  late int _selectedMinute = widget.selectedMinute;
+
   late bool _isCheck;
   String option = "";
   List<String> repeatOptions = [
@@ -74,7 +86,11 @@ class _RepeatState extends State<Repeat> {
                 onPressed: () {
                   // Get.off(Set_schedul(option: option));
                   Get.off(() => Set_schedul(
-                      option: option, selectedDate_: selectedDate_));
+                      option: option,
+                      selectedDate_: selectedDate_,
+                      schedule_Write: schedule_Write,
+                      selectedHour: _selectedHour,
+                      selectedMinute: _selectedMinute));
                   // 야 이거 페이지 이동으로 해놧더니 달력이 그대로 돌아간다.
                   // 다행이 저장해놓은건 남는데 보기가 이상하구만. - 해결.
                   // Get
@@ -133,7 +149,6 @@ class _RepeatState extends State<Repeat> {
                 }
                 // 그리고 이제 체크한게 뭔지 저장해서 넘기면 됨.
                 option = repeatOptions[index];
-                print(option);
               });
             })
       ],

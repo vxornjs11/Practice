@@ -12,11 +12,18 @@ import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class Set_schedul extends StatefulWidget {
-  final String option;
   final DateTime selectedDate_;
+  final String schedule_Write;
+  final int selectedHour;
+  final int selectedMinute;
+  final String option;
   const Set_schedul(
-      {super.key, required this.option, required this.selectedDate_});
-
+      {super.key,
+      required this.option,
+      required this.selectedDate_,
+      required this.schedule_Write,
+      required this.selectedHour,
+      required this.selectedMinute});
   @override
   State<Set_schedul> createState() => __Set_schedulState();
 }
@@ -57,15 +64,14 @@ class __Set_schedulState extends State<Set_schedul> {
     // TODO: implement initState
     super.initState();
     selectedDate_ = widget.selectedDate_;
+    option = widget.option;
+    schedule_Write = widget.schedule_Write;
+    _selectedHour = widget.selectedHour;
+    _selectedMinute = widget.selectedMinute;
     titlecontroller = TextEditingController();
     textdate = "";
     _isSwitch = false;
-    _selectedHour = 0;
-    _selectedMinute = 0;
-    // _selectedSeconds = 0;
-    schedule_Write = "";
     _isCheck = false;
-    option = widget.option;
     timeText_1 = "오전";
     timeText_2 = "오후";
   }
@@ -284,8 +290,11 @@ class __Set_schedulState extends State<Set_schedul> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  (Repeat(selectedDate_: selectedDate_)),
+                              builder: (context) => (Repeat(
+                                  selectedDate_: selectedDate_,
+                                  schedule_Write: schedule_Write,
+                                  selectedHour: _selectedHour,
+                                  selectedMinute: _selectedMinute)),
                             ),
                           );
                           // AlertDialog_Refresh();
@@ -321,23 +330,34 @@ class __Set_schedulState extends State<Set_schedul> {
                     ),
                   ],
                 ),
+                const SizedBox(
+                  height: 20,
+                ),
                 ElevatedButton(
                     onPressed: () async {
+                      // _addNewSchedule();
                       String day = context.read<CounterProvider>().day;
 
                       // String day = context.watch<CounterProvider>().day;
-                      await _firestore.collection("cars").doc().set(
-                        {
-                          "brand": schedule_Write,
-                          "day": day,
-                          "price": 7000,
-                          "hour": _selectedHour,
-                          "minit": _selectedMinute,
-                          // "option": option
-                        },
-                      );
+                      try {
+                        await _firestore.collection("Calender").doc().set(
+                          {
+                            "Schedule": schedule_Write,
+                            "year": selectedDate.year,
+                            "month": selectedDate.month,
+                            "day": selectedDate.day,
+                            "hour": _selectedHour,
+                            "minit": _selectedMinute,
+                            "option": option
+                          },
+                        );
+                        print('새 문서가 성공적으로 추가되었습니다.');
+                        Get.offAll(Mainpage());
+                      } catch (e) {
+                        print('문서 추가 중 오류가 발생했습니다: $e');
+                      }
                     },
-                    child: Text("test"))
+                    child: Text("등록하기"))
               ],
             ),
           ),
@@ -491,140 +511,17 @@ class __Set_schedulState extends State<Set_schedul> {
         });
   }
 
-  Future<void> addNew_schedule() async {
-    await _firestore.collection("cars").doc().set(
-      {
-        "brand": "Genesis",
-        "name": "G80",
-        "price": 7000,
-      },
-    );
-  }
-
-  Future<void> AlertDialog_Refresh() {
-    return showDialog<Void>(
-        barrierColor: Colors.black.withOpacity(0.8),
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return Dialog(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Container(
-                color: Colors.white,
-                height: 500,
-                width: 300,
-                child: Column(
-                  children: [
-                    const Text(
-                      "알림 시간 설정",
-                      style: TextStyle(fontSize: 30),
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.05,
-                    ),
-                    Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Text("반복 안함"),
-                                Checkbox(
-                                    checkColor: Colors.black,
-                                    fillColor:
-                                        MaterialStateProperty.resolveWith<
-                                            Color>((Set<MaterialState> states) {
-                                      if (states
-                                          .contains(MaterialState.disabled)) {
-                                        return Colors.orange.withOpacity(.32);
-                                      }
-                                      if (states
-                                          .contains(MaterialState.selected)) {
-                                        return Colors.blue; // 선택 시 파란색 배경
-                                      }
-                                      return Colors.white; // 선택하지 않았을 때 하얀색 배경
-                                    }),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(15)),
-                                    value: _isCheck,
-                                    onChanged: (bool? value) {
-                                      setState(() {
-                                        _isCheck = value ?? false;
-                                        print(_isCheck);
-                                      });
-                                    })
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Text("매일"),
-                                Checkbox(
-                                    checkColor: Colors.black,
-                                    fillColor:
-                                        MaterialStateProperty.resolveWith<
-                                            Color>((Set<MaterialState> states) {
-                                      if (states
-                                          .contains(MaterialState.disabled)) {
-                                        return Colors.orange.withOpacity(.32);
-                                      }
-                                      if (states
-                                          .contains(MaterialState.selected)) {
-                                        return Colors.blue; // 선택 시 파란색 배경
-                                      }
-                                      return Colors.white; // 선택하지 않았을 때 하얀색 배경
-                                    }),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(15)),
-                                    value: _isCheck,
-                                    onChanged: (bool? value) {
-                                      setState(() {
-                                        _isCheck = value ?? false;
-                                        print(_isCheck);
-                                      });
-                                    })
-                              ],
-                            ),
-                            Text("매주"),
-                            Text("주중"),
-                            Text("주말"),
-                            Text("한달"),
-                            Text("1년"),
-                          ],
-                        )),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.005,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            // 시간대 설정 메소드 들어가야한다.
-                          },
-                          child: Text("OK"),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.1,
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text("back"),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        });
-  }
+  // Future<void> _addNewSchedule(String newTitle) async {
+  //   try {
+  //     await _firestore.collection('newCollection').add({
+  //       'title': newTitle,
+  //       // 'created_at': Timestamp.now(),
+  //     });
+  //     print('새 문서가 성공적으로 추가되었습니다.');
+  //   } catch (e) {
+  //     print('문서 추가 중 오류가 발생했습니다: $e');
+  //   }
+  // }
 }// end
 
 // {

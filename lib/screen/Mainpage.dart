@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_01_app/screen/Set_schedule.dart';
@@ -12,13 +13,17 @@ class Mainpage extends StatefulWidget {
 class _MyWidgetState extends State<Mainpage> {
   final List<String> week = ["월", "화", "수", "목", "금", "토", "일"];
   final int ListCount = 1;
-
+  final firebase = FirebaseFirestore.instance;
   @override
   void initState() {
     // TODO: implement initState
     // 우측 상단이나 왼쪽에서 설정 칸 만들어서 알림 설정 같은거
     // 아니면 아래 빈칸에 3개 만들어서 메인화면, 설정, 프로필? 달력? 이렇게
     super.initState();
+  }
+
+  Stream invitaionList() async* {
+    yield* firebase.collection('Calander').snapshots();
   }
 
   @override
@@ -83,15 +88,47 @@ class _MyWidgetState extends State<Mainpage> {
               child: Container(
                 width: c_size.width * 1,
                 height: c_size.height * 0.6,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.black, // 원하는 색상을 지정
-                    width: 1.0, // 원하는 선의 두께를 지정
-                  ),
-                ),
-                child: ListCount > 1
-                    ? ListView.builder(
+                // decoration: BoxDecoration(
+                //   border: Border.all(
+                //     color: Colors.black, // 원하는 색상을 지정
+                //     width: 1.0, // 원하는 선의 두께를 지정
+                //   ),
+                // ),
+                child: StreamBuilder<QuerySnapshot>(
+                    stream: firebase.collection('Calender').snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+
+                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                        return Center(
+                          child: Container(
+                            child: ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => Set_schedul(
+                                              option: '반복 안 함',
+                                              selectedDate_: DateTime.now(),
+                                              schedule_Write: "",
+                                              selectedHour: 0,
+                                              selectedMinute: 0
+                                              // 넘어가야 할 정보.
+                                              )));
+                                },
+                                child: Text("일정을 등록하세요")),
+                          ),
+                        );
+                      }
+                      final documents = snapshot.data!.docs;
+                      return ListView.builder(
+                        itemCount: documents.length,
                         itemBuilder: (context, index) {
+                          final data =
+                              documents[index].data() as Map<String, dynamic>;
+
                           return Padding(
                             padding: const EdgeInsets.all(3.0),
                             child: Container(
@@ -100,40 +137,18 @@ class _MyWidgetState extends State<Mainpage> {
                                 borderRadius: BorderRadius.circular(20.0),
                                 color: Colors.blue.shade100,
                               ),
+                              child: ListTile(
+                                title: Text(data['Schedule'] ?? 'No Schedule'),
+                                subtitle: Text(
+                                    'Date: ${data['year'] ?? 'No Date'}\nTime: ${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}'),
+                              ),
                             ),
                           );
                         },
-                        itemCount: 5,
-                      )
-                    : Center(
-                        child: Container(
-                          // decoration: BoxDecoration(
-                          //   border: Border.all(
-                          //     color: Colors.red, // 원하는 색상을 지정
-                          //     width: 1.0, // 원하는 선의 두께를 지정
-                          //   ),
-                          // ),
-                          child: ElevatedButton(
-                              onPressed: () {
-                                // Future.delayed(Duration(seconds: 1), () {
-                                //   Navigator.push(
-                                //     context,
-                                //     MaterialPageRoute(
-                                //         builder: (context) => Set_schedul()),
-                                //   );
-                                // });
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => Set_schedul(
-                                              option: '',
-                                              selectedDate_: DateTime.now(),
-                                              // 넘어가야 할 정보.
-                                            )));
-                              },
-                              child: Text("일정을 등록하세요")),
-                        ),
-                      )
+                        // itemCount: 5,
+                      );
+                    })
+
                 // Text("오늘 체크리스트 할일")
                 ,
                 // 여기가 문제임.
@@ -153,6 +168,35 @@ class _MyWidgetState extends State<Mainpage> {
                 // 알람 설정도 할 수 있음 좋은데 일단 보류하고.
                 // 금요일의 나야 반갑다.
               ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: FloatingActionButton(
+                    backgroundColor: Colors.grey.shade100,
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Set_schedul(
+                                  option: '반복 안 함',
+                                  selectedDate_: DateTime.now(),
+                                  schedule_Write: "",
+                                  selectedHour: 0,
+                                  selectedMinute: 0
+                                  // 넘어가야 할 정보.
+                                  )));
+                    },
+                    child: Icon(Icons.add),
+                    tooltip: 'Add Schedule',
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 5,
             ),
             Row(
               children: [
