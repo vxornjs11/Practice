@@ -101,8 +101,14 @@ class __Set_schedulState extends State<Set_schedul> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
+              setState(() {
+                context
+                    .read<CounterProvider>()
+                    .ChangeText(newYear: '', newMonth: '', newDay: '');
+              });
+
               // 커스텀 동작을 수행하거나 원하는 페이지로 이동
-              Get.offAll(() => Mainpage()); // 홈 페이지로 이동, 이전 페이지 스택을 모두 제거
+              Get.offAll(const Mainpage()); // 홈 페이지로 이동, 이전 페이지 스택을 모두 제거
             },
           ),
         ),
@@ -336,22 +342,29 @@ class __Set_schedulState extends State<Set_schedul> {
                 ElevatedButton(
                     onPressed: () async {
                       // _addNewSchedule();
-                      String day = context.read<CounterProvider>().day;
+                      int day = context.read<CounterProvider>().day as int;
+                      int year = context.read<CounterProvider>().year as int;
+                      int month = context.read<CounterProvider>().month as int;
+                      // print(
+                      //   selectedDate.day,
+                      // );
 
                       // String day = context.watch<CounterProvider>().day;
                       try {
                         await _firestore.collection("Calender").doc().set(
                           {
                             "Schedule": schedule_Write,
-                            "year": selectedDate.year,
-                            "month": selectedDate.month,
-                            "day": selectedDate.day,
+                            "year": year == "" ? selectedDate.year : year,
+                            "month": month == "" ? selectedDate.month : month,
+                            "day": day == "" ? selectedDate.day : day,
                             "hour": _selectedHour,
                             "minit": _selectedMinute,
                             "option": option
                           },
                         );
                         print('새 문서가 성공적으로 추가되었습니다.');
+                        print(selectedDate.day);
+                        print(day);
                         Get.offAll(Mainpage());
                       } catch (e) {
                         print('문서 추가 중 오류가 발생했습니다: $e');

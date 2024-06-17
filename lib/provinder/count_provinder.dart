@@ -28,6 +28,14 @@ class CounterProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void resetText() {
+    year = '';
+    month = '';
+    day = '';
+    notifyListeners();
+  }
+  // void resetText() {}
+
   // decrese() {
   //   _count--; //상태 변경
   //   notifyListeners(); // 상태 변경 된 것을 알림

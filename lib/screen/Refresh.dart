@@ -149,6 +149,11 @@ class _RepeatState extends State<Repeat> {
                 }
                 // 그리고 이제 체크한게 뭔지 저장해서 넘기면 됨.
                 option = repeatOptions[index];
+                if (value == false) {
+                  option = repeatOptions[0];
+                  repeatCheckList[0] = true;
+                }
+                print("option : $option /n value : $value");
               });
             })
       ],
