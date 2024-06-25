@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:practice_01_app/home.dart';
 import 'package:practice_01_app/provinder/count_provinder.dart';
 import 'package:practice_01_app/provinder/timer_provinder.dart';
 import 'package:practice_01_app/screen/Mainpage.dart';
@@ -63,6 +64,7 @@ class __Set_schedulState extends State<Set_schedul> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    // selectedDate_ = widget.selectedDate_;
     selectedDate_ = widget.selectedDate_;
     option = widget.option;
     schedule_Write = widget.schedule_Write;
@@ -76,17 +78,17 @@ class __Set_schedulState extends State<Set_schedul> {
     timeText_2 = "오후";
   }
 
-  Future<void> _addNewDocument(String newTitle) async {
-    try {
-      await _firestore.collection('newCollection').add({
-        'title': newTitle,
-        // 'created_at': Timestamp.now(),
-      });
-      print('새 문서가 성공적으로 추가되었습니다.');
-    } catch (e) {
-      print('문서 추가 중 오류가 발생했습니다: $e');
-    }
-  }
+  // Future<void> _addNewDocument(String newTitle) async {
+  //   try {
+  //     await _firestore.collection('newCollection').add({
+  //       'title': newTitle,
+  //       // 'created_at': Timestamp.now(),
+  //     });
+  //     print('새 문서가 성공적으로 추가되었습니다.');
+  //   } catch (e) {
+  //     print('문서 추가 중 오류가 발생했습니다: $e');
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -97,9 +99,9 @@ class __Set_schedulState extends State<Set_schedul> {
         fontSize: 16, color: Colors.grey.shade600, fontWeight: FontWeight.w500);
     return Scaffold(
         appBar: AppBar(
-          title: Text("일정 등록"),
+          title: const Text("일정 등록"),
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back),
             onPressed: () {
               setState(() {
                 context
@@ -108,7 +110,7 @@ class __Set_schedulState extends State<Set_schedul> {
               });
 
               // 커스텀 동작을 수행하거나 원하는 페이지로 이동
-              Get.offAll(const Mainpage()); // 홈 페이지로 이동, 이전 페이지 스택을 모두 제거
+              Get.offAll(const home()); // 홈 페이지로 이동, 이전 페이지 스택을 모두 제거
             },
           ),
         ),
@@ -141,18 +143,15 @@ class __Set_schedulState extends State<Set_schedul> {
                   width: size.width * 1,
                   height: size.height * 0.05,
                   child: context.watch<CounterProvider>().day != ""
-                      // 근데 textdate는 항상 ""아닌가?
-                      // 프로바이더로 바꿔도 얘가 그걸 어케암.
                       ? Consumer<CounterProvider>(
                           builder: (context, value, child) {
-                            return Column(
-                              children: [
-                                Text(value.month + "월" + value.day + "일")
-                              ],
-                            );
+                            return Center(
+                                child: Text("${value.month}월${value.day}일"));
                           },
                         )
-                      : Text(context.watch<CounterProvider>().day),
+                      : Center(
+                          child: Text(
+                              "${selectedDate_.month}월${selectedDate_.day}일")),
                 ),
                 // -- 구분 --
                 // 처음에 아무것도 없는 빈칸이다가
@@ -342,33 +341,40 @@ class __Set_schedulState extends State<Set_schedul> {
                 ElevatedButton(
                     onPressed: () async {
                       // _addNewSchedule();
-                      int day = context.read<CounterProvider>().day as int;
-                      int year = context.read<CounterProvider>().year as int;
-                      int month = context.read<CounterProvider>().month as int;
+                      String day = context.read<CounterProvider>().day;
+                      String year = context.read<CounterProvider>().year;
+                      String month = context.read<CounterProvider>().month;
                       // print(
                       //   selectedDate.day,
                       // );
 
+                      // int day_init_fire = int.parse(day);
+
                       // String day = context.watch<CounterProvider>().day;
                       try {
-                        await _firestore.collection("Calender").doc().set(
+                        await _firestore.collection("Calender").add(
                           {
                             "Schedule": schedule_Write,
-                            "year": year == "" ? selectedDate.year : year,
-                            "month": month == "" ? selectedDate.month : month,
-                            "day": day == "" ? selectedDate.day : day,
+                            "year": year == ""
+                                ? selectedDate.year
+                                : int.parse(year),
+                            "month": month == ""
+                                ? selectedDate.month
+                                : int.parse(month),
+                            "day":
+                                day == "" ? selectedDate.day : int.parse(day),
                             "hour": _selectedHour,
                             "minit": _selectedMinute,
                             "option": option
                           },
                         );
-                        print('새 문서가 성공적으로 추가되었습니다.');
-                        print(selectedDate.day);
-                        print(day);
-                        Get.offAll(Mainpage());
-                      } catch (e) {
-                        print('문서 추가 중 오류가 발생했습니다: $e');
-                      }
+                        Get.offAll(const home()); // 홈 페이지로 이동, 이전 페이지 스택을 모두 제거
+                      } catch (e) {}
+                      setState(() {
+                        context
+                            .read<CounterProvider>()
+                            .ChangeText(newYear: '', newMonth: '', newDay: '');
+                      });
                     },
                     child: Text("등록하기"))
               ],
