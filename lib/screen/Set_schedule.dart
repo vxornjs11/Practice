@@ -3,12 +3,14 @@ import 'dart:ffi';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:practice_01_app/home.dart';
 import 'package:practice_01_app/provinder/count_provinder.dart';
 import 'package:practice_01_app/provinder/timer_provinder.dart';
-import 'package:practice_01_app/screen/Mainpage.dart';
 import 'package:practice_01_app/screen/Refresh.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tz;
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -33,6 +35,8 @@ class __Set_schedulState extends State<Set_schedul> {
   // String get timeText {
   //   return _selectedHour < 12 ? "오전" : "오후";
   // }
+  DateTime _selectedDate = DateTime.now();
+  late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   // SureStlye sureStyle = SureStlye();
   late DateTime selectedDate_;
@@ -76,6 +80,86 @@ class __Set_schedulState extends State<Set_schedul> {
     _isCheck = false;
     timeText_1 = "오전";
     timeText_2 = "오후";
+
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    DarwinInitializationSettings iosInitializationSettings =
+        const DarwinInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
+    );
+    flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin>()
+        ?.requestPermissions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
+
+    final InitializationSettings initializationSettings =
+        InitializationSettings(
+            android: initializationSettingsAndroid,
+            iOS: iosInitializationSettings);
+
+    flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+    // _fetchAndScheduleNotifications();
+  }
+
+  // Future<void> _fetchAndScheduleNotifications() async {
+  //   final snapshot =
+  //       await FirebaseFirestore.instance.collection('Calender').get();
+
+  //   for (var doc in snapshot.docs) {
+  //     final data = doc.data();
+  //     final DateTime date = DateTime(data['year'], data['month'], data['day'],
+  //         data['hour'], data['minute']);
+  //     final String message = data['Schedule'];
+
+  //     if (date.isAfter(DateTime.now())) {
+  //       _scheduleNotification(date, message);
+  //     }
+  //   }
+  // }
+
+  Future<void> _scheduleNotification(DateTime dateTime, String message) async {
+    tz.initializeTimeZones();
+    tz.setLocalLocation(tz.getLocation('Asia/Seoul'));
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      'high_importance_channel', // channelId
+      'High Importance Notifications', // channelName
+      channelDescription:
+          'This channel is used for important notifications.', // channelDescription
+      importance: Importance.max,
+      priority: Priority.high,
+      showWhen: false,
+    );
+
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+        android: androidPlatformChannelSpecifics,
+        iOS: DarwinNotificationDetails(badgeNumber: 1));
+
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      0,
+      '일정 알림',
+      message,
+      tz.TZDateTime(tz.local, dateTime.year, dateTime.month, dateTime.day,
+          dateTime.hour, dateTime.month),
+      platformChannelSpecifics,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+    );
+
+    // makeDate(){
+    //   var now =tz.TZDateTime.now(tz.local);
+    //   var when = tz.TZDateTime(tz.local,now.year)
+    // }
   }
 
   // Future<void> _addNewDocument(String newTitle) async {
@@ -374,9 +458,23 @@ class __Set_schedulState extends State<Set_schedul> {
                         context
                             .read<CounterProvider>()
                             .ChangeText(newYear: '', newMonth: '', newDay: '');
+
+                        _selectedDate = DateTime(
+                          year == "" ? selectedDate.year : int.parse(year),
+                          month == "" ? selectedDate.month : int.parse(month),
+                          day == "" ? selectedDate.day : int.parse(day),
+                          _selectedHour,
+                          _selectedMinute,
+                        );
                       });
+                      _scheduleNotification(_selectedDate, schedule_Write);
                     },
-                    child: Text("등록하기"))
+                    child: Text("등록하기")),
+                ElevatedButton(
+                    onPressed: () {
+                      _scheduleNotification(_selectedDate, schedule_Write);
+                    },
+                    child: Text("test")),
               ],
             ),
           ),

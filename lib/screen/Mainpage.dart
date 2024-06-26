@@ -382,7 +382,7 @@ class _MyWidgetState extends State<Mainpage> {
                                 ),
                               )
                             : Padding(
-                                padding: const EdgeInsets.all(8.0),
+                                padding: const EdgeInsets.all(3.0),
                                 child: Container(
                                   width: c_size.width * 1,
                                   height: c_size.height * 0.7,
