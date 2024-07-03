@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_01_app/screen/Set_schedule.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class Mainpage extends StatefulWidget {
@@ -12,6 +13,7 @@ class Mainpage extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<Mainpage> {
+  List<DocumentSnapshot> combinedResults = [];
   late DateTime selectedDate_;
   bool _isMounted = false;
   final List<String> week = ["월", "화", "수", "목", "금", "토", "일"];
@@ -35,7 +37,7 @@ class _MyWidgetState extends State<Mainpage> {
     selectedDate_ = DateTime.now();
     invitaionList();
     _loadEvents();
-
+    _combineStreams();
     // 우측 상단이나 왼쪽에서 설정 칸 만들어서 알림 설정 같은거
     // 아니면 아래 빈칸에 3개 만들어서 메인화면, 설정, 프로필? 달력? 이렇게
     super.initState();
@@ -45,6 +47,82 @@ class _MyWidgetState extends State<Mainpage> {
   void dispose() {
     _isMounted = false;
     super.dispose();
+  }
+
+  Stream<List<DocumentSnapshot>> _combineStreams() {
+    // "매일" 옵션 문서 가져오기
+    Stream<QuerySnapshot> dailyStream = FirebaseFirestore.instance
+        .collection('Calender')
+        .where('option', isEqualTo: "매일")
+        .snapshots();
+
+    // "주중" 옵션 문서 가져오기 (월요일부터 금요일까지)
+    Stream<QuerySnapshot> weekdayStream = FirebaseFirestore.instance
+        .collection('Calender')
+        .where('option', isEqualTo: "주중")
+        .where('day', whereIn: [1, 2, 3, 4, 5]).snapshots();
+
+    // "주말" 옵션 문서 가져오기 (토요일과 일요일)
+    Stream<QuerySnapshot> weekendStream = FirebaseFirestore.instance
+        .collection('Calender')
+        .where('option', isEqualTo: "주말")
+        .where('day', whereIn: [6, 7]).snapshots();
+
+    // "한달" 옵션 문서 가져오기 (현재 달)
+    Stream<QuerySnapshot> monthlyStream = FirebaseFirestore.instance
+        .collection('Calender')
+        .where('option', isEqualTo: "한달")
+        // .where('month', isEqualTo: today.month)
+        .where('day', isEqualTo: today.day)
+        .snapshots();
+
+    // "1년" 옵션 문서 가져오기 (현재 연도)
+    Stream<QuerySnapshot> yearlyStream = FirebaseFirestore.instance
+        .collection('Calender')
+        .where('option', isEqualTo: "1년")
+        .where('year', isEqualTo: today.year)
+        .where('day', isEqualTo: today.day)
+        .snapshots();
+
+    // 날짜와 일치하는 문서 가져오기 (특정 날짜)
+    Stream<QuerySnapshot> dateStream = FirebaseFirestore.instance
+        .collection('Calender')
+        .where('day', isEqualTo: today.day)
+        .where('month', isEqualTo: today.month)
+        .where('year', isEqualTo: today.year)
+        .snapshots();
+
+    // 모든 스트림을 결합하여 반환
+    return Rx.combineLatest6(
+      dailyStream,
+      weekdayStream,
+      weekendStream,
+      monthlyStream,
+      yearlyStream,
+      dateStream,
+      (QuerySnapshot a, QuerySnapshot b, QuerySnapshot c, QuerySnapshot d,
+          QuerySnapshot e, QuerySnapshot f) {
+        List<DocumentSnapshot> combinedDocs = [
+          ...a.docs,
+          ...b.docs,
+          ...c.docs,
+          ...d.docs,
+          ...e.docs,
+          ...f.docs
+        ];
+        print('Daily Stream: ${a.docs.length}');
+        print('Weekday Stream: ${b.docs.length}');
+        print('Weekend Stream: ${c.docs.length}');
+        print('Monthly Stream: ${d.docs.length}');
+        print('Yearly Stream: ${e.docs.length}');
+        print('Date Stream: ${f.docs.length}');
+        print('Combined Docs: ${combinedDocs.length}');
+        // setState(() {
+        //   ListCount = combinedDocs.length;
+        // });
+        return combinedDocs;
+      },
+    );
   }
 
   Future<void> _loadEvents() async {
@@ -209,13 +287,8 @@ class _MyWidgetState extends State<Mainpage> {
                         ),
                         Calender_switch == false
                             ? Expanded(
-                                child: StreamBuilder<QuerySnapshot>(
-                                  stream: FirebaseFirestore.instance
-                                      .collection('Calender')
-                                      .where('day', isEqualTo: today.day)
-                                      .where('month', isEqualTo: today.month)
-                                      .where('year', isEqualTo: today.year)
-                                      .snapshots(),
+                                child: StreamBuilder<List<DocumentSnapshot>>(
+                                  stream: _combineStreams(),
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
@@ -224,7 +297,7 @@ class _MyWidgetState extends State<Mainpage> {
                                     }
 
                                     if (!snapshot.hasData ||
-                                        snapshot.data!.docs.isEmpty) {
+                                        snapshot.data!.isEmpty) {
                                       return Center(
                                         child: ElevatedButton(
                                           onPressed: () {
@@ -247,32 +320,35 @@ class _MyWidgetState extends State<Mainpage> {
                                       );
                                     }
 
-                                    final documents = snapshot.data!.docs;
+                                    // 두 쿼리의 결과 병합
+                                    List<DocumentSnapshot> documents =
+                                        snapshot.data!;
+                                    // 필요시 중복 문서 제거
+                                    final uniqueDocuments = {
+                                      for (var doc in documents) doc.id: doc
+                                    }.values.toList();
 
                                     return ListView.builder(
                                       padding: EdgeInsets.zero,
-                                      // 리스트 윗 공간 채우기
-                                      itemCount: documents.length,
+                                      itemCount: uniqueDocuments.length,
                                       itemBuilder: (context, index) {
-                                        final doc = documents[index];
-                                        final data = documents[index].data()
-                                            as Map<String, dynamic>;
+                                        final doc = uniqueDocuments[index];
+                                        final data =
+                                            doc.data() as Map<String, dynamic>;
+
                                         return Padding(
                                           padding: const EdgeInsets.all(3.0),
                                           child: GestureDetector(
                                               onDoubleTap: () {
                                                 // 파이어베이스에서 문서 삭제
-                                                // 일정이 바로 삭제되는데.
                                                 setState(() {
                                                   delete_list = !delete_list;
-                                                  // AlertDialog_Refresh();
                                                 });
                                               },
                                               child: delete_list == false
                                                   ? Container(
                                                       height:
                                                           c_size.height * 0.1,
-                                                      // width: c_size.width * 0.1,
                                                       decoration: BoxDecoration(
                                                         borderRadius:
                                                             BorderRadius
@@ -292,7 +368,7 @@ class _MyWidgetState extends State<Mainpage> {
                                                                   fontSize: 25),
                                                         ),
                                                         subtitle: Text(
-                                                          'Date: ${data['year'] ?? 'No Date'}\nTime: ${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
+                                                          'Date: ${data['option'] ?? 'No Date'}\nTime: ${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
                                                           style:
                                                               const TextStyle(
                                                                   fontSize: 12),
