@@ -22,7 +22,8 @@ class _MyWidgetState extends State<Mainpage> {
   late bool delete_list = false;
   late bool Calender_switch = false;
   List<Map<String, dynamic>> list = [];
-  Map<DateTime, List<String>> _events = {};
+  // Map<DateTime, List<String>> _events = {};
+  late Map<DateTime, List<String>> _events;
 
   final firebase = FirebaseFirestore.instance;
   DateTime selectedDate = DateTime.utc(
@@ -36,6 +37,7 @@ class _MyWidgetState extends State<Mainpage> {
     _isMounted = true;
     selectedDate_ = DateTime.now();
     invitaionList();
+    _events = {};
     _loadEvents();
     _combineStreams();
     // 우측 상단이나 왼쪽에서 설정 칸 만들어서 알림 설정 같은거
@@ -72,7 +74,6 @@ class _MyWidgetState extends State<Mainpage> {
     Stream<QuerySnapshot> monthlyStream = FirebaseFirestore.instance
         .collection('Calender')
         .where('option', isEqualTo: "한달")
-        // .where('month', isEqualTo: today.month)
         .where('day', isEqualTo: today.day)
         .snapshots();
 
@@ -80,7 +81,7 @@ class _MyWidgetState extends State<Mainpage> {
     Stream<QuerySnapshot> yearlyStream = FirebaseFirestore.instance
         .collection('Calender')
         .where('option', isEqualTo: "1년")
-        .where('year', isEqualTo: today.year)
+        .where('month', isEqualTo: today.month)
         .where('day', isEqualTo: today.day)
         .snapshots();
 
@@ -125,6 +126,82 @@ class _MyWidgetState extends State<Mainpage> {
     );
   }
 
+  Stream<List<DocumentSnapshot>> select_combineStreams() {
+    // "매일" 옵션 문서 가져오기
+    Stream<QuerySnapshot> dailyStream = FirebaseFirestore.instance
+        .collection('Calender')
+        .where('option', isEqualTo: "매일")
+        .snapshots();
+
+    // "주중" 옵션 문서 가져오기 (월요일부터 금요일까지)
+    Stream<QuerySnapshot> weekdayStream = FirebaseFirestore.instance
+        .collection('Calender')
+        .where('option', isEqualTo: "주중")
+        .where('day', whereIn: [1, 2, 3, 4, 5]).snapshots();
+
+    // "주말" 옵션 문서 가져오기 (토요일과 일요일)
+    Stream<QuerySnapshot> weekendStream = FirebaseFirestore.instance
+        .collection('Calender')
+        .where('option', isEqualTo: "주말")
+        .where('day', isEqualTo: DateFormat('E', 'ko_KO').format(selectedDate_))
+        .snapshots();
+
+    // "한달" 옵션 문서 가져오기 (현재 달)
+    Stream<QuerySnapshot> monthlyStream = FirebaseFirestore.instance
+        .collection('Calender')
+        .where('option', isEqualTo: "한달")
+        .where('day', isEqualTo: selectedDate_.day)
+        .snapshots();
+
+    // "1년" 옵션 문서 가져오기 (현재 연도)
+    Stream<QuerySnapshot> yearlyStream = FirebaseFirestore.instance
+        .collection('Calender')
+        .where('option', isEqualTo: "1년")
+        .where('month', isEqualTo: selectedDate_.month)
+        .where('day', isEqualTo: selectedDate_.day)
+        .snapshots();
+
+    // 날짜와 일치하는 문서 가져오기 (특정 날짜)
+    Stream<QuerySnapshot> dateStream = FirebaseFirestore.instance
+        .collection('Calender')
+        .where('day', isEqualTo: selectedDate_.day)
+        .where('month', isEqualTo: selectedDate_.month)
+        .where('year', isEqualTo: selectedDate_.year)
+        .snapshots();
+
+    // 모든 스트림을 결합하여 반환
+    return Rx.combineLatest6(
+      dailyStream,
+      weekdayStream,
+      weekendStream,
+      monthlyStream,
+      yearlyStream,
+      dateStream,
+      (QuerySnapshot a, QuerySnapshot b, QuerySnapshot c, QuerySnapshot d,
+          QuerySnapshot e, QuerySnapshot f) {
+        List<DocumentSnapshot> combinedDocs = [
+          ...a.docs,
+          ...b.docs,
+          ...c.docs,
+          ...d.docs,
+          ...e.docs,
+          ...f.docs
+        ];
+        print('Daily Stream: ${a.docs.length}');
+        print('Weekday Stream: ${b.docs.length}');
+        print('Weekend Stream: ${c.docs.length}');
+        print('Monthly Stream: ${d.docs.length}');
+        print('Yearly Stream: ${e.docs.length}');
+        print('Date Stream: ${f.docs.length}');
+        print('Combined Docs: ${combinedDocs.length}');
+        // setState(() {
+        //   ListCount = combinedDocs.length;
+        // });
+        return combinedDocs;
+      },
+    );
+  }
+
   Future<void> _loadEvents() async {
     final snapshot =
         await FirebaseFirestore.instance.collection('Calender').get();
@@ -134,14 +211,9 @@ class _MyWidgetState extends State<Mainpage> {
       final data = doc.data();
       final date = DateTime(data['year'], data['month'], data['day']);
       final event = data['Schedule'];
+      final option = data['option'];
 
-      final dateOnly = DateTime(date.year, date.month, date.day);
-
-      if (events.containsKey(dateOnly)) {
-        events[dateOnly]!.add(event);
-      } else {
-        events[dateOnly] = [event];
-      }
+      _addEventToMap(events, date, event, option);
     }
 
     setState(() {
@@ -149,6 +221,58 @@ class _MyWidgetState extends State<Mainpage> {
     });
 
     print(_events); // 이벤트 로드 결과 확인
+  }
+
+  void _addEventToMap(Map<DateTime, List<String>> events, DateTime date,
+      String event, String option) {
+    switch (option) {
+      case '매일':
+        for (var i = 0; i < 365; i++) {
+          _addEvent(events, date.add(Duration(days: i)), event);
+        }
+        break;
+      case '주중':
+        for (var i = 0; i < 365; i++) {
+          final currentDate = date.add(Duration(days: i));
+          if (currentDate.weekday >= 1 && currentDate.weekday <= 5) {
+            _addEvent(events, currentDate, event);
+          }
+        }
+        break;
+      case '주말':
+        for (var i = 0; i < 365; i++) {
+          final currentDate = date.add(Duration(days: i));
+          if (currentDate.weekday == 6 || currentDate.weekday == 7) {
+            _addEvent(events, currentDate, event);
+          }
+        }
+        break;
+      case '한달':
+        for (var i = 0; i < 12; i++) {
+          _addEvent(
+              events, DateTime(date.year, date.month + i, date.day), event);
+        }
+        break;
+      case '1년':
+        for (var i = 0; i < 10; i++) {
+          _addEvent(
+              events, DateTime(date.year + i, date.month, date.day), event);
+        }
+        break;
+      default:
+        _addEvent(events, date, event);
+        break;
+    }
+  }
+
+  void _addEvent(
+      Map<DateTime, List<String>> events, DateTime date, String event) {
+    final dateOnly = DateTime(date.year, date.month, date.day);
+    if (events.containsKey(dateOnly)) {
+      events[dateOnly]!.add(event);
+    } else {
+      events[dateOnly] = [event];
+    }
   }
 
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
@@ -276,12 +400,13 @@ class _MyWidgetState extends State<Mainpage> {
                                 width: c_size.width * 0.4,
                               ),
                               IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      Calender_switch = !Calender_switch;
-                                    });
-                                  },
-                                  icon: const Icon(Icons.calendar_month))
+                                onPressed: () {
+                                  setState(() {
+                                    Calender_switch = !Calender_switch;
+                                  });
+                                },
+                                icon: const Icon(Icons.calendar_month),
+                              ),
                             ],
                           ),
                         ),
@@ -485,22 +610,65 @@ class _MyWidgetState extends State<Mainpage> {
                                                 child: _buildEventsMarker(
                                                     date, events),
                                               );
-                                            } else {}
+                                            }
                                             return null;
                                           },
                                         ),
+                                        // calendarStyle: CalendarStyle(
+                                        //   todayDecoration: BoxDecoration(
+                                        //     color: Colors.blue,
+                                        //     shape: BoxShape.circle,
+                                        //   ),
+                                        //   selectedDecoration: BoxDecoration(
+                                        //     color: Colors.red,
+                                        //     shape: BoxShape.circle,
+                                        //   ),
+                                        //   markerDecoration: BoxDecoration(
+                                        //     color: Colors.orange,
+                                        //     shape: BoxShape.circle,
+                                        //   ),
+                                        // ),
                                       ),
+                                      // Expanded(
+                                      //   child: ListView(
+                                      //     children: _getEventsForDay(
+                                      //             selectedDate_)
+                                      //         .map((event) => Padding(
+                                      //               padding:
+                                      //                   const EdgeInsets.all(
+                                      //                       4.0),
+                                      //               child: Container(
+                                      //                 height:
+                                      //                     c_size.height * 0.1,
+                                      //                 // width: c_size.width * 0.1,
+                                      //                 decoration: BoxDecoration(
+                                      //                   borderRadius:
+                                      //                       BorderRadius
+                                      //                           .circular(10.0),
+                                      //                   color: const Color
+                                      //                       .fromARGB(
+                                      //                       255, 255, 255, 255),
+                                      //                 ),
+                                      //                 child: ListTile(
+                                      //                   title: Text(
+                                      //                       event.toString(),
+                                      //                       overflow:
+                                      //                           TextOverflow
+                                      //                               .ellipsis,
+                                      //                       style:
+                                      //                           const TextStyle(
+                                      //                               fontSize:
+                                      //                                   25)),
+                                      //                 ),
+                                      //               ),
+                                      //             ))
+                                      //         .toList(),
+                                      //   ),
+                                      // ),
                                       Expanded(
-                                        child: StreamBuilder<QuerySnapshot>(
-                                          stream: FirebaseFirestore.instance
-                                              .collection('Calender')
-                                              .where('day',
-                                                  isEqualTo: selectedDate_.day)
-                                              .where('month',
-                                                  isEqualTo: today.month)
-                                              .where('year',
-                                                  isEqualTo: today.year)
-                                              .snapshots(),
+                                        child: StreamBuilder<
+                                            List<DocumentSnapshot>>(
+                                          stream: select_combineStreams(),
                                           builder: (context, snapshot) {
                                             if (snapshot.connectionState ==
                                                 ConnectionState.waiting) {
@@ -510,7 +678,7 @@ class _MyWidgetState extends State<Mainpage> {
                                             }
 
                                             if (!snapshot.hasData ||
-                                                snapshot.data!.docs.isEmpty) {
+                                                snapshot.data!.isEmpty) {
                                               return Center(
                                                 child: ElevatedButton(
                                                   onPressed: () {
@@ -535,29 +703,33 @@ class _MyWidgetState extends State<Mainpage> {
                                               );
                                             }
 
-                                            final documents =
-                                                snapshot.data!.docs;
+                                            // 두 쿼리의 결과 병합
+                                            List<DocumentSnapshot> documents =
+                                                snapshot.data!;
+                                            // 필요시 중복 문서 제거
+                                            final uniqueDocuments = {
+                                              for (var doc in documents)
+                                                doc.id: doc
+                                            }.values.toList();
 
                                             return ListView.builder(
                                               padding: EdgeInsets.zero,
-                                              // 리스트 윗 공간 채우기
-                                              itemCount: documents.length,
+                                              itemCount: uniqueDocuments.length,
                                               itemBuilder: (context, index) {
-                                                final doc = documents[index];
-                                                final data =
-                                                    documents[index].data()
-                                                        as Map<String, dynamic>;
+                                                final doc =
+                                                    uniqueDocuments[index];
+                                                final data = doc.data()
+                                                    as Map<String, dynamic>;
+
                                                 return Padding(
                                                   padding:
                                                       const EdgeInsets.all(3.0),
                                                   child: GestureDetector(
                                                       onDoubleTap: () {
                                                         // 파이어베이스에서 문서 삭제
-                                                        // 일정이 바로 삭제되는데.
                                                         setState(() {
                                                           delete_list =
                                                               !delete_list;
-                                                          // AlertDialog_Refresh();
                                                         });
                                                       },
                                                       child:
@@ -566,7 +738,6 @@ class _MyWidgetState extends State<Mainpage> {
                                                                   height: c_size
                                                                           .height *
                                                                       0.1,
-                                                                  // width: c_size.width * 0.1,
                                                                   decoration:
                                                                       BoxDecoration(
                                                                     borderRadius:
@@ -593,7 +764,7 @@ class _MyWidgetState extends State<Mainpage> {
                                                                     ),
                                                                     subtitle:
                                                                         Text(
-                                                                      'Date: ${data['year'] ?? 'No Date'}\nTime: ${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
+                                                                      'Date: ${data['option'] ?? 'No Date'}\nTime: ${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
                                                                       style: const TextStyle(
                                                                           fontSize:
                                                                               12),
@@ -618,7 +789,7 @@ class _MyWidgetState extends State<Mainpage> {
                                                                   ),
                                                                   child: Row(
                                                                     children: [
-                                                                      SizedBox(
+                                                                      Container(
                                                                         width: c_size.width *
                                                                             0.85,
                                                                         child:
