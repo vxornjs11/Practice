@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:practice_01_app/home.dart';
 import 'package:practice_01_app/provinder/count_provinder.dart';
 import 'package:practice_01_app/provinder/timer_provinder.dart';
@@ -449,7 +450,15 @@ class __Set_schedulState extends State<Set_schedul> {
                                 day == "" ? selectedDate.day : int.parse(day),
                             "hour": _selectedHour,
                             "minit": _selectedMinute,
-                            "option": option
+                            "option": option,
+                            "option_day": option == "주말"
+                                ? ["토", "일"]
+                                : option == "주중"
+                                    ? ["월", "화", "수", "목", "금"]
+                                    : [
+                                        DateFormat('E', 'ko_KO')
+                                            .format(selectedDate_)
+                                      ]
                           },
                         );
                         Get.offAll(const home()); // 홈 페이지로 이동, 이전 페이지 스택을 모두 제거

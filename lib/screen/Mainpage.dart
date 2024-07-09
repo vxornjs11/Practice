@@ -111,13 +111,13 @@ class _MyWidgetState extends State<Mainpage> {
           ...e.docs,
           ...f.docs
         ];
-        print('Daily Stream: ${a.docs.length}');
-        print('Weekday Stream: ${b.docs.length}');
-        print('Weekend Stream: ${c.docs.length}');
-        print('Monthly Stream: ${d.docs.length}');
-        print('Yearly Stream: ${e.docs.length}');
-        print('Date Stream: ${f.docs.length}');
-        print('Combined Docs: ${combinedDocs.length}');
+        // print('Daily Stream: ${a.docs.length}');
+        // print('Weekday Stream: ${b.docs.length}');
+        // print('Weekend Stream: ${c.docs.length}');
+        // print('Monthly Stream: ${d.docs.length}');
+        // print('Yearly Stream: ${e.docs.length}');
+        // print('Date Stream: ${f.docs.length}');
+        // print('Combined Docs: ${combinedDocs.length}');
         // setState(() {
         //   ListCount = combinedDocs.length;
         // });
@@ -128,6 +128,7 @@ class _MyWidgetState extends State<Mainpage> {
 
   Stream<List<DocumentSnapshot>> select_combineStreams() {
     // "매일" 옵션 문서 가져오기
+    // List<String> weekendDays = ['토', '일'];
     Stream<QuerySnapshot> dailyStream = FirebaseFirestore.instance
         .collection('Calender')
         .where('option', isEqualTo: "매일")
@@ -137,14 +138,17 @@ class _MyWidgetState extends State<Mainpage> {
     Stream<QuerySnapshot> weekdayStream = FirebaseFirestore.instance
         .collection('Calender')
         .where('option', isEqualTo: "주중")
-        .where('day', whereIn: [1, 2, 3, 4, 5]).snapshots();
+        .where('option_day', arrayContainsAny: [
+      DateFormat('E', 'ko_KO').format(selectedDate_)
+    ]).snapshots();
 
     // "주말" 옵션 문서 가져오기 (토요일과 일요일)
     Stream<QuerySnapshot> weekendStream = FirebaseFirestore.instance
         .collection('Calender')
         .where('option', isEqualTo: "주말")
-        .where('day', isEqualTo: DateFormat('E', 'ko_KO').format(selectedDate_))
-        .snapshots();
+        .where('option_day', arrayContainsAny: [
+      DateFormat('E', 'ko_KO').format(selectedDate_)
+    ]).snapshots();
 
     // "한달" 옵션 문서 가져오기 (현재 달)
     Stream<QuerySnapshot> monthlyStream = FirebaseFirestore.instance
@@ -212,19 +216,25 @@ class _MyWidgetState extends State<Mainpage> {
       final date = DateTime(data['year'], data['month'], data['day']);
       final event = data['Schedule'];
       final option = data['option'];
+      final optionDay =
+          data.containsKey('option_day') ? data['option_day'] : null;
 
-      _addEventToMap(events, date, event, option);
+      _addEventToMap(events, date, event, option, optionDay);
     }
 
     setState(() {
       _events = events;
+      // print(_events);
     });
 
-    print(_events); // 이벤트 로드 결과 확인
+    // print(_events); // 이벤트 로드 결과 확인
   }
 
   void _addEventToMap(Map<DateTime, List<String>> events, DateTime date,
-      String event, String option) {
+      String event, String option, List<dynamic> optionDay) {
+    // print("optionDay");
+    // print(optionDay as List<String>);
+    // print("optionDay");
     switch (option) {
       case '매일':
         for (var i = 0; i < 365; i++) {
@@ -234,7 +244,7 @@ class _MyWidgetState extends State<Mainpage> {
       case '주중':
         for (var i = 0; i < 365; i++) {
           final currentDate = date.add(Duration(days: i));
-          if (currentDate.weekday >= 1 && currentDate.weekday <= 5) {
+          if ((currentDate.weekday >= 1 && currentDate.weekday <= 5)) {
             _addEvent(events, currentDate, event);
           }
         }
@@ -242,11 +252,14 @@ class _MyWidgetState extends State<Mainpage> {
       case '주말':
         for (var i = 0; i < 365; i++) {
           final currentDate = date.add(Duration(days: i));
-          if (currentDate.weekday == 6 || currentDate.weekday == 7) {
+          if ((currentDate.weekday == 6 || currentDate.weekday == 7)) {
             _addEvent(events, currentDate, event);
+
+            // 365일 돌리는건데 그중에
           }
         }
         break;
+
       case '한달':
         for (var i = 0; i < 12; i++) {
           _addEvent(
@@ -305,7 +318,7 @@ class _MyWidgetState extends State<Mainpage> {
     setState(() {
       this.selectedDate = selectedDate;
       selectedDate_ = selectedDate;
-      print("selectedDate$selectedDate");
+      // print("selectedDate$selectedDate");
     });
   }
 
@@ -931,4 +944,4 @@ class _MyWidgetState extends State<Mainpage> {
       ),
     );
   }
-}//
+} //
