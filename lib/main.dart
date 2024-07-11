@@ -4,6 +4,7 @@ import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:practice_01_app/firebase_options.dart';
 import 'package:practice_01_app/home.dart';
 import 'package:practice_01_app/provinder/count_provinder.dart';
+import 'package:practice_01_app/provinder/scheduleCount_provinder.dart';
 import 'package:practice_01_app/provinder/timer_provinder.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -29,6 +30,8 @@ class MyApp extends StatelessWidget {
             create: (BuildContext context) => CounterProvider()),
         ChangeNotifierProvider(
             create: (BuildContext context) => Timer_Provider()),
+        ChangeNotifierProvider(
+            create: (BuildContext context) => ScheduleCountProvider()),
       ],
       child: const GetMaterialApp(
         title: 'Flutter Provider Demo',

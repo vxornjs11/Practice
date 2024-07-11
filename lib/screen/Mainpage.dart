@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:practice_01_app/provinder/scheduleCount_provinder.dart';
 import 'package:practice_01_app/screen/Set_schedule.dart';
+import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -62,13 +64,17 @@ class _MyWidgetState extends State<Mainpage> {
     Stream<QuerySnapshot> weekdayStream = FirebaseFirestore.instance
         .collection('Calender')
         .where('option', isEqualTo: "주중")
-        .where('day', whereIn: [1, 2, 3, 4, 5]).snapshots();
+        .where('option_day', arrayContainsAny: [
+      DateFormat('E', 'ko_KO').format(today)
+    ]).snapshots();
 
     // "주말" 옵션 문서 가져오기 (토요일과 일요일)
     Stream<QuerySnapshot> weekendStream = FirebaseFirestore.instance
         .collection('Calender')
         .where('option', isEqualTo: "주말")
-        .where('day', whereIn: [6, 7]).snapshots();
+        .where('option_day', arrayContainsAny: [
+      DateFormat('E', 'ko_KO').format(today)
+    ]).snapshots();
 
     // "한달" 옵션 문서 가져오기 (현재 달)
     Stream<QuerySnapshot> monthlyStream = FirebaseFirestore.instance
@@ -111,16 +117,6 @@ class _MyWidgetState extends State<Mainpage> {
           ...e.docs,
           ...f.docs
         ];
-        // print('Daily Stream: ${a.docs.length}');
-        // print('Weekday Stream: ${b.docs.length}');
-        // print('Weekend Stream: ${c.docs.length}');
-        // print('Monthly Stream: ${d.docs.length}');
-        // print('Yearly Stream: ${e.docs.length}');
-        // print('Date Stream: ${f.docs.length}');
-        // print('Combined Docs: ${combinedDocs.length}');
-        // setState(() {
-        //   ListCount = combinedDocs.length;
-        // });
         return combinedDocs;
       },
     );
@@ -198,9 +194,6 @@ class _MyWidgetState extends State<Mainpage> {
         print('Yearly Stream: ${e.docs.length}');
         print('Date Stream: ${f.docs.length}');
         print('Combined Docs: ${combinedDocs.length}');
-        // setState(() {
-        //   ListCount = combinedDocs.length;
-        // });
         return combinedDocs;
       },
     );
@@ -408,7 +401,12 @@ class _MyWidgetState extends State<Mainpage> {
                           child: Row(
                             children: [
                               TitleText('오늘의 일정 ', 24),
-                              TitleText("$ListCount건", 24),
+                              Consumer<ScheduleCountProvider>(
+                                builder: (context, value, child) {
+                                  return Center(
+                                      child: TitleText("${value.count}건", 24));
+                                },
+                              ),
                               SizedBox(
                                 width: c_size.width * 0.4,
                               ),
@@ -461,10 +459,22 @@ class _MyWidgetState extends State<Mainpage> {
                                     // 두 쿼리의 결과 병합
                                     List<DocumentSnapshot> documents =
                                         snapshot.data!;
+                                    // context
+                                    //     .read<ScheduleCountProvider>()
+                                    //     .changeScheduleCount(
+                                    //         initialCount: documents.length);
                                     // 필요시 중복 문서 제거
                                     final uniqueDocuments = {
                                       for (var doc in documents) doc.id: doc
                                     }.values.toList();
+                                    WidgetsBinding.instance
+                                        .addPostFrameCallback((_) {
+                                      context
+                                          .read<ScheduleCountProvider>()
+                                          .changeScheduleCount(
+                                              initialCount:
+                                                  uniqueDocuments.length);
+                                    });
 
                                     return ListView.builder(
                                       padding: EdgeInsets.zero,
@@ -580,6 +590,7 @@ class _MyWidgetState extends State<Mainpage> {
                                                                           });
 
                                                                           invitaionList();
+                                                                          _loadEvents();
                                                                         },
                                                                         icon: const Icon(
                                                                             Icons.close)),
@@ -725,6 +736,16 @@ class _MyWidgetState extends State<Mainpage> {
                                                 doc.id: doc
                                             }.values.toList();
 
+                                            WidgetsBinding.instance
+                                                .addPostFrameCallback((_) {
+                                              context
+                                                  .read<ScheduleCountProvider>()
+                                                  .changeScheduleCount(
+                                                      initialCount:
+                                                          uniqueDocuments
+                                                              .length);
+                                            });
+
                                             return ListView.builder(
                                               padding: EdgeInsets.zero,
                                               itemCount: uniqueDocuments.length,
@@ -843,6 +864,7 @@ class _MyWidgetState extends State<Mainpage> {
                                                                                   });
 
                                                                                   invitaionList();
+                                                                                  _loadEvents();
                                                                                 },
                                                                                 icon: const Icon(Icons.close)),
                                                                           ),

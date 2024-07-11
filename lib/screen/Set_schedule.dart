@@ -128,7 +128,8 @@ class __Set_schedulState extends State<Set_schedul> {
   //   }
   // }
 
-  Future<void> _scheduleNotification(DateTime dateTime, String message) async {
+  Future<void> _scheduleNotification(
+      DateTime dateTime, String message, String option) async {
     tz.initializeTimeZones();
     tz.setLocalLocation(tz.getLocation('Asia/Seoul'));
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
@@ -141,27 +142,148 @@ class __Set_schedulState extends State<Set_schedul> {
       priority: Priority.high,
       showWhen: false,
     );
-
+    tz.TZDateTime scheduledDate = tz.TZDateTime(
+      tz.local,
+      dateTime.year,
+      dateTime.month,
+      dateTime.day,
+      dateTime.hour,
+      dateTime.minute,
+    );
     const NotificationDetails platformChannelSpecifics = NotificationDetails(
         android: androidPlatformChannelSpecifics,
         iOS: DarwinNotificationDetails(badgeNumber: 1));
+    switch (option) {
+      case '매일':
+        for (var i = 0; i < 365; i++) {
+          print("object매일");
+          await flutterLocalNotificationsPlugin.zonedSchedule(
+            0,
+            '일정 알림',
+            message,
+            scheduledDate.add(Duration(days: i)),
+            platformChannelSpecifics,
+            uiLocalNotificationDateInterpretation:
+                UILocalNotificationDateInterpretation.absoluteTime,
+          );
+        }
+        break;
+      case '주중':
+        for (var i = 0; i < 365; i++) {
+          final currentDate = scheduledDate.add(Duration(days: i));
+          if ((currentDate.weekday >= 1 && currentDate.weekday <= 5)) {
+            await flutterLocalNotificationsPlugin.zonedSchedule(
+              0,
+              '일정 알림',
+              message,
+              currentDate,
+              platformChannelSpecifics,
+              uiLocalNotificationDateInterpretation:
+                  UILocalNotificationDateInterpretation.absoluteTime,
+            );
+          }
+        }
+        break;
+      case '주말':
+        for (var i = 0; i < 365; i++) {
+          final currentDate = scheduledDate.add(Duration(days: i));
+          if ((currentDate.weekday == 6 || currentDate.weekday == 7)) {
+            await flutterLocalNotificationsPlugin.zonedSchedule(
+              0,
+              '일정 알림',
+              message,
+              currentDate,
+              platformChannelSpecifics,
+              uiLocalNotificationDateInterpretation:
+                  UILocalNotificationDateInterpretation.absoluteTime,
+            );
 
+            // 365일 돌리는건데 그중에
+          }
+        }
+        break;
+
+      case '한달':
+        for (var i = 0; i < 12; i++) {
+          await flutterLocalNotificationsPlugin.zonedSchedule(
+            0,
+            '일정 알림',
+            message,
+            tz.TZDateTime(
+              tz.local,
+              dateTime.year,
+              dateTime.month + i,
+              dateTime.day,
+              dateTime.hour,
+              dateTime.minute,
+            ),
+            platformChannelSpecifics,
+            uiLocalNotificationDateInterpretation:
+                UILocalNotificationDateInterpretation.absoluteTime,
+          );
+        }
+        break;
+      case '1년':
+        for (var i = 0; i < 10; i++) {
+          await flutterLocalNotificationsPlugin.zonedSchedule(
+            0,
+            '일정 알림',
+            message,
+            tz.TZDateTime(
+              tz.local,
+              dateTime.year + i,
+              dateTime.month,
+              dateTime.day,
+              dateTime.hour,
+              dateTime.minute,
+            ),
+            platformChannelSpecifics,
+            uiLocalNotificationDateInterpretation:
+                UILocalNotificationDateInterpretation.absoluteTime,
+          );
+        }
+        break;
+      default:
+        await flutterLocalNotificationsPlugin.zonedSchedule(
+          0,
+          '일정 알림',
+          message,
+          tz.TZDateTime(
+            tz.local,
+            dateTime.year,
+            dateTime.month,
+            dateTime.day,
+            dateTime.hour,
+            dateTime.minute,
+          ),
+          platformChannelSpecifics,
+          uiLocalNotificationDateInterpretation:
+              UILocalNotificationDateInterpretation.absoluteTime,
+        );
+        break;
+    }
     await flutterLocalNotificationsPlugin.zonedSchedule(
       0,
       '일정 알림',
       message,
-      tz.TZDateTime(tz.local, dateTime.year, dateTime.month, dateTime.day,
-          dateTime.hour, dateTime.month),
+      tz.TZDateTime(
+        tz.local,
+        dateTime.year,
+        dateTime.month,
+        dateTime.day,
+        dateTime.hour,
+        dateTime.minute,
+      ),
       platformChannelSpecifics,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
     );
-
-    // makeDate(){
-    //   var now =tz.TZDateTime.now(tz.local);
-    //   var when = tz.TZDateTime(tz.local,now.year)
-    // }
   }
+
+  // makeDate(){
+  //   var now =tz.TZDateTime.now(tz.local);
+  //   var when = tz.TZDateTime(tz.local,now.year)
+  // }
 
   // Future<void> _addNewDocument(String newTitle) async {
   //   try {
@@ -476,14 +598,14 @@ class __Set_schedulState extends State<Set_schedul> {
                           _selectedMinute,
                         );
                       });
-                      _scheduleNotification(_selectedDate, schedule_Write);
+                      print("_selectedDate");
+                      print(option);
+                      print("_selectedDate");
+                      _scheduleNotification(
+                          _selectedDate, schedule_Write, option);
                     },
                     child: Text("등록하기")),
-                ElevatedButton(
-                    onPressed: () {
-                      _scheduleNotification(_selectedDate, schedule_Write);
-                    },
-                    child: Text("test")),
+                ElevatedButton(onPressed: () {}, child: Text("test")),
               ],
             ),
           ),
@@ -649,6 +771,7 @@ class __Set_schedulState extends State<Set_schedul> {
   //   }
   // }
 }// end
+
 
 // {
 //     "user_id": {
