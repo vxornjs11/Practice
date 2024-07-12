@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:practice_01_app/provinder/color_provinder.dart';
 import 'package:practice_01_app/provinder/scheduleCount_provinder.dart';
 import 'package:practice_01_app/screen/Set_schedule.dart';
 import 'package:provider/provider.dart';
@@ -386,107 +387,136 @@ class _MyWidgetState extends State<Mainpage> {
             ),
             Padding(
               padding: const EdgeInsets.all(1.0),
-              child: Container(
-                width: c_size.width * 1,
-                height: c_size.height * 0.8,
-                decoration: const BoxDecoration(
-                  color: Color.fromARGB(255, 230, 242, 255),
-                ),
-                child: Stack(
-                  children: [
-                    Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            children: [
-                              TitleText('오늘의 일정 ', 24),
-                              Consumer<ScheduleCountProvider>(
-                                builder: (context, value, child) {
-                                  return Center(
-                                      child: TitleText("${value.count}건", 24));
-                                },
-                              ),
-                              SizedBox(
-                                width: c_size.width * 0.4,
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    Calender_switch = !Calender_switch;
-                                  });
-                                },
-                                icon: const Icon(Icons.calendar_month),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Calender_switch == false
-                            ? Expanded(
-                                child: StreamBuilder<List<DocumentSnapshot>>(
-                                  stream: _combineStreams(),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return const Center(
-                                          child: CircularProgressIndicator());
-                                    }
-
-                                    if (!snapshot.hasData ||
-                                        snapshot.data!.isEmpty) {
-                                      return Center(
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    Set_schedul(
-                                                  option: '반복 안 함',
-                                                  selectedDate_: DateTime.now(),
-                                                  schedule_Write: "",
-                                                  selectedHour: 0,
-                                                  selectedMinute: 0,
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                          child: const Text("일정을 등록하세요"),
-                                        ),
-                                      );
-                                    }
-
-                                    // 두 쿼리의 결과 병합
-                                    List<DocumentSnapshot> documents =
-                                        snapshot.data!;
-                                    // context
-                                    //     .read<ScheduleCountProvider>()
-                                    //     .changeScheduleCount(
-                                    //         initialCount: documents.length);
-                                    // 필요시 중복 문서 제거
-                                    final uniqueDocuments = {
-                                      for (var doc in documents) doc.id: doc
-                                    }.values.toList();
-                                    WidgetsBinding.instance
-                                        .addPostFrameCallback((_) {
-                                      context
-                                          .read<ScheduleCountProvider>()
-                                          .changeScheduleCount(
-                                              initialCount:
-                                                  uniqueDocuments.length);
+              child: Consumer<ColorProvider>(builder: (context, value, child) {
+                return Container(
+                  width: c_size.width * 1,
+                  height: c_size.height * 0.8,
+                  decoration: BoxDecoration(
+                    color: value.backgroundColor,
+                  ),
+                  child: Stack(
+                    children: [
+                      Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                TitleText('오늘의 일정 ', 24),
+                                Consumer<ScheduleCountProvider>(
+                                  builder: (context, value, child) {
+                                    return Center(
+                                        child:
+                                            TitleText("${value.count}건", 24));
+                                  },
+                                ),
+                                SizedBox(
+                                  width: c_size.width * 0.4,
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      Calender_switch = !Calender_switch;
                                     });
+                                  },
+                                  icon: const Icon(Icons.calendar_month),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Calender_switch == false
+                              ? Expanded(
+                                  child: StreamBuilder<List<DocumentSnapshot>>(
+                                    stream: _combineStreams(),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return const Center(
+                                            child: CircularProgressIndicator());
+                                      }
 
-                                    return ListView.builder(
-                                      padding: EdgeInsets.zero,
-                                      itemCount: uniqueDocuments.length,
-                                      itemBuilder: (context, index) {
-                                        final doc = uniqueDocuments[index];
-                                        final data =
-                                            doc.data() as Map<String, dynamic>;
+                                      if (!snapshot.hasData ||
+                                          snapshot.data!.isEmpty) {
+                                        return Center(
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      Set_schedul(
+                                                    option: '반복 안 함',
+                                                    selectedDate_:
+                                                        DateTime.now(),
+                                                    schedule_Write: "",
+                                                    selectedHour: 0,
+                                                    selectedMinute: 0,
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            child: const Text("일정을 등록하세요"),
+                                          ),
+                                        );
+                                      }
 
-                                        return Padding(
-                                          padding: const EdgeInsets.all(3.0),
-                                          child: GestureDetector(
+                                      // 두 쿼리의 결과 병합
+                                      List<DocumentSnapshot> documents =
+                                          snapshot.data!;
+                                      // context
+                                      //     .read<ScheduleCountProvider>()
+                                      //     .changeScheduleCount(
+                                      //         initialCount: documents.length);
+                                      // 필요시 중복 문서 제거
+                                      final uniqueDocuments = {
+                                        for (var doc in documents) doc.id: doc
+                                      }.values.toList();
+                                      WidgetsBinding.instance
+                                          .addPostFrameCallback((_) {
+                                        context
+                                            .read<ScheduleCountProvider>()
+                                            .changeScheduleCount(
+                                                initialCount:
+                                                    uniqueDocuments.length);
+                                      });
+                                      // 시간과 분을 기준으로 정렬
+                                      uniqueDocuments.sort((a, b) {
+                                        final dataA =
+                                            a.data() as Map<String, dynamic>;
+                                        final dataB =
+                                            b.data() as Map<String, dynamic>;
+
+                                        final scheduleHourA =
+                                            dataA['hour'] ?? 0;
+                                        final scheduleMinuteA =
+                                            dataA['minit'] ?? 0;
+                                        final scheduleTimeA =
+                                            scheduleHourA * 60 +
+                                                scheduleMinuteA;
+
+                                        final scheduleHourB =
+                                            dataB['hour'] ?? 0;
+                                        final scheduleMinuteB =
+                                            dataB['minit'] ?? 0;
+                                        final scheduleTimeB =
+                                            scheduleHourB * 60 +
+                                                scheduleMinuteB;
+
+                                        return scheduleTimeA
+                                            .compareTo(scheduleTimeB);
+                                      });
+
+                                      return ListView.builder(
+                                        padding: EdgeInsets.zero,
+                                        itemCount: uniqueDocuments.length,
+                                        itemBuilder: (context, index) {
+                                          final doc = uniqueDocuments[index];
+                                          final data = doc.data()
+                                              as Map<String, dynamic>;
+
+                                          return Padding(
+                                            padding: const EdgeInsets.all(3.0),
+                                            child: GestureDetector(
                                               onDoubleTap: () {
                                                 // 파이어베이스에서 문서 삭제
                                                 setState(() {
@@ -505,23 +535,53 @@ class _MyWidgetState extends State<Mainpage> {
                                                             .fromARGB(
                                                             255, 255, 255, 255),
                                                       ),
-                                                      child: ListTile(
-                                                        title: Text(
-                                                          data['Schedule'] ??
-                                                              'No Schedule',
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          style:
-                                                              const TextStyle(
-                                                                  fontSize: 25),
-                                                        ),
-                                                        subtitle: Text(
-                                                          'Date: ${data['option'] ?? 'No Date'}\nTime: ${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
-                                                          style:
-                                                              const TextStyle(
-                                                                  fontSize: 12),
-                                                        ),
-                                                      ),
+                                                      child: DateTime.now()
+                                                              .isBefore(DateTime(
+                                                                  data['year'],
+                                                                  data['month'],
+                                                                  data['hour'],
+                                                                  data[
+                                                                      'minit']))
+                                                          ? ListTile(
+                                                              title: Text(
+                                                                data['Schedule'] ??
+                                                                    'No Schedule',
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                style:
+                                                                    const TextStyle(
+                                                                        fontSize:
+                                                                            25),
+                                                              ),
+                                                              subtitle: Text(
+                                                                'Date: ${data['option'] ?? 'No Date'}\nTime: ${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
+                                                                style:
+                                                                    const TextStyle(
+                                                                        fontSize:
+                                                                            12),
+                                                              ),
+                                                            )
+                                                          : ListTile(
+                                                              title: Text(
+                                                                data['Schedule'] ??
+                                                                    'No Schedule',
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                style:
+                                                                    const TextStyle(
+                                                                        fontSize:
+                                                                            25),
+                                                              ),
+                                                              subtitle: Text(
+                                                                '완료?',
+                                                                style:
+                                                                    const TextStyle(
+                                                                        fontSize:
+                                                                            12),
+                                                              ),
+                                                            ),
                                                     )
                                                   : Container(
                                                       height:
@@ -599,318 +659,319 @@ class _MyWidgetState extends State<Mainpage> {
                                                           ),
                                                         ],
                                                       ),
-                                                    )),
-                                        );
-                                      },
-                                    );
-                                  },
-                                ),
-                              )
-                            : Padding(
-                                padding: const EdgeInsets.all(3.0),
-                                child: Container(
-                                  width: c_size.width * 1,
-                                  height: c_size.height * 0.7,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                      color: Colors.grey.shade200),
-                                  child: Column(
-                                    children: [
-                                      TableCalendar(
-                                        firstDay: DateTime.utc(2010, 10, 16),
-                                        lastDay: DateTime.utc(2030, 3, 14),
-                                        focusedDay: selectedDate_,
-                                        selectedDayPredicate: (date) =>
-                                            isSameDay(selectedDate_, date),
-                                        onDaySelected: _onDaySelected,
-                                        eventLoader: _getEventsForDay,
-                                        calendarBuilders: CalendarBuilders(
-                                          markerBuilder:
-                                              (context, date, events) {
-                                            if (events.isNotEmpty) {
-                                              return Positioned(
-                                                right: 1,
-                                                bottom: 1,
-                                                child: _buildEventsMarker(
-                                                    date, events),
-                                              );
-                                            }
-                                            return null;
-                                          },
+                                                    ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ),
+                                )
+                              : Padding(
+                                  padding: const EdgeInsets.all(3.0),
+                                  child: Container(
+                                    width: c_size.width * 1,
+                                    height: c_size.height * 0.7,
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        color: Colors.grey.shade200),
+                                    child: Column(
+                                      children: [
+                                        TableCalendar(
+                                          firstDay: DateTime.utc(2010, 10, 16),
+                                          lastDay: DateTime.utc(2030, 3, 14),
+                                          focusedDay: selectedDate_,
+                                          selectedDayPredicate: (date) =>
+                                              isSameDay(selectedDate_, date),
+                                          onDaySelected: _onDaySelected,
+                                          eventLoader: _getEventsForDay,
+                                          calendarBuilders: CalendarBuilders(
+                                            markerBuilder:
+                                                (context, date, events) {
+                                              if (events.isNotEmpty) {
+                                                return Positioned(
+                                                  right: 1,
+                                                  bottom: 1,
+                                                  child: _buildEventsMarker(
+                                                      date, events),
+                                                );
+                                              }
+                                              return null;
+                                            },
+                                          ),
+                                          // calendarStyle: CalendarStyle(
+                                          //   todayDecoration: BoxDecoration(
+                                          //     color: Colors.blue,
+                                          //     shape: BoxShape.circle,
+                                          //   ),
+                                          //   selectedDecoration: BoxDecoration(
+                                          //     color: Colors.red,
+                                          //     shape: BoxShape.circle,
+                                          //   ),
+                                          //   markerDecoration: BoxDecoration(
+                                          //     color: Colors.orange,
+                                          //     shape: BoxShape.circle,
+                                          //   ),
+                                          // ),
                                         ),
-                                        // calendarStyle: CalendarStyle(
-                                        //   todayDecoration: BoxDecoration(
-                                        //     color: Colors.blue,
-                                        //     shape: BoxShape.circle,
-                                        //   ),
-                                        //   selectedDecoration: BoxDecoration(
-                                        //     color: Colors.red,
-                                        //     shape: BoxShape.circle,
-                                        //   ),
-                                        //   markerDecoration: BoxDecoration(
-                                        //     color: Colors.orange,
-                                        //     shape: BoxShape.circle,
+                                        // Expanded(
+                                        //   child: ListView(
+                                        //     children: _getEventsForDay(
+                                        //             selectedDate_)
+                                        //         .map((event) => Padding(
+                                        //               padding:
+                                        //                   const EdgeInsets.all(
+                                        //                       4.0),
+                                        //               child: Container(
+                                        //                 height:
+                                        //                     c_size.height * 0.1,
+                                        //                 // width: c_size.width * 0.1,
+                                        //                 decoration: BoxDecoration(
+                                        //                   borderRadius:
+                                        //                       BorderRadius
+                                        //                           .circular(10.0),
+                                        //                   color: const Color
+                                        //                       .fromARGB(
+                                        //                       255, 255, 255, 255),
+                                        //                 ),
+                                        //                 child: ListTile(
+                                        //                   title: Text(
+                                        //                       event.toString(),
+                                        //                       overflow:
+                                        //                           TextOverflow
+                                        //                               .ellipsis,
+                                        //                       style:
+                                        //                           const TextStyle(
+                                        //                               fontSize:
+                                        //                                   25)),
+                                        //                 ),
+                                        //               ),
+                                        //             ))
+                                        //         .toList(),
                                         //   ),
                                         // ),
-                                      ),
-                                      // Expanded(
-                                      //   child: ListView(
-                                      //     children: _getEventsForDay(
-                                      //             selectedDate_)
-                                      //         .map((event) => Padding(
-                                      //               padding:
-                                      //                   const EdgeInsets.all(
-                                      //                       4.0),
-                                      //               child: Container(
-                                      //                 height:
-                                      //                     c_size.height * 0.1,
-                                      //                 // width: c_size.width * 0.1,
-                                      //                 decoration: BoxDecoration(
-                                      //                   borderRadius:
-                                      //                       BorderRadius
-                                      //                           .circular(10.0),
-                                      //                   color: const Color
-                                      //                       .fromARGB(
-                                      //                       255, 255, 255, 255),
-                                      //                 ),
-                                      //                 child: ListTile(
-                                      //                   title: Text(
-                                      //                       event.toString(),
-                                      //                       overflow:
-                                      //                           TextOverflow
-                                      //                               .ellipsis,
-                                      //                       style:
-                                      //                           const TextStyle(
-                                      //                               fontSize:
-                                      //                                   25)),
-                                      //                 ),
-                                      //               ),
-                                      //             ))
-                                      //         .toList(),
-                                      //   ),
-                                      // ),
-                                      Expanded(
-                                        child: StreamBuilder<
-                                            List<DocumentSnapshot>>(
-                                          stream: select_combineStreams(),
-                                          builder: (context, snapshot) {
-                                            if (snapshot.connectionState ==
-                                                ConnectionState.waiting) {
-                                              return const Center(
-                                                  child:
-                                                      CircularProgressIndicator());
-                                            }
+                                        Expanded(
+                                          child: StreamBuilder<
+                                              List<DocumentSnapshot>>(
+                                            stream: select_combineStreams(),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.waiting) {
+                                                return const Center(
+                                                    child:
+                                                        CircularProgressIndicator());
+                                              }
 
-                                            if (!snapshot.hasData ||
-                                                snapshot.data!.isEmpty) {
-                                              return Center(
-                                                child: ElevatedButton(
-                                                  onPressed: () {
-                                                    Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            Set_schedul(
-                                                          option: '반복 안 함',
-                                                          selectedDate_:
-                                                              DateTime.now(),
-                                                          schedule_Write: "",
-                                                          selectedHour: 0,
-                                                          selectedMinute: 0,
+                                              if (!snapshot.hasData ||
+                                                  snapshot.data!.isEmpty) {
+                                                return Center(
+                                                  child: ElevatedButton(
+                                                    onPressed: () {
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              Set_schedul(
+                                                            option: '반복 안 함',
+                                                            selectedDate_:
+                                                                DateTime.now(),
+                                                            schedule_Write: "",
+                                                            selectedHour: 0,
+                                                            selectedMinute: 0,
+                                                          ),
                                                         ),
-                                                      ),
-                                                    );
-                                                  },
-                                                  child:
-                                                      const Text("일정을 등록하세요"),
-                                                ),
-                                              );
-                                            }
+                                                      );
+                                                    },
+                                                    child:
+                                                        const Text("일정을 등록하세요"),
+                                                  ),
+                                                );
+                                              }
 
-                                            // 두 쿼리의 결과 병합
-                                            List<DocumentSnapshot> documents =
-                                                snapshot.data!;
-                                            // 필요시 중복 문서 제거
-                                            final uniqueDocuments = {
-                                              for (var doc in documents)
-                                                doc.id: doc
-                                            }.values.toList();
+                                              // 두 쿼리의 결과 병합
+                                              List<DocumentSnapshot> documents =
+                                                  snapshot.data!;
+                                              // 필요시 중복 문서 제거
+                                              final uniqueDocuments = {
+                                                for (var doc in documents)
+                                                  doc.id: doc
+                                              }.values.toList();
 
-                                            WidgetsBinding.instance
-                                                .addPostFrameCallback((_) {
-                                              context
-                                                  .read<ScheduleCountProvider>()
-                                                  .changeScheduleCount(
-                                                      initialCount:
-                                                          uniqueDocuments
-                                                              .length);
-                                            });
+                                              WidgetsBinding.instance
+                                                  .addPostFrameCallback((_) {
+                                                context
+                                                    .read<
+                                                        ScheduleCountProvider>()
+                                                    .changeScheduleCount(
+                                                        initialCount:
+                                                            uniqueDocuments
+                                                                .length);
+                                              });
 
-                                            return ListView.builder(
-                                              padding: EdgeInsets.zero,
-                                              itemCount: uniqueDocuments.length,
-                                              itemBuilder: (context, index) {
-                                                final doc =
-                                                    uniqueDocuments[index];
-                                                final data = doc.data()
-                                                    as Map<String, dynamic>;
+                                              return ListView.builder(
+                                                padding: EdgeInsets.zero,
+                                                itemCount:
+                                                    uniqueDocuments.length,
+                                                itemBuilder: (context, index) {
+                                                  final doc =
+                                                      uniqueDocuments[index];
+                                                  final data = doc.data()
+                                                      as Map<String, dynamic>;
 
-                                                return Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(3.0),
-                                                  child: GestureDetector(
-                                                      onDoubleTap: () {
-                                                        // 파이어베이스에서 문서 삭제
-                                                        setState(() {
-                                                          delete_list =
-                                                              !delete_list;
-                                                        });
-                                                      },
-                                                      child:
-                                                          delete_list == false
-                                                              ? Container(
-                                                                  height: c_size
-                                                                          .height *
-                                                                      0.1,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            10.0),
-                                                                    color: const Color
-                                                                        .fromARGB(
-                                                                        255,
-                                                                        255,
-                                                                        255,
-                                                                        255),
-                                                                  ),
-                                                                  child:
-                                                                      ListTile(
-                                                                    title: Text(
-                                                                      data['Schedule'] ??
-                                                                          'No Schedule',
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis,
-                                                                      style: const TextStyle(
-                                                                          fontSize:
-                                                                              25),
+                                                  return Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            3.0),
+                                                    child: GestureDetector(
+                                                        onDoubleTap: () {
+                                                          // 파이어베이스에서 문서 삭제
+                                                          setState(() {
+                                                            delete_list =
+                                                                !delete_list;
+                                                          });
+                                                        },
+                                                        child:
+                                                            delete_list == false
+                                                                ? Container(
+                                                                    height:
+                                                                        c_size.height *
+                                                                            0.1,
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              10.0),
+                                                                      color: const Color
+                                                                          .fromARGB(
+                                                                          255,
+                                                                          255,
+                                                                          255,
+                                                                          255),
                                                                     ),
-                                                                    subtitle:
-                                                                        Text(
-                                                                      'Date: ${data['option'] ?? 'No Date'}\nTime: ${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
-                                                                      style: const TextStyle(
-                                                                          fontSize:
-                                                                              12),
+                                                                    child:
+                                                                        ListTile(
+                                                                      title:
+                                                                          Text(
+                                                                        data['Schedule'] ??
+                                                                            'No Schedule',
+                                                                        overflow:
+                                                                            TextOverflow.ellipsis,
+                                                                        style: const TextStyle(
+                                                                            fontSize:
+                                                                                25),
+                                                                      ),
+                                                                      subtitle:
+                                                                          Text(
+                                                                        'Date: ${data['option'] ?? 'No Date'}\nTime: ${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
+                                                                        style: const TextStyle(
+                                                                            fontSize:
+                                                                                12),
+                                                                      ),
                                                                     ),
-                                                                  ),
-                                                                )
-                                                              : Container(
-                                                                  height: c_size
-                                                                          .height *
-                                                                      0.1,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            10.0),
-                                                                    color: const Color
-                                                                        .fromARGB(
-                                                                        255,
-                                                                        255,
-                                                                        255,
-                                                                        255),
-                                                                  ),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      Container(
-                                                                        width: c_size.width *
-                                                                            0.85,
-                                                                        child:
-                                                                            ListTile(
-                                                                          title:
-                                                                              Text(
-                                                                            data['Schedule'] ??
-                                                                                'No Schedule',
-                                                                            overflow:
-                                                                                TextOverflow.ellipsis,
-                                                                            style:
-                                                                                const TextStyle(fontSize: 25),
-                                                                          ),
-                                                                          subtitle:
-                                                                              Text(
-                                                                            'Date: ${data['year'] ?? 'No Date'}\nTime: ${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
-                                                                            style:
-                                                                                const TextStyle(fontSize: 12),
+                                                                  )
+                                                                : Container(
+                                                                    height:
+                                                                        c_size.height *
+                                                                            0.1,
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              10.0),
+                                                                      color: const Color
+                                                                          .fromARGB(
+                                                                          255,
+                                                                          255,
+                                                                          255,
+                                                                          255),
+                                                                    ),
+                                                                    child: Row(
+                                                                      children: [
+                                                                        Container(
+                                                                          width:
+                                                                              c_size.width * 0.85,
+                                                                          child:
+                                                                              ListTile(
+                                                                            title:
+                                                                                Text(
+                                                                              data['Schedule'] ?? 'No Schedule',
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                              style: const TextStyle(fontSize: 25),
+                                                                            ),
+                                                                            subtitle:
+                                                                                Text(
+                                                                              'Date: ${data['year'] ?? 'No Date'}\nTime: ${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
+                                                                              style: const TextStyle(fontSize: 12),
+                                                                            ),
                                                                           ),
                                                                         ),
-                                                                      ),
-                                                                      Column(
-                                                                        mainAxisAlignment:
-                                                                            MainAxisAlignment.start,
-                                                                        children: [
-                                                                          SizedBox(
-                                                                            width:
-                                                                                c_size.width * 0.1,
-                                                                            // height:
-                                                                            //     c_size.height * 0.1,
-                                                                            child: IconButton(
-                                                                                color: Colors.red,
-                                                                                onPressed: () {
-                                                                                  FirebaseFirestore.instance.collection('Calender').doc(doc.id).delete().then((_) {
-                                                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('일정이 삭제되었습니다')));
-                                                                                  }).catchError((error) {
-                                                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('일정 삭제 실패: $error')));
-                                                                                  });
+                                                                        Column(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.start,
+                                                                          children: [
+                                                                            SizedBox(
+                                                                              width: c_size.width * 0.1,
+                                                                              // height:
+                                                                              //     c_size.height * 0.1,
+                                                                              child: IconButton(
+                                                                                  color: Colors.red,
+                                                                                  onPressed: () {
+                                                                                    FirebaseFirestore.instance.collection('Calender').doc(doc.id).delete().then((_) {
+                                                                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('일정이 삭제되었습니다')));
+                                                                                    }).catchError((error) {
+                                                                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('일정 삭제 실패: $error')));
+                                                                                    });
 
-                                                                                  invitaionList();
-                                                                                  _loadEvents();
-                                                                                },
-                                                                                icon: const Icon(Icons.close)),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                )),
-                                                );
-                                              },
-                                            );
-                                          },
-                                        ),
-                                      )
-                                    ],
+                                                                                    invitaionList();
+                                                                                    _loadEvents();
+                                                                                  },
+                                                                                  icon: const Icon(Icons.close)),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  )),
+                                                  );
+                                                },
+                                              );
+                                            },
+                                          ),
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                      ],
-                    ),
-                    Positioned(
-                      bottom: 16.0,
-                      right: 16.0,
-                      child: FloatingActionButton(
-                        backgroundColor: Colors.grey.shade100,
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Set_schedul(
-                                option: '반복 안 함',
-                                selectedDate_: DateTime.now(),
-                                schedule_Write: "",
-                                selectedHour: 0,
-                                selectedMinute: 0,
-                              ),
-                            ),
-                          );
-                        },
-                        child: Icon(Icons.add),
-                        tooltip: 'Add Schedule',
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-              ),
+                      Positioned(
+                        bottom: 16.0,
+                        right: 16.0,
+                        child: FloatingActionButton(
+                          backgroundColor: Colors.grey.shade100,
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Set_schedul(
+                                  option: '반복 안 함',
+                                  selectedDate_: DateTime.now(),
+                                  schedule_Write: "",
+                                  selectedHour: 0,
+                                  selectedMinute: 0,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Icon(Icons.add),
+                          tooltip: 'Add Schedule',
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
             ),
             const SizedBox(
               height: 5,

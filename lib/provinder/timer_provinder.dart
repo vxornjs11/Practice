@@ -11,15 +11,4 @@ class Timer_Provider extends ChangeNotifier {
     TimerText = timeText;
     notifyListeners();
   }
-
-  // void ChangeText({
-  //   required String newYear,
-  //   required String newMonth,
-  //   required String newDay,
-  // }) async {
-  //   year = newYear;
-  //   month = newMonth;
-  //   day = newDay;
-  //   notifyListeners();
-  // }
 }
