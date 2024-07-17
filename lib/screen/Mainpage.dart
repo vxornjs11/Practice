@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:practice_01_app/main.dart';
 import 'package:practice_01_app/provinder/color_provinder.dart';
 import 'package:practice_01_app/provinder/scheduleCount_provinder.dart';
 import 'package:practice_01_app/screen/Set_schedule.dart';
@@ -59,12 +60,14 @@ class _MyWidgetState extends State<Mainpage> {
     Stream<QuerySnapshot> dailyStream = FirebaseFirestore.instance
         .collection('Calender')
         .where('option', isEqualTo: "매일")
+        .where('userid', isEqualTo: UserManager.userId)
         .snapshots();
 
     // "주중" 옵션 문서 가져오기 (월요일부터 금요일까지)
     Stream<QuerySnapshot> weekdayStream = FirebaseFirestore.instance
         .collection('Calender')
         .where('option', isEqualTo: "주중")
+        .where('userid', isEqualTo: UserManager.userId)
         .where('option_day', arrayContainsAny: [
       DateFormat('E', 'ko_KO').format(today)
     ]).snapshots();
@@ -73,6 +76,7 @@ class _MyWidgetState extends State<Mainpage> {
     Stream<QuerySnapshot> weekendStream = FirebaseFirestore.instance
         .collection('Calender')
         .where('option', isEqualTo: "주말")
+        .where('userid', isEqualTo: UserManager.userId)
         .where('option_day', arrayContainsAny: [
       DateFormat('E', 'ko_KO').format(today)
     ]).snapshots();
@@ -81,6 +85,7 @@ class _MyWidgetState extends State<Mainpage> {
     Stream<QuerySnapshot> monthlyStream = FirebaseFirestore.instance
         .collection('Calender')
         .where('option', isEqualTo: "한달")
+        .where('userid', isEqualTo: UserManager.userId)
         .where('day', isEqualTo: today.day)
         .snapshots();
 
@@ -88,6 +93,7 @@ class _MyWidgetState extends State<Mainpage> {
     Stream<QuerySnapshot> yearlyStream = FirebaseFirestore.instance
         .collection('Calender')
         .where('option', isEqualTo: "1년")
+        .where('userid', isEqualTo: UserManager.userId)
         .where('month', isEqualTo: today.month)
         .where('day', isEqualTo: today.day)
         .snapshots();
@@ -95,6 +101,7 @@ class _MyWidgetState extends State<Mainpage> {
     // 날짜와 일치하는 문서 가져오기 (특정 날짜)
     Stream<QuerySnapshot> dateStream = FirebaseFirestore.instance
         .collection('Calender')
+        .where('userid', isEqualTo: UserManager.userId)
         .where('day', isEqualTo: today.day)
         .where('month', isEqualTo: today.month)
         .where('year', isEqualTo: today.year)
@@ -129,12 +136,14 @@ class _MyWidgetState extends State<Mainpage> {
     Stream<QuerySnapshot> dailyStream = FirebaseFirestore.instance
         .collection('Calender')
         .where('option', isEqualTo: "매일")
+        .where('userid', isEqualTo: UserManager.userId)
         .snapshots();
 
     // "주중" 옵션 문서 가져오기 (월요일부터 금요일까지)
     Stream<QuerySnapshot> weekdayStream = FirebaseFirestore.instance
         .collection('Calender')
         .where('option', isEqualTo: "주중")
+        .where('userid', isEqualTo: UserManager.userId)
         .where('option_day', arrayContainsAny: [
       DateFormat('E', 'ko_KO').format(selectedDate_)
     ]).snapshots();
@@ -143,6 +152,7 @@ class _MyWidgetState extends State<Mainpage> {
     Stream<QuerySnapshot> weekendStream = FirebaseFirestore.instance
         .collection('Calender')
         .where('option', isEqualTo: "주말")
+        .where('userid', isEqualTo: UserManager.userId)
         .where('option_day', arrayContainsAny: [
       DateFormat('E', 'ko_KO').format(selectedDate_)
     ]).snapshots();
@@ -150,6 +160,7 @@ class _MyWidgetState extends State<Mainpage> {
     // "한달" 옵션 문서 가져오기 (현재 달)
     Stream<QuerySnapshot> monthlyStream = FirebaseFirestore.instance
         .collection('Calender')
+        .where('userid', isEqualTo: UserManager.userId)
         .where('option', isEqualTo: "한달")
         .where('day', isEqualTo: selectedDate_.day)
         .snapshots();
@@ -157,6 +168,7 @@ class _MyWidgetState extends State<Mainpage> {
     // "1년" 옵션 문서 가져오기 (현재 연도)
     Stream<QuerySnapshot> yearlyStream = FirebaseFirestore.instance
         .collection('Calender')
+        .where('userid', isEqualTo: UserManager.userId)
         .where('option', isEqualTo: "1년")
         .where('month', isEqualTo: selectedDate_.month)
         .where('day', isEqualTo: selectedDate_.day)
@@ -165,6 +177,7 @@ class _MyWidgetState extends State<Mainpage> {
     // 날짜와 일치하는 문서 가져오기 (특정 날짜)
     Stream<QuerySnapshot> dateStream = FirebaseFirestore.instance
         .collection('Calender')
+        .where('userid', isEqualTo: UserManager.userId)
         .where('day', isEqualTo: selectedDate_.day)
         .where('month', isEqualTo: selectedDate_.month)
         .where('year', isEqualTo: selectedDate_.year)
@@ -188,13 +201,6 @@ class _MyWidgetState extends State<Mainpage> {
           ...e.docs,
           ...f.docs
         ];
-        print('Daily Stream: ${a.docs.length}');
-        print('Weekday Stream: ${b.docs.length}');
-        print('Weekend Stream: ${c.docs.length}');
-        print('Monthly Stream: ${d.docs.length}');
-        print('Yearly Stream: ${e.docs.length}');
-        print('Date Stream: ${f.docs.length}');
-        print('Combined Docs: ${combinedDocs.length}');
         return combinedDocs;
       },
     );
@@ -575,7 +581,7 @@ class _MyWidgetState extends State<Mainpage> {
                                                                             25),
                                                               ),
                                                               subtitle: Text(
-                                                                '완료?',
+                                                                '완료할지선택',
                                                                 style:
                                                                     const TextStyle(
                                                                         fontSize:

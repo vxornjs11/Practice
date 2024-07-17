@@ -7,6 +7,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_01_app/home.dart';
+import 'package:practice_01_app/main.dart';
 import 'package:practice_01_app/provinder/count_provinder.dart';
 import 'package:practice_01_app/provinder/timer_provinder.dart';
 import 'package:practice_01_app/screen/Refresh.dart';
@@ -150,83 +151,87 @@ class __Set_schedulState extends State<Set_schedul> {
       dateTime.hour,
       dateTime.minute,
     );
+    final pendingNotifications =
+        await flutterLocalNotificationsPlugin.pendingNotificationRequests();
+    print('Pending notifications: ${pendingNotifications.length}');
     const NotificationDetails platformChannelSpecifics = NotificationDetails(
         android: androidPlatformChannelSpecifics,
-        iOS: DarwinNotificationDetails(badgeNumber: 1));
-    switch (option) {
+        iOS: DarwinNotificationDetails(
+            presentAlert: true,
+            presentBadge: true,
+            presentSound: true,
+            badgeNumber: 1));
+    switch (option.trim()) {
       case '매일':
-        for (var i = 0; i < 365; i++) {
-          print("object매일");
+        await flutterLocalNotificationsPlugin.zonedSchedule(
+          0,
+          '일정 알림',
+          message,
+          scheduledDate,
+          uiLocalNotificationDateInterpretation:
+              UILocalNotificationDateInterpretation.absoluteTime,
+          platformChannelSpecifics,
+          // androidAllowWhileIdle: true,
+          matchDateTimeComponents: DateTimeComponents.time, // 매일 같은 시간에 알림.
+        );
+        break;
+      case '주중':
+        for (int i = 1; i <= 5; i++) {
           await flutterLocalNotificationsPlugin.zonedSchedule(
-            0,
-            '일정 알림',
-            message,
-            scheduledDate.add(Duration(days: i)),
+            i, // 고유한 ID
+            '일정 알림', // 알림 제목
+            message, // 알림 메시지
+            _nextInstanceOfWeekday(dateTime, i), // 다음 주중 날짜 계산
             platformChannelSpecifics,
             uiLocalNotificationDateInterpretation:
                 UILocalNotificationDateInterpretation.absoluteTime,
+            androidAllowWhileIdle: true,
+            matchDateTimeComponents:
+                DateTimeComponents.dayOfWeekAndTime, // 매주 특정 요일에 반복
           );
-        }
-        break;
-      case '주중':
-        for (var i = 0; i < 365; i++) {
-          final currentDate = scheduledDate.add(Duration(days: i));
-          if ((currentDate.weekday >= 1 && currentDate.weekday <= 5)) {
-            await flutterLocalNotificationsPlugin.zonedSchedule(
-              0,
-              '일정 알림',
-              message,
-              currentDate,
-              platformChannelSpecifics,
-              uiLocalNotificationDateInterpretation:
-                  UILocalNotificationDateInterpretation.absoluteTime,
-            );
-          }
         }
         break;
       case '주말':
-        for (var i = 0; i < 365; i++) {
-          final currentDate = scheduledDate.add(Duration(days: i));
-          if ((currentDate.weekday == 6 || currentDate.weekday == 7)) {
-            await flutterLocalNotificationsPlugin.zonedSchedule(
-              0,
-              '일정 알림',
-              message,
-              currentDate,
-              platformChannelSpecifics,
-              uiLocalNotificationDateInterpretation:
-                  UILocalNotificationDateInterpretation.absoluteTime,
-            );
-
-            // 365일 돌리는건데 그중에
-          }
-        }
-        break;
-
-      case '한달':
-        for (var i = 0; i < 12; i++) {
+        for (int i = 6; i <= 7; i++) {
+          // 토요일(6)과 일요일(7)
           await flutterLocalNotificationsPlugin.zonedSchedule(
-            0,
-            '일정 알림',
-            message,
-            tz.TZDateTime(
-              tz.local,
-              dateTime.year,
-              dateTime.month + i,
-              dateTime.day,
-              dateTime.hour,
-              dateTime.minute,
-            ),
+            i + 5, // 고유한 ID 설정 (주중 알림 ID와 겹치지 않도록 5를 더함)
+            '일정 알림', // 알림 제목
+            message, // 알림 메시지
+            _nextInstanceOfWeekend(dateTime, i), // 다음 주말 날짜 계산
             platformChannelSpecifics,
             uiLocalNotificationDateInterpretation:
                 UILocalNotificationDateInterpretation.absoluteTime,
+            androidAllowWhileIdle: true,
+            matchDateTimeComponents:
+                DateTimeComponents.dayOfWeekAndTime, // 매주 특정 요일에 반복
           );
         }
         break;
+      case '한달':
+        await flutterLocalNotificationsPlugin.zonedSchedule(
+          0,
+          '일정 알림',
+          message,
+          tz.TZDateTime(
+            tz.local,
+            dateTime.year,
+            dateTime.month,
+            dateTime.day,
+            dateTime.hour,
+            dateTime.minute,
+          ),
+          platformChannelSpecifics,
+          uiLocalNotificationDateInterpretation:
+              UILocalNotificationDateInterpretation.absoluteTime,
+          matchDateTimeComponents: DateTimeComponents.dayOfMonthAndTime,
+        );
+        break;
       case '1년':
         for (var i = 0; i < 10; i++) {
+          final id = i + 1; // 고유한 ID 설정
           await flutterLocalNotificationsPlugin.zonedSchedule(
-            0,
+            id,
             '일정 알림',
             message,
             tz.TZDateTime(
@@ -240,9 +245,19 @@ class __Set_schedulState extends State<Set_schedul> {
             platformChannelSpecifics,
             uiLocalNotificationDateInterpretation:
                 UILocalNotificationDateInterpretation.absoluteTime,
+            androidAllowWhileIdle: true,
           );
+          print("Scheduled yearly notification $id for ${tz.TZDateTime(
+            tz.local,
+            dateTime.year + i,
+            dateTime.month,
+            dateTime.day,
+            dateTime.hour,
+            dateTime.minute,
+          )}");
         }
         break;
+
       default:
         await flutterLocalNotificationsPlugin.zonedSchedule(
           0,
@@ -259,25 +274,50 @@ class __Set_schedulState extends State<Set_schedul> {
           platformChannelSpecifics,
           uiLocalNotificationDateInterpretation:
               UILocalNotificationDateInterpretation.absoluteTime,
+          androidAllowWhileIdle: true,
         );
+        print("Scheduled default notification at ${tz.TZDateTime(
+          tz.local,
+          dateTime.year,
+          dateTime.month,
+          dateTime.day,
+          dateTime.hour,
+          dateTime.minute,
+        )}");
         break;
     }
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-      0,
-      '일정 알림',
-      message,
-      tz.TZDateTime(
-        tz.local,
-        dateTime.year,
-        dateTime.month,
-        dateTime.day,
-        dateTime.hour,
-        dateTime.minute,
-      ),
-      platformChannelSpecifics,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
+  }
+
+  /// 다음 주중 날짜를 계산하는 함수
+  tz.TZDateTime _nextInstanceOfWeekday(DateTime dateTime, int weekday) {
+    tz.TZDateTime scheduledDate = tz.TZDateTime(
+      tz.local,
+      dateTime.year,
+      dateTime.month,
+      dateTime.day,
+      dateTime.hour,
+      dateTime.minute,
     );
+    while (scheduledDate.weekday != weekday) {
+      scheduledDate = scheduledDate.add(Duration(days: 1));
+    }
+    return scheduledDate;
+  }
+
+  /// 다음 주말 날짜를 계산하는 함수
+  tz.TZDateTime _nextInstanceOfWeekend(DateTime dateTime, int weekendDay) {
+    tz.TZDateTime scheduledDate = tz.TZDateTime(
+      tz.local,
+      dateTime.year,
+      dateTime.month,
+      dateTime.day,
+      dateTime.hour,
+      dateTime.minute,
+    );
+    while (scheduledDate.weekday != weekendDay) {
+      scheduledDate = scheduledDate.add(Duration(days: 1));
+    }
+    return scheduledDate;
   }
 
   // makeDate(){
@@ -580,7 +620,8 @@ class __Set_schedulState extends State<Set_schedul> {
                                     : [
                                         DateFormat('E', 'ko_KO')
                                             .format(selectedDate_)
-                                      ]
+                                      ],
+                            "userid": UserManager.userId
                           },
                         );
                         Get.offAll(const home()); // 홈 페이지로 이동, 이전 페이지 스택을 모두 제거

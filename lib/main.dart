@@ -9,6 +9,39 @@ import 'package:practice_01_app/provinder/scheduleCount_provinder.dart';
 import 'package:practice_01_app/provinder/timer_provinder.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
+
+class UserManager {
+  static String? userId;
+
+  // 유저 아이디를 SharedPreferences에 저장
+  static Future<void> saveUserId(String id) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('userId', id);
+    userId = id;
+  }
+
+  // 유저 아이디를 SharedPreferences에서 불러오기
+  static Future<void> loadUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    userId = prefs.getString('userId');
+  }
+
+  // 유저 아이디를 생성 (없을 경우)
+  static Future<void> initializeUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString('userId');
+    if (id == null) {
+      print("id = null");
+      id = Uuid().v4();
+      await saveUserId(id);
+    } else {
+      print("id not null");
+      userId = id;
+    }
+  }
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,12 +49,12 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(const MyApp());
+  // 사용자 아이디 저장
+  await UserManager.initializeUserId();
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
