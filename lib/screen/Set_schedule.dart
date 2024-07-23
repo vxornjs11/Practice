@@ -163,14 +163,22 @@ class __Set_schedulState extends State<Set_schedul> {
             badgeNumber: 1));
     switch (option.trim()) {
       case '매일':
+        tz.TZDateTime schedule = tz.TZDateTime(
+          tz.local,
+          dateTime.year,
+          dateTime.month,
+          dateTime.day,
+          dateTime.hour,
+          dateTime.minute,
+        );
         await flutterLocalNotificationsPlugin.zonedSchedule(
-          0,
+          8,
           '일정 알림',
           message,
-          scheduledDate,
+          schedule,
+          platformChannelSpecifics,
           uiLocalNotificationDateInterpretation:
               UILocalNotificationDateInterpretation.absoluteTime,
-          platformChannelSpecifics,
           // androidAllowWhileIdle: true,
           matchDateTimeComponents: DateTimeComponents.time, // 매일 같은 시간에 알림.
         );
@@ -646,7 +654,16 @@ class __Set_schedulState extends State<Set_schedul> {
                           _selectedDate, schedule_Write, option);
                     },
                     child: Text("등록하기")),
-                ElevatedButton(onPressed: () {}, child: Text("test")),
+                ElevatedButton(
+                    onPressed: () async {
+                      flutterLocalNotificationsPlugin.cancelAll();
+                      final pendingNotifications =
+                          await flutterLocalNotificationsPlugin
+                              .pendingNotificationRequests();
+                      print(
+                          'Pending notifications: ${pendingNotifications.length}');
+                    },
+                    child: Text("test")),
               ],
             ),
           ),

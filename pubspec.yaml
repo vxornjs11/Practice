@@ -49,6 +49,7 @@ dependencies:
   timezone: ^0.9.3
   rxdart: ^0.28.0
   uuid: ^4.4.2
+  fl_chart: ^0.68.0
   # get: ^4.6.6
 
 dev_dependencies:

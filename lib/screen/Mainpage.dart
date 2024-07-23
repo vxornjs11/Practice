@@ -207,8 +207,10 @@ class _MyWidgetState extends State<Mainpage> {
   }
 
   Future<void> _loadEvents() async {
-    final snapshot =
-        await FirebaseFirestore.instance.collection('Calender').get();
+    final snapshot = await FirebaseFirestore.instance
+        .collection('Calender')
+        .where('userid', isEqualTo: UserManager.userId)
+        .get();
     final events = <DateTime, List<String>>{};
 
     for (var doc in snapshot.docs) {
@@ -543,8 +545,9 @@ class _MyWidgetState extends State<Mainpage> {
                                                       ),
                                                       child: DateTime.now()
                                                               .isBefore(DateTime(
-                                                                  data['year'],
-                                                                  data['month'],
+                                                                  now.year,
+                                                                  now.month,
+                                                                  now.day,
                                                                   data['hour'],
                                                                   data[
                                                                       'minit']))

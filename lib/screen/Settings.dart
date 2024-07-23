@@ -20,7 +20,8 @@ class Settings extends StatefulWidget {
 // 이거 일정을 내일로 잡고 매일로 하면  ===
 // 매일매일은 조건문이 존나 널널해서 리스트에 나온다 문제가 있네/
 // -- 통계 그래프 만들고, 자기 아이디만 리스트 보이게 회원가입? 비슷한거 만들고 -
-
+// d1663176-816b-4629-94eb-eaa544185b28 local id
+// 완료선택 저게 steam저럼 바로 완료되는게 아닌거 같아.
   @override
   State<Settings> createState() => _SettingsState();
 }
