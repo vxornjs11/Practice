@@ -583,14 +583,37 @@ class _MyWidgetState extends State<Mainpage> {
                                                                         fontSize:
                                                                             25),
                                                               ),
-                                                              subtitle: Text(
-                                                                '완료할지선택',
-                                                                style:
-                                                                    const TextStyle(
-                                                                        fontSize:
-                                                                            12),
-                                                              ),
-                                                            ),
+                                                              subtitle: Row(
+                                                                children: [
+                                                                  Container(
+                                                                    width: 60,
+                                                                    height: 35,
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              30),
+                                                                    ),
+                                                                    child:
+                                                                        IconButton(
+                                                                      onPressed:
+                                                                          () {
+                                                                        setState(
+                                                                            () {
+                                                                          // 이거 안내를 어떻게 해야도리까
+                                                                          // 완료 실패로 나누면 실패를 누가 누룰까?
+                                                                          // 게임처럼 느낌표 물음표로 할까?
+                                                                        });
+                                                                      },
+                                                                      icon: Icon(
+                                                                          Icons
+                                                                              .question_mark_outlined),
+                                                                      color: Colors
+                                                                          .amber,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              )),
                                                     )
                                                   : Container(
                                                       height:
