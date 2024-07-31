@@ -521,6 +521,14 @@ class _MyWidgetState extends State<Mainpage> {
                                           final doc = uniqueDocuments[index];
                                           final data = doc.data()
                                               as Map<String, dynamic>;
+                                          DateTime now = DateTime.now();
+                                          DateTime scheduleTime = DateTime(
+                                            now.year,
+                                            now.month,
+                                            now.day,
+                                            data['hour'] ?? 0,
+                                            data['minit'] ?? 0,
+                                          );
 
                                           return Padding(
                                             padding: const EdgeInsets.all(3.0),
@@ -544,13 +552,8 @@ class _MyWidgetState extends State<Mainpage> {
                                                             255, 255, 255, 255),
                                                       ),
                                                       child: DateTime.now()
-                                                              .isBefore(DateTime(
-                                                                  now.year,
-                                                                  now.month,
-                                                                  now.day,
-                                                                  data['hour'],
-                                                                  data[
-                                                                      'minit']))
+                                                              .isBefore(
+                                                                  scheduleTime)
                                                           ? ListTile(
                                                               title: Text(
                                                                 data['Schedule'] ??
@@ -584,36 +587,58 @@ class _MyWidgetState extends State<Mainpage> {
                                                                             25),
                                                               ),
                                                               subtitle: Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .spaceBetween,
                                                                 children: [
+                                                                  Text(
+                                                                    'Date: ${data['option'] ?? 'No Date'}\nTime: ${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
+                                                                    style: const TextStyle(
+                                                                        fontSize:
+                                                                            12),
+                                                                  ),
                                                                   Container(
-                                                                    width: 60,
-                                                                    height: 35,
+                                                                    width: 80,
+                                                                    height: 30,
                                                                     decoration:
                                                                         BoxDecoration(
                                                                       borderRadius:
                                                                           BorderRadius.circular(
-                                                                              30),
+                                                                              10),
                                                                     ),
                                                                     child:
-                                                                        IconButton(
+                                                                        ElevatedButton(
+                                                                      style: ElevatedButton
+                                                                          .styleFrom(
+                                                                        backgroundColor:
+                                                                            Colors.white,
+                                                                      ),
                                                                       onPressed:
                                                                           () {
-                                                                        setState(
-                                                                            () {
-                                                                          // 이거 안내를 어떻게 해야도리까
-                                                                          // 완료 실패로 나누면 실패를 누가 누룰까?
-                                                                          // 게임처럼 느낌표 물음표로 할까?
+                                                                        firebase
+                                                                            .collection("Calender")
+                                                                            .doc(uniqueDocuments[index].id)
+                                                                            .update({
+                                                                          'dates':
+                                                                              FieldValue.arrayUnion([
+                                                                            now
+                                                                          ])
                                                                         });
+                                                                        print(
+                                                                            "${uniqueDocuments[index].id}");
                                                                       },
-                                                                      icon: Icon(
-                                                                          Icons
-                                                                              .question_mark_outlined),
-                                                                      color: Colors
-                                                                          .amber,
+                                                                      child:
+                                                                          Text(
+                                                                        "완료",
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                                18),
+                                                                      ),
                                                                     ),
                                                                   ),
                                                                 ],
-                                                              )),
+                                                              ),
+                                                            ),
                                                     )
                                                   : Container(
                                                       height:

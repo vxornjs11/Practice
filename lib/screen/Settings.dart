@@ -31,7 +31,8 @@ class Settings extends StatefulWidget {
 // 완료된지 아닌지 구분하려면 체크된걸 만들어야하고
 // 또 그게 반복 설정이 아닌거면 상관없는데 반복설정 되어있는거면
 // 내일이랑 어제랑 여튼 다른 날짜랑 구분이 되어야하니까 완료 누른 DATETIME을 저장해야 할거같은데.
-//
+// 완료 누르면 오늘은 사라져야됨. 계속 있으면 안됨.... 생각보다 쉬울수도. 일단 집가자.
+// 그리고 또 뭐가 있었는데 기억이 안나네. 몰라싲말.
   @override
   State<Settings> createState() => _SettingsState();
 }
