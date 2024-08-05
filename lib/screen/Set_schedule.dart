@@ -629,7 +629,8 @@ class __Set_schedulState extends State<Set_schedul> {
                                         DateFormat('E', 'ko_KO')
                                             .format(selectedDate_)
                                       ],
-                            "userid": UserManager.userId
+                            "userid": UserManager.userId,
+                            "dates": []
                           },
                         );
                         Get.offAll(const home()); // 홈 페이지로 이동, 이전 페이지 스택을 모두 제거

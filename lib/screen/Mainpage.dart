@@ -597,45 +597,43 @@ class _MyWidgetState extends State<Mainpage> {
                                                                         fontSize:
                                                                             12),
                                                                   ),
-                                                                  Container(
-                                                                    width: 80,
-                                                                    height: 30,
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              10),
-                                                                    ),
-                                                                    child:
-                                                                        ElevatedButton(
-                                                                      style: ElevatedButton
-                                                                          .styleFrom(
-                                                                        backgroundColor:
-                                                                            Colors.white,
-                                                                      ),
-                                                                      onPressed:
-                                                                          () {
-                                                                        firebase
-                                                                            .collection("Calender")
-                                                                            .doc(uniqueDocuments[index].id)
-                                                                            .update({
-                                                                          'dates':
-                                                                              FieldValue.arrayUnion([
-                                                                            now
-                                                                          ])
-                                                                        });
-                                                                        print(
-                                                                            "${uniqueDocuments[index].id}");
-                                                                      },
-                                                                      child:
-                                                                          Text(
-                                                                        "완료",
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                18),
-                                                                      ),
-                                                                    ),
-                                                                  ),
+                                                                  data['dates'][
+                                                                              0] ==
+                                                                          now
+                                                                      ? Container(
+                                                                          width:
+                                                                              80,
+                                                                          height:
+                                                                              30,
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(10),
+                                                                          ),
+                                                                          child:
+                                                                              ElevatedButton(
+                                                                            style:
+                                                                                ElevatedButton.styleFrom(
+                                                                              backgroundColor: Colors.white,
+                                                                            ),
+                                                                            onPressed:
+                                                                                () {
+                                                                              firebase.collection("Calender").doc(uniqueDocuments[index].id).update({
+                                                                                'dates': FieldValue.arrayUnion([
+                                                                                  now
+                                                                                ])
+                                                                              });
+                                                                              print("${uniqueDocuments[index].id}");
+                                                                            },
+                                                                            child:
+                                                                                Text(
+                                                                              "완료",
+                                                                              style: TextStyle(fontSize: 18),
+                                                                            ),
+                                                                          ),
+                                                                        )
+                                                                      : Text(
+                                                                          "$now"),
                                                                 ],
                                                               ),
                                                             ),

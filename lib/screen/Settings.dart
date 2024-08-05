@@ -33,6 +33,7 @@ class Settings extends StatefulWidget {
 // 내일이랑 어제랑 여튼 다른 날짜랑 구분이 되어야하니까 완료 누른 DATETIME을 저장해야 할거같은데.
 // 완료 누르면 오늘은 사라져야됨. 계속 있으면 안됨.... 생각보다 쉬울수도. 일단 집가자.
 // 그리고 또 뭐가 있었는데 기억이 안나네. 몰라싲말.
+// DateTIme이 아니네 시발; 8.5일 모르겟당 ㅎㅎ
   @override
   State<Settings> createState() => _SettingsState();
 }
