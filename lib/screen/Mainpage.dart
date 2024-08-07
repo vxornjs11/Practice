@@ -529,6 +529,23 @@ class _MyWidgetState extends State<Mainpage> {
                                             data['hour'] ?? 0,
                                             data['minit'] ?? 0,
                                           );
+                                          bool showButton = false;
+                                          if (data['dates'] != null &&
+                                              data['dates'].isNotEmpty) {
+                                            DateTime storedDate =
+                                                (data['dates'][0] as Timestamp)
+                                                    .toDate();
+                                            DateTime ymdStoredDate = DateTime(
+                                                storedDate.year,
+                                                storedDate.month,
+                                                storedDate.day);
+
+                                            if (ymdStoredDate ==
+                                                DateTime(now.year, now.month,
+                                                    now.day)) {
+                                              showButton = true;
+                                            }
+                                          }
 
                                           return Padding(
                                             padding: const EdgeInsets.all(3.0),
@@ -597,10 +614,10 @@ class _MyWidgetState extends State<Mainpage> {
                                                                         fontSize:
                                                                             12),
                                                                   ),
-                                                                  data['dates'][
-                                                                              0] ==
-                                                                          now
-                                                                      ? Container(
+                                                                  showButton
+                                                                      ? Text(
+                                                                          "축하합니다")
+                                                                      : Container(
                                                                           width:
                                                                               80,
                                                                           height:
@@ -618,12 +635,15 @@ class _MyWidgetState extends State<Mainpage> {
                                                                             ),
                                                                             onPressed:
                                                                                 () {
+                                                                              DateTime YMD_now;
+                                                                              YMD_now = DateTime(now.year, now.month, now.day);
                                                                               firebase.collection("Calender").doc(uniqueDocuments[index].id).update({
                                                                                 'dates': FieldValue.arrayUnion([
-                                                                                  now
+                                                                                  YMD_now
                                                                                 ])
                                                                               });
                                                                               print("${uniqueDocuments[index].id}");
+                                                                              print(YMD_now);
                                                                             },
                                                                             child:
                                                                                 Text(
@@ -631,9 +651,7 @@ class _MyWidgetState extends State<Mainpage> {
                                                                               style: TextStyle(fontSize: 18),
                                                                             ),
                                                                           ),
-                                                                        )
-                                                                      : Text(
-                                                                          "$now"),
+                                                                        ),
                                                                 ],
                                                               ),
                                                             ),

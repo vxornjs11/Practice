@@ -159,6 +159,12 @@ class _calendarState extends State<calendar> {
                                   const LineTouchData(enabled: false),
                               lineBarsData: [
                                 LineChartBarData(
+                                  isCurved: true,
+                                  color: Colors.red,
+                                  barWidth: 3,
+                                  belowBarData: BarAreaData(show: false),
+                                ),
+                                LineChartBarData(
                                   spots:
                                       // for (double i = 0; i < 12; i++)
                                       //  for (var doc in documents)
