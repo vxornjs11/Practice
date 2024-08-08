@@ -11,19 +11,79 @@ class calendar extends StatefulWidget {
 }
 
 class _calendarState extends State<calendar> {
-  List<FlSpot> _generateFlSpots(List<QueryDocumentSnapshot> documents) {
+  List<FlSpot> _generateFlSpots2(List<QueryDocumentSnapshot> documents) {
     Map<int, int> monthCounts = {};
+    Map<int, int> Clear_dateCounts = {};
 
     // 각 달의 문서 개수를 계산
     for (var doc in documents) {
       int month = doc['month'];
       if (monthCounts.containsKey(month)) {
+        // 특정키가 map에 존재하는지 여부. ??
         monthCounts[month] = monthCounts[month]! + 1;
       } else {
         monthCounts[month] = 1;
       }
     }
+// // 각 달의 문서 개수를 계산
+    for (var doc in documents) {
+      int dates = doc['dates'];
+      print(dates);
+      if (Clear_dateCounts.containsKey(dates)) {
+        // 특정키가 map에 존재하는지 여부. ??
+        Clear_dateCounts[dates] = Clear_dateCounts[dates]! + 1;
+      } else {
+        Clear_dateCounts[dates] = 1;
+      }
+    }
+    // FlSpot 리스트 생성
+    List<FlSpot> spots = [];
+    for (int i = 1; i <= 12; i++) {
+      spots.add(FlSpot(i.toDouble(), (monthCounts[i] ?? 0).toDouble()));
+    }
 
+    return spots;
+  }
+
+  List<FlSpot> _generateFlSpots(List<QueryDocumentSnapshot> documents) {
+    Map<int, int> monthCounts = {};
+    Map<DateTime, int> Clear_dateCounts = {};
+    // 각 달의 문서 개수를 계산
+    for (var doc in documents) {
+      int month = doc['month'];
+      if (monthCounts.containsKey(month)) {
+        // 특정키가 map에 존재하는지 여부. ??
+        monthCounts[month] = monthCounts[month]! + 1;
+      } else {
+        monthCounts[month] = 1;
+      }
+      print(monthCounts);
+    }
+    for (var doc in documents) {
+      for (var timestamp in doc['dates']) {
+        DateTime dates = (timestamp as Timestamp).toDate();
+        print("dates$dates");
+        // print(dates);
+        if (Clear_dateCounts.containsKey(dates)) {
+          // 특정키가 map에 존재하는지 여부. ??
+          Clear_dateCounts[dates] = Clear_dateCounts[dates]! + 1;
+        } else {
+          Clear_dateCounts[dates] = 1;
+        }
+        print(Clear_dateCounts);
+      }
+      // DateTime dates = timestamp;
+    }
+// // 각 달의 문서 개수를 계산
+    // for (var doc in documents) {
+    //   int month = doc['dates'];
+    //   if (Clear_dateCounts.containsKey(month)) {
+    //     // 특정키가 map에 존재하는지 여부. ??
+    //     Clear_dateCounts[month] = Clear_dateCounts[month]! + 1;
+    //   } else {
+    //     Clear_dateCounts[month] = 1;
+    //   }
+    // }
     // FlSpot 리스트 생성
     List<FlSpot> spots = [];
     for (int i = 1; i <= 12; i++) {
@@ -159,6 +219,20 @@ class _calendarState extends State<calendar> {
                                   const LineTouchData(enabled: false),
                               lineBarsData: [
                                 LineChartBarData(
+                                  spots: [
+                                    FlSpot(1, 3.5),
+                                    FlSpot(2, 4.5),
+                                    FlSpot(3, 1),
+                                    FlSpot(4, 4),
+                                    FlSpot(5, 6),
+                                    FlSpot(6, 6.5),
+                                    FlSpot(7, 6),
+                                    FlSpot(8, 4),
+                                    FlSpot(9, 6),
+                                    FlSpot(10, 6),
+                                    FlSpot(11, 7),
+                                    FlSpot(12, 9),
+                                  ],
                                   isCurved: true,
                                   color: Colors.red,
                                   barWidth: 3,
@@ -193,12 +267,12 @@ class _calendarState extends State<calendar> {
                                     cutOffY: cutOffYValue,
                                     applyCutOffY: true,
                                   ),
-                                  aboveBarData: BarAreaData(
-                                    show: true,
-                                    color: Colors.blue,
-                                    cutOffY: cutOffYValue,
-                                    applyCutOffY: true,
-                                  ),
+                                  // aboveBarData: BarAreaData(
+                                  //   show: true,
+                                  //   color: Colors.blue,
+                                  //   cutOffY: cutOffYValue,
+                                  //   applyCutOffY: true,
+                                  // ),
                                   dotData: const FlDotData(
                                     show: false,
                                   ),

@@ -530,20 +530,25 @@ class _MyWidgetState extends State<Mainpage> {
                                             data['minit'] ?? 0,
                                           );
                                           bool showButton = false;
+                                          DateTime ymdNow = DateTime(
+                                              now.year, now.month, now.day);
                                           if (data['dates'] != null &&
                                               data['dates'].isNotEmpty) {
-                                            DateTime storedDate =
-                                                (data['dates'][0] as Timestamp)
-                                                    .toDate();
-                                            DateTime ymdStoredDate = DateTime(
+                                            for (var timestamp
+                                                in data['dates']) {
+                                              DateTime storedDate =
+                                                  (timestamp as Timestamp)
+                                                      .toDate();
+                                              DateTime ymdStoredDate = DateTime(
                                                 storedDate.year,
                                                 storedDate.month,
-                                                storedDate.day);
+                                                storedDate.day,
+                                              );
 
-                                            if (ymdStoredDate ==
-                                                DateTime(now.year, now.month,
-                                                    now.day)) {
-                                              showButton = true;
+                                              if (ymdStoredDate == ymdNow) {
+                                                showButton = true;
+                                                break;
+                                              }
                                             }
                                           }
 
