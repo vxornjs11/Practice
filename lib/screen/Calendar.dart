@@ -12,37 +12,31 @@ class calendar extends StatefulWidget {
 
 class _calendarState extends State<calendar> {
   List<FlSpot> _generateFlSpots2(List<QueryDocumentSnapshot> documents) {
-    Map<int, int> monthCounts = {};
     Map<int, int> Clear_dateCounts = {};
 
-    // 각 달의 문서 개수를 계산
     for (var doc in documents) {
-      int month = doc['month'];
-      if (monthCounts.containsKey(month)) {
-        // 특정키가 map에 존재하는지 여부. ??
-        monthCounts[month] = monthCounts[month]! + 1;
-      } else {
-        monthCounts[month] = 1;
-      }
-    }
-// // 각 달의 문서 개수를 계산
-    for (var doc in documents) {
-      int dates = doc['dates'];
-      print(dates);
-      if (Clear_dateCounts.containsKey(dates)) {
-        // 특정키가 map에 존재하는지 여부. ??
-        Clear_dateCounts[dates] = Clear_dateCounts[dates]! + 1;
-      } else {
-        Clear_dateCounts[dates] = 1;
+      for (var timestamp in doc['dates']) {
+        DateTime fullDateTime = (timestamp as Timestamp).toDate();
+        DateTime dates = fullDateTime;
+        // 시간 부분을 제거하고 year, month, day만 사용합니다.
+        // DateTime dates = (timestamp as Timestamp).toDate();
+        print("dates${dates.month}");
+        if (Clear_dateCounts.containsKey(dates.month)) {
+          // 특정키가 map에 존재하는지 여부. ??
+          Clear_dateCounts[dates.month] = Clear_dateCounts[dates.month]! + 1;
+        } else {
+          Clear_dateCounts[dates.month] = 1;
+        }
+        print("Clear_dateCounts$Clear_dateCounts");
       }
     }
     // FlSpot 리스트 생성
-    List<FlSpot> spots = [];
+    List<FlSpot> spots2 = [];
     for (int i = 1; i <= 12; i++) {
-      spots.add(FlSpot(i.toDouble(), (monthCounts[i] ?? 0).toDouble()));
+      spots2.add(FlSpot(i.toDouble(), (Clear_dateCounts[i] ?? 0).toDouble()));
     }
 
-    return spots;
+    return spots2;
   }
 
   List<FlSpot> _generateFlSpots(List<QueryDocumentSnapshot> documents) {
@@ -61,18 +55,17 @@ class _calendarState extends State<calendar> {
     }
     for (var doc in documents) {
       for (var timestamp in doc['dates']) {
-        DateTime dates = (timestamp as Timestamp).toDate();
-        print("dates$dates");
-        // print(dates);
+        DateTime fullDateTime = (timestamp as Timestamp).toDate();
+        DateTime dates = DateTime(fullDateTime.month);
+        // 시간 부분을 제거하고 year, month, day만 사용합니다.
+        // DateTime dates = (timestamp as Timestamp).toDate();
         if (Clear_dateCounts.containsKey(dates)) {
           // 특정키가 map에 존재하는지 여부. ??
           Clear_dateCounts[dates] = Clear_dateCounts[dates]! + 1;
         } else {
           Clear_dateCounts[dates] = 1;
         }
-        print(Clear_dateCounts);
       }
-      // DateTime dates = timestamp;
     }
 // // 각 달의 문서 개수를 계산
     // for (var doc in documents) {
@@ -89,6 +82,7 @@ class _calendarState extends State<calendar> {
     for (int i = 1; i <= 12; i++) {
       spots.add(FlSpot(i.toDouble(), (monthCounts[i] ?? 0).toDouble()));
     }
+    print(spots);
 
     return spots;
   }
@@ -201,6 +195,7 @@ class _calendarState extends State<calendar> {
                   final documents = snapshot.data!.docs;
                   // FlSpot 리스트 생성
                   List<FlSpot> spots = _generateFlSpots(documents);
+                  List<FlSpot> spots2 = _generateFlSpots2(documents);
 
                   return Column(
                     children: [
@@ -219,20 +214,7 @@ class _calendarState extends State<calendar> {
                                   const LineTouchData(enabled: false),
                               lineBarsData: [
                                 LineChartBarData(
-                                  spots: [
-                                    FlSpot(1, 3.5),
-                                    FlSpot(2, 4.5),
-                                    FlSpot(3, 1),
-                                    FlSpot(4, 4),
-                                    FlSpot(5, 6),
-                                    FlSpot(6, 6.5),
-                                    FlSpot(7, 6),
-                                    FlSpot(8, 4),
-                                    FlSpot(9, 6),
-                                    FlSpot(10, 6),
-                                    FlSpot(11, 7),
-                                    FlSpot(12, 9),
-                                  ],
+                                  spots: spots2,
                                   isCurved: true,
                                   color: Colors.red,
                                   barWidth: 3,
@@ -342,6 +324,16 @@ class _calendarState extends State<calendar> {
                       ),
                       Text("${documents[0]["month"]}"),
                       Text("${documents[0].data()}"),
+                      ElevatedButton(
+                          onPressed: () {
+                            print("spots");
+                            print(spots);
+                            print("spots");
+                            print("spots2");
+                            print(spots2);
+                            print("spots2");
+                          },
+                          child: Text("test"))
                     ],
                   );
                 }),
