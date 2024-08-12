@@ -44,44 +44,51 @@ class _calendarState extends State<calendar> {
     Map<DateTime, int> Clear_dateCounts = {};
     // 각 달의 문서 개수를 계산
     for (var doc in documents) {
+      DateTime YMD_now;
+      YMD_now = DateTime(doc['year'], doc['month'], doc['day']);
+      String options = doc['option'];
       int month = doc['month'];
-      if (monthCounts.containsKey(month)) {
-        // 특정키가 map에 존재하는지 여부. ??
-        monthCounts[month] = monthCounts[month]! + 1;
+      // 날짜 차이 계산
+      Duration difference = DateTime.now().difference(YMD_now);
+      bool hasMonthChanged = DateTime.now().year != YMD_now.year ||
+          DateTime.now().month != YMD_now.month;
+
+      // 차이나는 일(day) 수
+      int differenceInDays = difference.inDays;
+      print('현재 날짜: $DateTime.now()');
+      print('비교 날짜: $YMD_now');
+      print('차이나는 일 수: $differenceInDays');
+      print('월이 바뀌었나? $hasMonthChanged');
+      if (monthCounts.containsKey(month) && options == "매일") {
+        bool hasMonthChanged = DateTime.now().year != YMD_now.year ||
+            DateTime.now().month != YMD_now.month;
+
+        if (hasMonthChanged) {
+          // 현재 달에 데이터 추가
+          monthCounts[month] = (monthCounts[month]! + differenceInDays);
+
+          // 다음 달 계산 (현재 달이 12월이면 다음 달은 1월이 됩니다)
+          int nextMonth = (month % 12) + 1;
+
+          // 다음 달에 데이터 추가
+          monthCounts[nextMonth] =
+              (monthCounts[nextMonth] ?? 0) + differenceInDays;
+        } else {
+          monthCounts[month] = (monthCounts[month]! + differenceInDays);
+        }
       } else {
         monthCounts[month] = 1;
       }
       print(monthCounts);
+      print("===================");
+      print("options$options");
+      print("===================");
     }
-    for (var doc in documents) {
-      for (var timestamp in doc['dates']) {
-        DateTime fullDateTime = (timestamp as Timestamp).toDate();
-        DateTime dates = DateTime(fullDateTime.month);
-        // 시간 부분을 제거하고 year, month, day만 사용합니다.
-        // DateTime dates = (timestamp as Timestamp).toDate();
-        if (Clear_dateCounts.containsKey(dates)) {
-          // 특정키가 map에 존재하는지 여부. ??
-          Clear_dateCounts[dates] = Clear_dateCounts[dates]! + 1;
-        } else {
-          Clear_dateCounts[dates] = 1;
-        }
-      }
-    }
-// // 각 달의 문서 개수를 계산
-    // for (var doc in documents) {
-    //   int month = doc['dates'];
-    //   if (Clear_dateCounts.containsKey(month)) {
-    //     // 특정키가 map에 존재하는지 여부. ??
-    //     Clear_dateCounts[month] = Clear_dateCounts[month]! + 1;
-    //   } else {
-    //     Clear_dateCounts[month] = 1;
-    //   }
-    // }
-    // FlSpot 리스트 생성
     List<FlSpot> spots = [];
     for (int i = 1; i <= 12; i++) {
       spots.add(FlSpot(i.toDouble(), (monthCounts[i] ?? 0).toDouble()));
     }
+    print("======spots");
     print(spots);
 
     return spots;
@@ -176,7 +183,7 @@ class _calendarState extends State<calendar> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Title(color: Colors.black, child: Text("Line Chart")),
+        title: Title(color: Colors.black, child: Text("목표 달성률")),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -217,7 +224,7 @@ class _calendarState extends State<calendar> {
                                   spots: spots2,
                                   isCurved: true,
                                   color: Colors.red,
-                                  barWidth: 3,
+                                  barWidth: 4,
                                   belowBarData: BarAreaData(show: false),
                                 ),
                                 LineChartBarData(
@@ -241,14 +248,14 @@ class _calendarState extends State<calendar> {
                                   // FlSpot(11, 7),
                                   ,
                                   isCurved: true,
-                                  barWidth: 5,
+                                  barWidth: 4,
                                   color: Colors.black,
-                                  belowBarData: BarAreaData(
-                                    show: true,
-                                    color: Colors.red,
-                                    cutOffY: cutOffYValue,
-                                    applyCutOffY: true,
-                                  ),
+                                  // belowBarData: BarAreaData(
+                                  //   show: true,
+                                  //   color: Colors.red,
+                                  //   cutOffY: cutOffYValue,
+                                  //   applyCutOffY: true,
+                                  // ),
                                   // aboveBarData: BarAreaData(
                                   //   show: true,
                                   //   color: Colors.blue,
@@ -295,7 +302,7 @@ class _calendarState extends State<calendar> {
                                   ),
                                   sideTitles: SideTitles(
                                     showTitles: true,
-                                    interval: 3,
+                                    interval: 5,
                                     reservedSize: 40,
                                     getTitlesWidget: leftTitleWidgets,
                                   ),
