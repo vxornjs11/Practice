@@ -55,26 +55,36 @@ class _calendarState extends State<calendar> {
 
       // 차이나는 일(day) 수
       int differenceInDays = difference.inDays;
-      print('현재 날짜: $DateTime.now()');
+      print('options: $options');
+      print('현재 날짜: ${DateTime.now()}');
       print('비교 날짜: $YMD_now');
       print('차이나는 일 수: $differenceInDays');
       print('월이 바뀌었나? $hasMonthChanged');
+      print('지금 무슨 요일이지? ${YMD_now.weekday} ');
       if (monthCounts.containsKey(month) && options == "매일") {
         bool hasMonthChanged = DateTime.now().year != YMD_now.year ||
             DateTime.now().month != YMD_now.month;
-
+// 7월은 18일이 나와야 됨. 지금 너무 높다.
+// 8월은 오늘 4개 추가했고 7월에 시작하는 매일 일정이 4개니까
+// 13곱하기 4 로 52에 +4로 56개여야함.
+// 지금 true면 차이나는 일수만큼 그냥 더해버리는데
+// 근데 다음달은 초기화 해서 1이 되버리고 7월에만 계속 추가됨. 골떄리는데?
+// 달이 바뀌었나 이거는 써도 되는데 차이나는 일수 이게 그냥 joat네 쓰면안됨.
         if (hasMonthChanged) {
-          // 현재 달에 데이터 추가
           monthCounts[month] = (monthCounts[month]! + differenceInDays);
-
+          // 현재 달에 데이터 추가
+          print('ture일경우 ${monthCounts[month]} ');
           // 다음 달 계산 (현재 달이 12월이면 다음 달은 1월이 됩니다)
           int nextMonth = (month % 12) + 1;
 
           // 다음 달에 데이터 추가
+          print('nextMonth ${nextMonth} ');
           monthCounts[nextMonth] =
               (monthCounts[nextMonth] ?? 0) + differenceInDays;
+          print('nextMonth2 ${monthCounts[nextMonth]} ');
         } else {
           monthCounts[month] = (monthCounts[month]! + differenceInDays);
+          print('flase일경우 ${monthCounts[month]} ');
         }
       } else {
         monthCounts[month] = 1;
@@ -158,7 +168,7 @@ class _calendarState extends State<calendar> {
     );
     return SideTitleWidget(
       axisSide: meta.axisSide,
-      child: Text(' ${value + 2}', style: style),
+      child: Text(' ${value + 5}', style: style),
     );
   }
 
@@ -203,7 +213,9 @@ class _calendarState extends State<calendar> {
                   // FlSpot 리스트 생성
                   List<FlSpot> spots = _generateFlSpots(documents);
                   List<FlSpot> spots2 = _generateFlSpots2(documents);
-
+                  double maxYValue = spots
+                      .map((spot) => spot.y)
+                      .reduce((a, b) => a > b ? a : b);
                   return Column(
                     children: [
                       AspectRatio(
@@ -217,6 +229,8 @@ class _calendarState extends State<calendar> {
                           ),
                           child: LineChart(
                             LineChartData(
+                              minY: 0,
+                              maxY: maxYValue + 5,
                               lineTouchData:
                                   const LineTouchData(enabled: false),
                               lineBarsData: [
@@ -228,25 +242,7 @@ class _calendarState extends State<calendar> {
                                   belowBarData: BarAreaData(show: false),
                                 ),
                                 LineChartBarData(
-                                  spots:
-                                      // for (double i = 0; i < 12; i++)
-                                      //  for (var doc in documents)
-                                      //  if(i = doc['month'])
-                                      spots
-                                  // for (double i = 0; i < 12; i++)
-                                  // FlSpot(i, 0 + i),
-                                  // FlSpot(1, 3.5),
-                                  // FlSpot(2, 4.5),
-                                  // FlSpot(3, 1),
-                                  // FlSpot(4, 4),
-                                  // FlSpot(5, 6),
-                                  // FlSpot(6, 6.5),
-                                  // FlSpot(7, 6),
-                                  // FlSpot(8, 4),
-                                  // FlSpot(9, 6),
-                                  // FlSpot(10, 6),
-                                  // FlSpot(11, 7),
-                                  ,
+                                  spots: spots,
                                   isCurved: true,
                                   barWidth: 4,
                                   color: Colors.black,
@@ -267,7 +263,6 @@ class _calendarState extends State<calendar> {
                                   ),
                                 ),
                               ],
-                              minY: 0,
                               titlesData: FlTitlesData(
                                 show: true,
                                 topTitles: const AxisTitles(
@@ -304,7 +299,17 @@ class _calendarState extends State<calendar> {
                                     showTitles: true,
                                     interval: 5,
                                     reservedSize: 40,
-                                    getTitlesWidget: leftTitleWidgets,
+                                    getTitlesWidget:
+                                        (double value, TitleMeta meta) {
+                                      if (value % 5 == 0) {
+                                        // 5의 배수인 경우에만 표시
+                                        return Text(value.toInt().toString(),
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 12));
+                                      }
+                                      return Container();
+                                    },
                                   ),
                                 ),
                               ),
