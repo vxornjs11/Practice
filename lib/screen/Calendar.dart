@@ -279,141 +279,224 @@ class _calendarState extends State<calendar> {
                   double maxYValue = spots
                       .map((spot) => spot.y)
                       .reduce((a, b) => a > b ? a : b);
-                  return Column(
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      AspectRatio(
-                        aspectRatio: 2,
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 12,
-                            right: 28,
-                            top: 22,
-                            bottom: 12,
-                          ),
-                          child: LineChart(
-                            LineChartData(
-                              minY: 0,
-                              maxY: maxYValue + 5,
-                              lineTouchData:
-                                  const LineTouchData(enabled: false),
-                              lineBarsData: [
-                                LineChartBarData(
-                                  spots: spots2,
-                                  isCurved: true,
-                                  color: Colors.red,
-                                  barWidth: 4,
-                                  belowBarData: BarAreaData(show: false),
+                      Column(
+                        children: [
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.9,
+                            height: MediaQuery.of(context).size.height * 0.3,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(60),
+                              color: Color.fromARGB(255, 230, 242, 255),
+                            ),
+                            child: AspectRatio(
+                              aspectRatio: 2,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 15,
+                                  right: 28,
+                                  top: 22,
+                                  bottom: 10,
                                 ),
-                                LineChartBarData(
-                                  spots: spots,
-                                  isCurved: true,
-                                  barWidth: 4,
-                                  color: Colors.black,
-                                  // belowBarData: BarAreaData(
-                                  //   show: true,
-                                  //   color: Colors.red,
-                                  //   cutOffY: cutOffYValue,
-                                  //   applyCutOffY: true,
-                                  // ),
-                                  // aboveBarData: BarAreaData(
-                                  //   show: true,
-                                  //   color: Colors.blue,
-                                  //   cutOffY: cutOffYValue,
-                                  //   applyCutOffY: true,
-                                  // ),
-                                  dotData: const FlDotData(
-                                    show: false,
-                                  ),
-                                ),
-                              ],
-                              titlesData: FlTitlesData(
-                                show: true,
-                                topTitles: const AxisTitles(
-                                  sideTitles: SideTitles(showTitles: false),
-                                ),
-                                rightTitles: const AxisTitles(
-                                  sideTitles: SideTitles(showTitles: false),
-                                ),
-                                bottomTitles: AxisTitles(
-                                  axisNameWidget: Text(
-                                    '2024',
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      color: Colors.red,
-                                      fontWeight: FontWeight.bold,
+                                child: LineChart(
+                                  LineChartData(
+                                    minY: 0,
+                                    maxY: maxYValue + 5,
+                                    lineTouchData:
+                                        const LineTouchData(enabled: false),
+                                    lineBarsData: [
+                                      LineChartBarData(
+                                        spots: spots2,
+                                        isCurved: true,
+                                        color: Colors.red,
+                                        barWidth: 4,
+                                        belowBarData: BarAreaData(show: false),
+                                      ),
+                                      LineChartBarData(
+                                        spots: spots,
+                                        isCurved: true,
+                                        barWidth: 4,
+                                        color: Colors.black,
+                                        // belowBarData: BarAreaData(
+                                        //   show: true,
+                                        //   color: Colors.red,
+                                        //   cutOffY: cutOffYValue,
+                                        //   applyCutOffY: true,
+                                        // ),
+                                        // aboveBarData: BarAreaData(
+                                        //   show: true,
+                                        //   color: Colors.blue,
+                                        //   cutOffY: cutOffYValue,
+                                        //   applyCutOffY: true,
+                                        // ),
+                                        dotData: const FlDotData(
+                                          show: false,
+                                        ),
+                                      ),
+                                    ],
+                                    titlesData: FlTitlesData(
+                                      show: true,
+                                      topTitles: const AxisTitles(
+                                        sideTitles:
+                                            SideTitles(showTitles: false),
+                                      ),
+                                      rightTitles: const AxisTitles(
+                                        sideTitles:
+                                            SideTitles(showTitles: false),
+                                      ),
+                                      bottomTitles: AxisTitles(
+                                        axisNameWidget: Text(
+                                          '2024',
+                                          style: TextStyle(
+                                            fontSize: 10,
+                                            color: Colors.red,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        sideTitles: SideTitles(
+                                          showTitles: true,
+                                          reservedSize: 18,
+                                          interval: 1,
+                                          getTitlesWidget: bottomTitleWidgets,
+                                        ),
+                                      ),
+                                      leftTitles: AxisTitles(
+                                        axisNameSize: 20,
+                                        axisNameWidget: const Text(
+                                          'Value',
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                        sideTitles: SideTitles(
+                                          showTitles: true,
+                                          interval: 5,
+                                          reservedSize: 40,
+                                          getTitlesWidget:
+                                              (double value, TitleMeta meta) {
+                                            if (value % 5 == 0) {
+                                              // 5의 배수인 경우에만 표시
+                                              return Text(
+                                                  value.toInt().toString(),
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 12));
+                                            }
+                                            return Container();
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                    borderData: FlBorderData(
+                                      show: true,
+                                      border: Border.all(
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                    gridData: FlGridData(
+                                      show: true,
+                                      drawVerticalLine: false,
+                                      horizontalInterval: 1,
+                                      checkToShowHorizontalLine:
+                                          (double value) {
+                                        return value == 1 ||
+                                            value == 6 ||
+                                            value == 4 ||
+                                            value == 5;
+                                      },
                                     ),
                                   ),
-                                  sideTitles: SideTitles(
-                                    showTitles: true,
-                                    reservedSize: 18,
-                                    interval: 1,
-                                    getTitlesWidget: bottomTitleWidgets,
-                                  ),
                                 ),
-                                leftTitles: AxisTitles(
-                                  axisNameSize: 20,
-                                  axisNameWidget: const Text(
-                                    'Value',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                  sideTitles: SideTitles(
-                                    showTitles: true,
-                                    interval: 5,
-                                    reservedSize: 40,
-                                    getTitlesWidget:
-                                        (double value, TitleMeta meta) {
-                                      if (value % 5 == 0) {
-                                        // 5의 배수인 경우에만 표시
-                                        return Text(value.toInt().toString(),
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 12));
-                                      }
-                                      return Container();
-                                    },
-                                  ),
-                                ),
-                              ),
-                              borderData: FlBorderData(
-                                show: true,
-                                border: Border.all(
-                                  color: Colors.green,
-                                ),
-                              ),
-                              gridData: FlGridData(
-                                show: true,
-                                drawVerticalLine: false,
-                                horizontalInterval: 1,
-                                checkToShowHorizontalLine: (double value) {
-                                  return value == 1 ||
-                                      value == 6 ||
-                                      value == 4 ||
-                                      value == 5;
-                                },
                               ),
                             ),
                           ),
-                        ),
+                          // ElevatedButton(
+                          //     onPressed: () {
+                          //       print("spots");
+                          //       print(totalSchedules);
+                          //       print("spots");
+                          //       print("spots2");
+                          //       print(totalSchedules2);
+                          //       print("spots2");
+                          //     },
+                          //     child: Text(
+                          //         "달성률 ${(totalSchedules2 / totalSchedules) * 100}")),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.02,
+                          ),
+                          Row(
+                            children: [
+                              Container(
+                                width: MediaQuery.of(context).size.width * 0.45,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.23,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(60),
+                                  color: Color.fromARGB(255, 230, 242, 255),
+                                ),
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.02,
+                                    ),
+                                    Text(
+                                      "년/달성률",
+                                      style: TextStyle(fontSize: 30),
+                                    ),
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.02,
+                                    ),
+                                    Text(
+                                      " ${((totalSchedules2 / totalSchedules) * 100).toStringAsFixed(1)}%",
+                                      style: TextStyle(fontSize: 50),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.05,
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width * 0.45,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.23,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(60),
+                                  color: Color.fromARGB(255, 230, 242, 255),
+                                ),
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.02,
+                                    ),
+                                    Text(
+                                      "년/달성률",
+                                      style: TextStyle(fontSize: 30),
+                                    ),
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.02,
+                                    ),
+                                    Text(
+                                      " ${((totalSchedules2 / totalSchedules) * 100).toStringAsFixed(1)}%",
+                                      style: TextStyle(fontSize: 50),
+                                    )
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ],
                       ),
-                      Text("${documents[0]["month"]}"),
-                      Text("${documents[0].data()}"),
-                      ElevatedButton(
-                          onPressed: () {
-                            print("spots");
-                            print(totalSchedules);
-                            print("spots");
-                            print("spots2");
-                            print(totalSchedules2);
-                            print("spots2");
-                          },
-                          child: Text(
-                              "달성률 ${(totalSchedules2 / totalSchedules) * 100}")),
-                      Text(
-                        "달성률 ${((totalSchedules2 / totalSchedules) * 100).toStringAsFixed(1)}%",
-                        style: TextStyle(fontSize: 30),
-                      )
                     ],
                   );
                 }),
