@@ -32,6 +32,9 @@ class Settings extends StatefulWidget {
 // 일단 넘어가서 달성률 퍼센트로 원형차트나 그냥 숫자로 보여주면 될듯.
 // 여기서 더 업그레이드 하는건 좀 뇌절인듯.
 // 그럼 이제 다음주에는 디버깅 특히 알람쪽 수정하고 ui좀 다듬고 출시하면 될듯합니다.
+
+// provider로 월별 달성률 할수 있을듯. for문 대충 어떻게 만져서 그냥 for말고 글자를 1넣는 식으로 하면 될거샅음.
+// 내일 이거 하고 이제 진짜 대충 디버깅해서 넘기자.
   @override
   State<Settings> createState() => _SettingsState();
 }
