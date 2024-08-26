@@ -16,6 +16,25 @@ class calendar extends StatefulWidget {
 
 class _calendarState extends State<calendar> {
   double count = 1;
+
+  double monthCount1 = 0;
+
+  void _updateMonthCount(scheduleCounts2, scheduleCounts) {
+    int value21 = count.toInt();
+    double value2 = scheduleCounts2[value21];
+    double value = scheduleCounts[value21];
+
+    if (value > 0) {
+      monthCount1 = (value2 / value) * 100;
+    } else {
+      monthCount1 = 0.0;
+    }
+
+    setState(() {
+      monthCount1 = double.parse(monthCount1.toStringAsFixed(1));
+    });
+  }
+
   List<FlSpot> _generateFlSpots2(List<QueryDocumentSnapshot> documents) {
     Map<int, int> Clear_dateCounts = {};
 
@@ -25,14 +44,14 @@ class _calendarState extends State<calendar> {
         DateTime dates = fullDateTime;
         // 시간 부분을 제거하고 year, month, day만 사용합니다.
         // DateTime dates = (timestamp as Timestamp).toDate();
-        print("dates${dates.month}");
+        // print("dates${dates.month}");
         if (Clear_dateCounts.containsKey(dates.month)) {
           // 특정키가 map에 존재하는지 여부. ??
           Clear_dateCounts[dates.month] = Clear_dateCounts[dates.month]! + 1;
         } else {
           Clear_dateCounts[dates.month] = 1;
         }
-        print("Clear_dateCounts$Clear_dateCounts");
+        // print("Clear_dateCounts$Clear_dateCounts");
       }
     }
     // FlSpot 리스트 생성
@@ -62,19 +81,19 @@ class _calendarState extends State<calendar> {
       String options = doc['option'];
       int month = doc['month'];
 
-      print("===================");
-      print("options: $options");
-      print("===================");
+      // print("===================");
+      // print("options: $options");
+      // print("===================");
 
       if (options != null && monthCounts != null && YMD_now != null) {
         bool hasMonthChanged = DateTime.now().year != YMD_now.year ||
             DateTime.now().month != YMD_now.month;
-        print("hasMonthChanged: $hasMonthChanged");
+        // print("hasMonthChanged: $hasMonthChanged");
 
         if (options == "매일") {
           if (hasMonthChanged) {
-            print('달이 바뀐 경우 (true): $hasMonthChanged');
-            print('현재 달의 일정 개수: ${monthCounts[month]}');
+            // print('달이 바뀐 경우 (true): $hasMonthChanged');
+            // print('현재 달의 일정 개수: ${monthCounts[month]}');
 
             // 다음 달 계산 (현재 달이 12월이면 다음 달은 1월이 됩니다)
             int nextMonth = (month % 12) + 1;
@@ -82,20 +101,20 @@ class _calendarState extends State<calendar> {
                 DateTime(YMD_now.year, YMD_now.month + 1, 0).day; // 현재 월의 일 수
             int differenceDays = daysInMonth - YMD_now.day + 1; // 남은 일 수 계산
 
-            print("현재 달 매일 일정: $differenceDays");
+            // print("현재 달 매일 일정: $differenceDays");
             monthCounts[month] = (monthCounts[month] ?? 0) + differenceDays;
 
             // 다음 달에 데이터 추가
-            print('다음 달 (nextMonth): $nextMonth');
+            // print('다음 달 (nextMonth): $nextMonth');
             monthCounts[nextMonth] =
                 (monthCounts[nextMonth] ?? 0) + DateTime.now().day;
             print('다음 달의 일정 개수: ${monthCounts[nextMonth]}');
           } else {
             int differenceDays = DateTime.now().day;
-            print("현재 달 매일 일정: $differenceDays");
+            // print("현재 달 매일 일정: $differenceDays");
 
             monthCounts[month] = (monthCounts[month] ?? 0) + differenceDays;
-            print('달이 바뀌지 않은 경우 (false): ${monthCounts[month]}');
+            // print('달이 바뀌지 않은 경우 (false): ${monthCounts[month]}');
           }
         } else if (options == "주중") {
           int weeksElapsed =
@@ -105,7 +124,7 @@ class _calendarState extends State<calendar> {
           if (YMD_now.weekday >= DateTime.monday &&
               YMD_now.weekday <= DateTime.friday) {
             monthCounts[month] = (monthCounts[month] ?? 0) + daysToAdd;
-            print("주중 일정 추가: $daysToAdd 일");
+            // print("주중 일정 추가: $daysToAdd 일");
           }
         } else if (options == "주말") {
           // 만약
@@ -128,17 +147,17 @@ class _calendarState extends State<calendar> {
           monthCounts[month] = 1;
         }
       } else {
-        print("options, monthCounts 또는 YMD_now가 null입니다.");
+        // print("options, monthCounts 또는 YMD_now가 null입니다.");
       }
-      print(monthCounts);
+      // print(monthCounts);
     }
 
     List<FlSpot> spots = [];
     for (int i = 1; i <= 12; i++) {
       spots.add(FlSpot(i.toDouble(), (monthCounts[i] ?? 0).toDouble()));
     }
-    print("======spots");
-    print(spots);
+    // print("======spots");
+    // print(spots);
     return spots;
   }
   // 아니 나 병신인가 월별 달성률은 차트에 보이잖아?
@@ -271,13 +290,13 @@ class _calendarState extends State<calendar> {
                       scheduleCounts.reduce((a, b) => a + b);
                   List<double> scheduleCounts2 =
                       spots2.map((spot) => spot.y).toList();
-                  for (int i = 0; i < scheduleCounts2.length; i++) {
-                    double value2 = scheduleCounts2[i];
-                    double value = scheduleCounts[i];
-                    print(value2);
-                    print(
-                        "Month ${i + 1}: ${((value2 / value) * 100).toStringAsFixed(1)}");
-                  }
+                  // for (int i = 0; i < scheduleCounts2.length; i++) {
+                  //   double value2 = scheduleCounts2[i];
+                  //   double value = scheduleCounts[i];
+                  //   // print(value2);
+                  //   // print(
+                  //   //     "Month ${i + 1}: ${((value2 / value) * 100).toStringAsFixed(1)}");
+                  // }
                   double totalSchedules2 =
                       scheduleCounts2.reduce((a, b) => a + b);
                   // print(
@@ -510,21 +529,41 @@ class _calendarState extends State<calendar> {
                                                   .height *
                                               0.02,
                                         ),
-                                        ElevatedButton(
-                                            onPressed: () {
-                                              setState(() {
-                                                if (count < 13) {
-                                                  count = count + 1;
-                                                } else {
-                                                  count = 1;
-                                                }
-                                                print(count);
-                                              });
-                                            },
-                                            child: Text("+-")),
-                                        Text(
-                                          "월별/달성률",
-                                          style: TextStyle(fontSize: 30),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            IconButton(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    count = (count > 0)
+                                                        ? count - 1
+                                                        : 11;
+                                                    _updateMonthCount(
+                                                        scheduleCounts2,
+                                                        scheduleCounts);
+                                                  });
+                                                },
+                                                icon:
+                                                    Icon(Icons.arrow_back_ios)),
+                                            Text(
+                                              "${(count + 1).toInt()}월",
+                                              style: TextStyle(fontSize: 30),
+                                            ),
+                                            IconButton(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    count = (count < 11)
+                                                        ? count + 1
+                                                        : 0;
+                                                    _updateMonthCount(
+                                                        scheduleCounts2,
+                                                        scheduleCounts);
+                                                  });
+                                                },
+                                                icon: Icon(
+                                                    Icons.arrow_forward_ios)),
+                                          ],
                                         ),
                                         SizedBox(
                                           height: MediaQuery.of(context)
@@ -533,7 +572,7 @@ class _calendarState extends State<calendar> {
                                               0.02,
                                         ),
                                         Text(
-                                          " ${((totalSchedules2 / totalSchedules) * 100).toStringAsFixed(1)}%",
+                                          " ${monthCount1 >= 0 ? double.parse(monthCount1.toStringAsFixed(1)) : monthCount1 = 0}%",
                                           style: TextStyle(fontSize: 40),
                                         )
                                       ],
