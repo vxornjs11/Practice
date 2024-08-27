@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -589,7 +590,7 @@ class _MyWidgetState extends State<Mainpage> {
                                                                             25),
                                                               ),
                                                               subtitle: Text(
-                                                                'Date: ${data['option'] ?? 'No Date'}\nTime: ${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
+                                                                'Option: ${data['option'] ?? 'No Date'}\nTime: ${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
                                                                 style:
                                                                     const TextStyle(
                                                                         fontSize:
@@ -614,7 +615,7 @@ class _MyWidgetState extends State<Mainpage> {
                                                                         .spaceBetween,
                                                                 children: [
                                                                   Text(
-                                                                    'Date: ${data['option'] ?? 'No Date'}\nTime: ${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
+                                                                    'Option: ${data['option'] ?? 'No Date'}\nTime: ${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
                                                                     style: const TextStyle(
                                                                         fontSize:
                                                                             12),
@@ -691,7 +692,7 @@ class _MyWidgetState extends State<Mainpage> {
                                                                             25),
                                                               ),
                                                               subtitle: Text(
-                                                                'Date: ${data['year'] ?? 'No Date'}\nTime: ${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
+                                                                'Option: ${data['option'] ?? 'No Date'}\nTime: ${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
                                                                 style:
                                                                     const TextStyle(
                                                                         fontSize:
@@ -716,19 +717,22 @@ class _MyWidgetState extends State<Mainpage> {
                                                                             .red,
                                                                         onPressed:
                                                                             () {
-                                                                          FirebaseFirestore
-                                                                              .instance
-                                                                              .collection('Calender')
-                                                                              .doc(doc.id)
-                                                                              .delete()
-                                                                              .then((_) {
-                                                                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('일정이 삭제되었습니다')));
-                                                                          }).catchError((error) {
-                                                                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('일정 삭제 실패: $error')));
-                                                                          });
+                                                                          AlertDialog(
+                                                                              doc);
 
-                                                                          invitaionList();
-                                                                          _loadEvents();
+                                                                          // FirebaseFirestore
+                                                                          //     .instance
+                                                                          //     .collection('Calender')
+                                                                          //     .doc(doc.id)
+                                                                          //     .delete()
+                                                                          //     .then((_) {
+                                                                          //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('일정이 삭제되었습니다')));
+                                                                          // }).catchError((error) {
+                                                                          //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('일정 삭제 실패: $error')));
+                                                                          // });
+
+                                                                          // invitaionList();
+                                                                          // _loadEvents();
                                                                         },
                                                                         icon: const Icon(
                                                                             Icons.close)),
@@ -751,47 +755,62 @@ class _MyWidgetState extends State<Mainpage> {
                                     width: c_size.width * 1,
                                     height: c_size.height * 0.7,
                                     decoration: BoxDecoration(
+                                        // 달력순간이동
                                         borderRadius:
                                             BorderRadius.circular(8.0),
-                                        color: Colors.grey.shade200),
+                                        color: value.backgroundColor),
                                     child: Column(
                                       children: [
-                                        TableCalendar(
-                                          firstDay: DateTime.utc(2010, 10, 16),
-                                          lastDay: DateTime.utc(2030, 3, 14),
-                                          focusedDay: selectedDate_,
-                                          selectedDayPredicate: (date) =>
-                                              isSameDay(selectedDate_, date),
-                                          onDaySelected: _onDaySelected,
-                                          eventLoader: _getEventsForDay,
-                                          calendarBuilders: CalendarBuilders(
-                                            markerBuilder:
-                                                (context, date, events) {
-                                              if (events.isNotEmpty) {
-                                                return Positioned(
-                                                  right: 1,
-                                                  bottom: 1,
-                                                  child: _buildEventsMarker(
-                                                      date, events),
-                                                );
-                                              }
-                                              return null;
-                                            },
+                                        Container(
+                                          decoration: BoxDecoration(
+                                              // 달력순간이동
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              color: Colors.white),
+                                          child: TableCalendar(
+                                            firstDay:
+                                                DateTime.utc(2010, 10, 16),
+                                            lastDay: DateTime.utc(2030, 3, 14),
+                                            focusedDay: selectedDate_,
+                                            selectedDayPredicate: (date) =>
+                                                isSameDay(selectedDate_, date),
+                                            onDaySelected: _onDaySelected,
+                                            eventLoader: _getEventsForDay,
+                                            calendarBuilders: CalendarBuilders(
+                                              markerBuilder:
+                                                  (context, date, events) {
+                                                if (events.isNotEmpty) {
+                                                  return Positioned(
+                                                    right: 20,
+                                                    bottom: 1,
+                                                    child: _buildEventsMarker(
+                                                        date, events),
+                                                  );
+                                                }
+                                                return null;
+                                              },
+                                            ),
+                                            calendarStyle: CalendarStyle(
+                                              defaultDecoration: BoxDecoration(
+                                                color: Colors.grey
+                                                    .shade200, // 기본 날짜 셀 배경색
+                                              ),
+                                              weekendDecoration: BoxDecoration(
+                                                color: Colors.red
+                                                    .shade100, // 주말 날짜 셀 배경색
+                                              ),
+                                              selectedDecoration: BoxDecoration(
+                                                color: Colors
+                                                    .blueAccent, // 선택된 날짜 셀 배경색
+                                                shape: BoxShape.circle,
+                                              ),
+                                              todayDecoration: BoxDecoration(
+                                                color: Colors
+                                                    .orangeAccent, // 오늘 날짜 셀 배경색
+                                                shape: BoxShape.circle,
+                                              ),
+                                            ),
                                           ),
-                                          // calendarStyle: CalendarStyle(
-                                          //   todayDecoration: BoxDecoration(
-                                          //     color: Colors.blue,
-                                          //     shape: BoxShape.circle,
-                                          //   ),
-                                          //   selectedDecoration: BoxDecoration(
-                                          //     color: Colors.red,
-                                          //     shape: BoxShape.circle,
-                                          //   ),
-                                          //   markerDecoration: BoxDecoration(
-                                          //     color: Colors.orange,
-                                          //     shape: BoxShape.circle,
-                                          //   ),
-                                          // ),
                                         ),
                                         // Expanded(
                                         //   child: ListView(
@@ -941,7 +960,7 @@ class _MyWidgetState extends State<Mainpage> {
                                                                       ),
                                                                       subtitle:
                                                                           Text(
-                                                                        'Date: ${data['option'] ?? 'No Date'}\nTime: ${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
+                                                                        'Option: ${data['option'] ?? 'No Date'}\nTime: ${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
                                                                         style: const TextStyle(
                                                                             fontSize:
                                                                                 12),
@@ -979,7 +998,7 @@ class _MyWidgetState extends State<Mainpage> {
                                                                             ),
                                                                             subtitle:
                                                                                 Text(
-                                                                              'Date: ${data['year'] ?? 'No Date'}\nTime: ${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
+                                                                              'Option: ${data['option'] ?? 'No Date'}\nTime: ${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
                                                                               style: const TextStyle(fontSize: 12),
                                                                             ),
                                                                           ),
@@ -995,14 +1014,7 @@ class _MyWidgetState extends State<Mainpage> {
                                                                               child: IconButton(
                                                                                   color: Colors.red,
                                                                                   onPressed: () {
-                                                                                    FirebaseFirestore.instance.collection('Calender').doc(doc.id).delete().then((_) {
-                                                                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('일정이 삭제되었습니다')));
-                                                                                    }).catchError((error) {
-                                                                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('일정 삭제 실패: $error')));
-                                                                                    });
-
-                                                                                    invitaionList();
-                                                                                    _loadEvents();
+                                                                                    AlertDialog(doc);
                                                                                   },
                                                                                   icon: const Icon(Icons.close)),
                                                                             ),
@@ -1086,21 +1098,107 @@ class _MyWidgetState extends State<Mainpage> {
     );
   }
 
+  Future<void> AlertDialog(doc) {
+    // late String timeText_1 = "오전";
+    return showDialog<Void>(
+        barrierColor: Colors.black.withOpacity(0.8),
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return Dialog(
+              child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    color: Colors.white,
+                    height: 300,
+                    width: 500,
+                    child: Column(children: [
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.05),
+                      const Text(
+                        "일정 삭제",
+                        style: TextStyle(
+                            fontSize: 25, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.05,
+                      ),
+                      const Text(
+                        "정말로 일정을 삭제하시겠습니까?",
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.05,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height:
+                                  MediaQuery.of(context).size.height * 0.005,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    FirebaseFirestore.instance
+                                        .collection('Calender')
+                                        .doc(doc.id)
+                                        .delete()
+                                        .then((_) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              content: Text('일정이 삭제되었습니다')));
+                                    }).catchError((error) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              content:
+                                                  Text('일정 삭제 실패: $error')));
+                                    });
+
+                                    invitaionList();
+                                    _loadEvents();
+                                    Navigator.pop(context);
+                                    // 시간대 설정 메소드 들어가야한다.
+                                  },
+                                  child: Text("삭제"),
+                                ),
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.1,
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text("돌아가기"),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ]),
+                  )));
+        });
+  }
+
   Widget _buildEventsMarker(DateTime date, List events) {
     return Container(
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: Colors.blue,
+        color: Colors.blueAccent,
       ),
-      width: 16.0,
-      height: 16.0,
+      width: 10.0,
+      height: 15.0,
       child: Center(
         child: Text(
           '${events.length}',
           style: TextStyle().copyWith(
-            color: Colors.white,
-            fontSize: 12.0,
-          ),
+              color: Colors.white, fontSize: 10.0, fontWeight: FontWeight.bold),
         ),
       ),
     );

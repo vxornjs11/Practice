@@ -328,7 +328,7 @@ class _calendarState extends State<calendar> {
                               Container(
                                 width: MediaQuery.of(context).size.width * 0.9,
                                 height:
-                                    MediaQuery.of(context).size.height * 0.3,
+                                    MediaQuery.of(context).size.height * 0.35,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(60),
                                   color: Colors.white,
@@ -409,7 +409,7 @@ class _calendarState extends State<calendar> {
                                           leftTitles: AxisTitles(
                                             axisNameSize: 20,
                                             axisNameWidget: const Text(
-                                              'Value',
+                                              '일정갯수',
                                               style: TextStyle(
                                                 color: Colors.black,
                                               ),
@@ -469,7 +469,7 @@ class _calendarState extends State<calendar> {
                               //         "달성률 ${(totalSchedules2 / totalSchedules) * 100}")),
                               SizedBox(
                                 height:
-                                    MediaQuery.of(context).size.height * 0.02,
+                                    MediaQuery.of(context).size.height * 0.03,
                               ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -489,7 +489,7 @@ class _calendarState extends State<calendar> {
                                           height: MediaQuery.of(context)
                                                   .size
                                                   .height *
-                                              0.02,
+                                              0.035,
                                         ),
                                         Text(
                                           "년/달성률",
@@ -527,7 +527,7 @@ class _calendarState extends State<calendar> {
                                           height: MediaQuery.of(context)
                                                   .size
                                                   .height *
-                                              0.02,
+                                              0.035,
                                         ),
                                         Row(
                                           mainAxisAlignment:
