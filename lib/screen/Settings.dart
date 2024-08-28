@@ -11,35 +11,12 @@ class Settings extends StatefulWidget {
   ///
   const Settings({super.key});
 
-// 완료 누르는 버튼 존재 자체는 만들 수 있는데
-// 완료된지 아닌지 구분하려면 체크된걸 만들어야하고
-// 또 그게 반복 설정이 아닌거면 상관없는데 반복설정 되어있는거면
-// 내일이랑 어제랑 여튼 다른 날짜랑 구분이 되어야하니까 완료 누른 DATETIME을 저장해야 할거같은데.
-// 완료 누르면 오늘은 사라져야됨. 계속 있으면 안됨.... 생각보다 쉬울수도. 일단 집가자.
-// 그리고 또 뭐가 있었는데 기억이 안나네. 몰라싲말.
-// DateTIme이 아니네 시발; 8.5일 모르겟당 ㅎㅎ
-
-// 달성률을 어떻게 계산해야 할까. 그날에 일정이 있고 그날에 완료가 있으면 달성인거지.
-// 이렇게 굴리면 어떻게 될까.
-// 근데 완료를 안누르면 어떻게 처리하지;;;;; 그거 그대로 내일까지 남아있을거같은데.
-
-// 지금 해당하는 달에 몇개의 완료를 눌럿는지는 나옴.
-// 근데 이걸 어떻게 퍼센트로 짜야할지 모르겟네
-// 그리고 이전에 존재하던 달에 몇개의 일정이 있냐 이것도 문제인게
-// 매일이나 매달이나 이런거 구분을 안한거라서 시발;
-// ++++ 8/16일 ++++
-// 목표 달성 차트 그래프로는 거의 다 한거같고
-// 일단 넘어가서 달성률 퍼센트로 원형차트나 그냥 숫자로 보여주면 될듯.
-// 여기서 더 업그레이드 하는건 좀 뇌절인듯.
-// 그럼 이제 다음주에는 디버깅 특히 알람쪽 수정하고 ui좀 다듬고 출시하면 될듯합니다.
-
-// provider로 월별 달성률 할수 있을듯. for문 대충 어떻게 만져서 그냥 for말고 글자를 1넣는 식으로 하면 될거샅음.
-// 내일 이거 하고 이제 진짜 대충 디버깅해서 넘기자.
   @override
   State<Settings> createState() => _SettingsState();
 }
 
 class _SettingsState extends State<Settings> {
+  bool color_select = false;
   @override
   Widget build(BuildContext context) {
     // ignore: unused_local_variable
@@ -51,60 +28,102 @@ class _SettingsState extends State<Settings> {
             height: cSize.height * 0.08,
           ),
           Consumer<ColorProvider>(builder: (context, colorProvider, child) {
-            return Column(
-              children: [
-                Container(
-                    width: 100,
-                    height: 100,
-                    decoration:
-                        BoxDecoration(color: colorProvider.backgroundColor)),
-                Container(
-                  color: Colors.amber,
-                  child: Center(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Example of changing the background color
-                        colorProvider.changeBackgroundColor(
-                          newColor: Colors.amber,
-                        );
+            return Container(
+              height: cSize.height * 0.8,
+              width: cSize.width * 1,
+              decoration: BoxDecoration(
+                color: colorProvider.backgroundColor,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Column(
+                  children: [
+                    Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                            color: colorProvider.backgroundColor)),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          color_select = !color_select;
+                          print(color_select);
+                        });
                       },
-                      child: Text('노랑색'),
+                      child: Container(
+                        height: cSize.height * 0.075,
+                        width: cSize.width * 1,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(15)),
+                        child: Row(
+                          children: [
+                            Icon(Icons.palette),
+                            Text("색 메타"),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                Container(
-                  color: Colors.blue,
-                  child: Center(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Example of changing the background color
-                        colorProvider.changeBackgroundColor(
-                          newColor: Colors.blue,
-                        );
-                      },
-                      child: Text('blue'),
+                    AnimatedContainer(
+                      duration: Duration(milliseconds: 300),
+                      height: color_select
+                          ? cSize.height * 0.5
+                          : cSize.height * 0.5, // 애니메이션으로 등장할 높이
+                      // 이거보다 그냥 색 메타 저기를 밀고 내려오는게 더 나을듯.
+                      curve: Curves.easeInOut, // 부드러운 등장 효과
+                      child: color_select
+                          ? Column(
+                              children: [
+                                _buildColorButton(
+                                    Colors.amber, "yellow", colorProvider),
+                                _buildColorButton(
+                                    Colors.blue, "blue", colorProvider),
+                                _buildColorButton(
+                                    Color.fromARGB(255, 230, 242, 255),
+                                    "기본 약하늘",
+                                    colorProvider),
+                              ],
+                            )
+                          : Container(),
                     ),
-                  ),
+                    // // color_select == false
+                    // //     ? SizedBox()
+                    // //     : Column(
+                    // //         children: [
+                    // //           _buildColorButton(
+                    // //               Colors.amber, "yellow", colorProvider),
+                    // //           _buildColorButton(
+                    // //               Colors.blue, "blue", colorProvider),
+                    // //           _buildColorButton(
+                    // //               Color.fromARGB(255, 230, 242, 255),
+                    // //               "기본 약하늘",
+                    // //               colorProvider),
+                    //         ],
+                    //       )
+                  ],
                 ),
-                Container(
-                  color: Color.fromARGB(255, 230, 242, 255),
-                  child: Center(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Example of changing the background color
-                        colorProvider.changeBackgroundColor(
-                          newColor: Color.fromARGB(255, 230, 242, 255),
-                        );
-                      },
-                      child: Text('기본 약하늘색'),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             );
           }),
-          Text(" Text('User ID: ${UserManager.userId}'),"),
+          // Text(" Text('User ID: ${UserManager.userId}'),"),
         ],
+      ),
+    );
+  }
+
+  Widget _buildColorButton(Color color, String label, colorProvider) {
+    return Container(
+      color: color,
+      child: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            // Example of changing the background color
+            colorProvider.changeBackgroundColor(
+              newColor: color,
+            );
+          },
+          child: Text(label),
+        ),
       ),
     );
   }
