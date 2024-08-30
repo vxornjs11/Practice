@@ -43,49 +43,90 @@ class _SettingsState extends State<Settings> {
                         height: 100,
                         decoration: BoxDecoration(
                             color: colorProvider.backgroundColor)),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          color_select = !color_select;
-                          print(color_select);
-                        });
-                      },
-                      child: Container(
-                        height: cSize.height * 0.075,
-                        width: cSize.width * 1,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(15)),
-                        child: Row(
-                          children: [
-                            Icon(Icons.palette),
-                            Text("색 메타"),
-                          ],
-                        ),
-                      ),
-                    ),
-                    AnimatedContainer(
-                      duration: Duration(milliseconds: 300),
-                      height: color_select
-                          ? cSize.height * 0.5
-                          : cSize.height * 0.5, // 애니메이션으로 등장할 높이
-                      // 이거보다 그냥 색 메타 저기를 밀고 내려오는게 더 나을듯.
-                      curve: Curves.easeInOut, // 부드러운 등장 효과
-                      child: color_select
-                          ? Column(
-                              children: [
-                                _buildColorButton(
-                                    Colors.amber, "yellow", colorProvider),
-                                _buildColorButton(
-                                    Colors.blue, "blue", colorProvider),
-                                _buildColorButton(
-                                    Color.fromARGB(255, 230, 242, 255),
-                                    "기본 약하늘",
-                                    colorProvider),
-                              ],
-                            )
-                          : Container(),
-                    ),
+                    // GestureDetector(
+                    //   onTap: () {
+                    //     setState(() {
+                    //       color_select = !color_select;
+                    //       print(color_select);
+                    //     });
+                    //   },
+                    //   child: Container(
+                    //     height: cSize.height * 0.075,
+                    //     width: cSize.width * 1,
+                    //     decoration: BoxDecoration(
+                    //         color: Colors.white,
+                    //         borderRadius: BorderRadius.circular(15)),
+                    //     child: Row(
+                    //       children: [
+                    //         Icon(Icons.palette),
+                    //         Text("색 메타"),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
+                    // GestureDetector(
+                    //   onTap: () {
+                    //     setState(() {
+                    //       color_select = !color_select;
+                    //       print(color_select);
+                    //     });
+                    //   },
+                    //   child: AnimatedContainer(
+                    //     duration: Duration(milliseconds: 300),
+                    //     height: color_select
+                    //         ? cSize.height * 0.3
+                    //         : cSize.height * 0.1, // 애니메이션으로 등장할 높이
+                    //     // 이거보다 그냥 색 메타 저기를 밀고 내려오는게 더 나을듯.
+                    //     curve: Curves.easeInOut, // 부드러운 등장 효과
+                    //     child: color_select
+                    //         ? Column(
+                    //             children: [
+                    //               Container(
+                    //                 height: cSize.height * 0.3,
+                    //                 width: cSize.width * 1,
+                    //                 decoration: BoxDecoration(
+                    //                     color: Colors.white,
+                    //                     borderRadius:
+                    //                         BorderRadius.circular(15)),
+                    //                 child: Column(
+                    //                   children: [
+                    //                     Row(
+                    //                       children: [
+                    //                         Icon(Icons.palette),
+                    //                         Text("색 메타"),
+                    //                       ],
+                    //                     ),
+                    //                     SizedBox(
+                    //                       height: cSize.height * 0.05,
+                    //                     ),
+                    //                     _buildColorButton(Colors.amber,
+                    //                         "yellow", colorProvider),
+                    //                     _buildColorButton(
+                    //                         Colors.blue, "blue", colorProvider),
+                    //                     _buildColorButton(
+                    //                         Color.fromARGB(255, 230, 242, 255),
+                    //                         "기본 약하늘",
+                    //                         colorProvider),
+                    //                   ],
+                    //                 ),
+                    //               ),
+                    //             ],
+                    //           )
+                    //         : Container(
+                    //             height: cSize.height * 0.075,
+                    //             width: cSize.width * 1,
+                    //             decoration: BoxDecoration(
+                    //                 color: Colors.white,
+                    //                 borderRadius: BorderRadius.circular(15)),
+                    //             child: Row(
+                    //               children: [
+                    //                 Icon(Icons.palette),
+                    //                 Text("색 메타"),
+                    //               ],
+                    //             ),
+                    //           ),
+                    //   ),
+                    // ),
                     // // color_select == false
                     // //     ? SizedBox()
                     // //     : Column(
@@ -100,6 +141,72 @@ class _SettingsState extends State<Settings> {
                     // //               colorProvider),
                     //         ],
                     //       )
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          color_select = !color_select;
+                          print(color_select);
+                        });
+                      },
+                      child: color_select
+                          ? Container(
+                              height: cSize.height * 0.075,
+                              width: cSize.width * 1,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(15)),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.palette),
+                                  Text("색 메타"),
+                                ],
+                              ),
+                            )
+                          : Container(
+                              height: cSize.height * 0.25,
+                              width: cSize.width * 1,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(15)),
+                              child: Column(
+                                children: [
+                                  SizedBox(
+                                    height: cSize.height * 0.025,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Icon(Icons.palette),
+                                      Text("색 메타"),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: cSize.height * 0.025,
+                                  ),
+                                  _buildColorButton(
+                                      Colors.amber, "yellow", colorProvider),
+                                  _buildColorButton(
+                                      Colors.blue, "blue", colorProvider),
+                                  _buildColorButton(
+                                      Color.fromARGB(255, 230, 242, 255),
+                                      "기본 약하늘",
+                                      colorProvider),
+                                ],
+                              ),
+                            ),
+                    ),
+                    Container(
+                      height: cSize.height * 0.075,
+                      width: cSize.width * 1,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15)),
+                      child: Row(
+                        children: [
+                          Icon(Icons.palette),
+                          Text("색 메타"),
+                        ],
+                      ),
+                    )
                   ],
                 ),
               ),
