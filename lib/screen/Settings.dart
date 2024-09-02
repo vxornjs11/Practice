@@ -158,12 +158,20 @@ class _SettingsState extends State<Settings> {
                               child: Row(
                                 children: [
                                   Icon(Icons.palette),
-                                  Text("색 메타"),
+                                  SizedBox(
+                                    width: cSize.width * 0.015,
+                                  ),
+                                  Text("색상 설정"),
+                                  SizedBox(
+                                    width: cSize.width * 0.65,
+                                  ),
+                                  Icon(Icons.arrow_drop_down)
                                 ],
+                                //arrow_left_sharp
                               ),
                             )
                           : Container(
-                              height: cSize.height * 0.25,
+                              height: cSize.height * 0.2,
                               width: cSize.width * 1,
                               decoration: BoxDecoration(
                                   color: Colors.white,
@@ -176,20 +184,61 @@ class _SettingsState extends State<Settings> {
                                   Row(
                                     children: [
                                       Icon(Icons.palette),
-                                      Text("색 메타"),
+                                      SizedBox(
+                                        width: cSize.width * 0.015,
+                                      ),
+                                      Text("색상 설정"),
+                                      SizedBox(
+                                        width: cSize.width * 0.65,
+                                      ),
+                                      Icon(Icons.arrow_left_sharp)
                                     ],
                                   ),
                                   SizedBox(
                                     height: cSize.height * 0.025,
                                   ),
-                                  _buildColorButton(
-                                      Colors.amber, "yellow", colorProvider),
-                                  _buildColorButton(
-                                      Colors.blue, "blue", colorProvider),
-                                  _buildColorButton(
-                                      Color.fromARGB(255, 230, 242, 255),
-                                      "기본 약하늘",
-                                      colorProvider),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      _buildColorButton(
+                                          Color.fromARGB(255, 255, 242, 202),
+                                          "연노랑",
+                                          colorProvider),
+                                      _buildColorButton(
+                                          Color.fromRGBO(200, 162, 200, 1.0),
+                                          "라일락",
+                                          colorProvider),
+                                      _buildColorButton(
+                                          Color.fromARGB(255, 230, 242, 255),
+                                          "하늘색",
+                                          colorProvider),
+                                      _buildColorButton(
+                                          Color.fromRGBO(245, 245, 220, 1.0),
+                                          "베이지",
+                                          colorProvider),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      _buildColorButton(
+                                          Color.fromRGBO(230, 230, 250, 1.0),
+                                          "연보라",
+                                          colorProvider),
+                                      _buildColorButton(
+                                          Color.fromRGBO(245, 222, 179, 1.0),
+                                          "밀색",
+                                          colorProvider),
+                                      _buildColorButton(
+                                          Color.fromRGBO(240, 220, 130, 1.0),
+                                          "버프",
+                                          colorProvider),
+                                      _buildColorButton(
+                                          Color.fromRGBO(210, 180, 140, 1.0),
+                                          "브라운",
+                                          colorProvider),
+                                    ],
+                                  )
                                 ],
                               ),
                             ),
@@ -219,18 +268,18 @@ class _SettingsState extends State<Settings> {
   }
 
   Widget _buildColorButton(Color color, String label, colorProvider) {
-    return Container(
-      color: color,
-      child: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            // Example of changing the background color
-            colorProvider.changeBackgroundColor(
-              newColor: color,
-            );
-          },
-          child: Text(label),
+    return Center(
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: color,
         ),
+        onPressed: () {
+          // Example of changing the background color
+          colorProvider.changeBackgroundColor(
+            newColor: color,
+          );
+        },
+        child: Text(label),
       ),
     );
   }

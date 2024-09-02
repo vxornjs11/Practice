@@ -59,6 +59,9 @@ class _calendarState extends State<calendar> {
     for (int i = 1; i <= 12; i++) {
       spots2.add(FlSpot(i.toDouble(), (Clear_dateCounts[i] ?? 0).toDouble()));
     }
+    print("======spots2222");
+    print(spots2);
+    print("======spots222");
     return spots2;
   }
 
@@ -96,6 +99,9 @@ class _calendarState extends State<calendar> {
             // print('현재 달의 일정 개수: ${monthCounts[month]}');
 
             // 다음 달 계산 (현재 달이 12월이면 다음 달은 1월이 됩니다)
+            month == DateTime.now().month
+                ? month
+                : month = DateTime.now().month;
             int nextMonth = (month % 12) + 1;
             int daysInMonth =
                 DateTime(YMD_now.year, YMD_now.month + 1, 0).day; // 현재 월의 일 수
@@ -120,20 +126,39 @@ class _calendarState extends State<calendar> {
           int weeksElapsed =
               (DateTime.now().difference(YMD_now).inDays / 7).floor();
           int daysToAdd = 5 * (weeksElapsed + 1); // 매주 5일씩 추가
-
           if (YMD_now.weekday >= DateTime.monday &&
               YMD_now.weekday <= DateTime.friday) {
             monthCounts[month] = (monthCounts[month] ?? 0) + daysToAdd;
-            // print("주중 일정 추가: $daysToAdd 일");
+            month == DateTime.now().month
+                ? month
+                : month = DateTime.now().month;
+            DateTime YMD_now =
+                DateTime(DateTime.now().year, month, DateTime.now().day);
+            int weeksElapsed =
+                (DateTime.now().difference(YMD_now).inDays / 7).floor();
+            int daysToAdd2 = 5 * (weeksElapsed + 1); // 매주 5일씩 추가
+            monthCounts[month] = (monthCounts[month] ?? 0) + daysToAdd2;
           }
         } else if (options == "주말") {
           // 만약
+          int weeksElapsed =
+              (DateTime.now().difference(YMD_now).inDays / 7).floor();
+          int daysToAdd = 2 * (weeksElapsed + 1); // 매주 2일씩 추가
           if (YMD_now.weekday == DateTime.saturday ||
               YMD_now.weekday == DateTime.sunday) {
-            int weeksElapsed =
-                (DateTime.now().difference(YMD_now).inDays / 7).floor();
-            int daysToAdd = 2 * (weeksElapsed + 1); // 매주 2일씩 추가
             monthCounts[month] = (monthCounts[month] ?? 0) + daysToAdd;
+
+            month == DateTime.now().month
+                ? month
+                : month = DateTime.now().month;
+            DateTime YMD_now =
+                DateTime(DateTime.now().year, month, DateTime.now().day);
+            int weeksElapsed2 =
+                (DateTime.now().difference(YMD_now).inDays / 7).floor();
+            int daysToAdd2 = 2 * (weeksElapsed2 + 1); // 매주 2일씩 추가
+            print("주말");
+            print(daysToAdd2);
+            monthCounts[month] = (monthCounts[month] ?? 0) + daysToAdd2;
           }
         } else if (options == "한달") {
           // 매월 반복 - 현재 달과 다음 달 모두 추가
@@ -156,8 +181,8 @@ class _calendarState extends State<calendar> {
     for (int i = 1; i <= 12; i++) {
       spots.add(FlSpot(i.toDouble(), (monthCounts[i] ?? 0).toDouble()));
     }
-    // print("======spots");
-    // print(spots);
+    print("======spots");
+    print(spots);
     return spots;
   }
   // 아니 나 병신인가 월별 달성률은 차트에 보이잖아?

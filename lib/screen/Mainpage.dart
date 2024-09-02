@@ -367,27 +367,30 @@ class _MyWidgetState extends State<Mainpage> {
                         itemBuilder: (context, index) {
                           return Padding(
                             padding: const EdgeInsets.all(1.0),
-                            child: Container(
-                              // color: Colors.white,
-                              decoration: BoxDecoration(
-                                color: week[index] == formattedWeekday
-                                    ? Colors.blue.shade100
-                                    : Colors.white, // 색 지정.
-                                border: Border.all(
-                                  color: Colors.black, // 원하는 색상을 지정
-                                  width: 1.0, // 원하는 선의 두께를 지정
+                            child: Consumer<ColorProvider>(
+                                builder: (context, value, child) {
+                              return Container(
+                                // color: Colors.white,
+                                decoration: BoxDecoration(
+                                  color: week[index] == formattedWeekday
+                                      ? value.backgroundColor
+                                      : Colors.white, // 색 지정.
+                                  border: Border.all(
+                                    color: Colors.black, // 원하는 색상을 지정
+                                    width: 1.0, // 원하는 선의 두께를 지정
+                                  ),
                                 ),
-                              ),
-                              width: c_size.width * 0.135,
-                              height: c_size.height * 0.1,
-                              child: Text(
-                                week[index],
-                                style: TextStyle(
-                                    color: week[index] == formattedWeekday
-                                        ? Colors.red
-                                        : Colors.black),
-                              ),
-                            ),
+                                width: c_size.width * 0.135,
+                                height: c_size.height * 0.1,
+                                child: Text(
+                                  week[index],
+                                  style: TextStyle(
+                                      color: week[index] == formattedWeekday
+                                          ? Colors.red
+                                          : Colors.black),
+                                ),
+                              );
+                            }),
                           );
                         }),
                   ),
