@@ -84,24 +84,24 @@ class _calendarState extends State<calendar> {
       String options = doc['option'];
       int month = doc['month'];
 
-      // print("===================");
-      // print("options: $options");
-      // print("===================");
-
       if (options != null && monthCounts != null && YMD_now != null) {
-        bool hasMonthChanged = DateTime.now().year != YMD_now.year ||
+        bool hasMonthChanged =
+            //  DateTime.now().year != YMD_now.year ||
             DateTime.now().month != YMD_now.month;
-        // print("hasMonthChanged: $hasMonthChanged");
+        // print("DateTime.now().month != YMD_now.month; $month");
 
+        print("매일 첫번째 $month // ${monthCounts[month]}");
+        print("hasMonthChanged $hasMonthChanged");
+        // 그니까 이건 데이터상 달과 현재의 달이 같냐 다르냐 묻는거고
+        // 지금 8월 일정은 현재 달과 다르잖아. 그니까 트루야.
+        // 아하 8월 매일이 없지 이제 ㅋㅋ;;
+        print(DateTime.now().month != YMD_now.month);
         if (options == "매일") {
           if (hasMonthChanged) {
-            // print('달이 바뀐 경우 (true): $hasMonthChanged');
+            print('달이 바뀐 경우 (true): $hasMonthChanged');
             // print('현재 달의 일정 개수: ${monthCounts[month]}');
 
             // 다음 달 계산 (현재 달이 12월이면 다음 달은 1월이 됩니다)
-            month == DateTime.now().month
-                ? month
-                : month = DateTime.now().month;
             int nextMonth = (month % 12) + 1;
             int daysInMonth =
                 DateTime(YMD_now.year, YMD_now.month + 1, 0).day; // 현재 월의 일 수
@@ -117,59 +117,210 @@ class _calendarState extends State<calendar> {
             print('다음 달의 일정 개수: ${monthCounts[nextMonth]}');
           } else {
             int differenceDays = DateTime.now().day;
-            // print("현재 달 매일 일정: $differenceDays");
+            // print("매일 일정: $date");
+            month == DateTime.now().month
+                ? month
+                : month = DateTime.now().month;
+            int dayCount = 0;
+            DateTime lastDayOfMonth =
+                DateTime(YMD_now.year, YMD_now.month, DateTime.now().day);
+            print("매일 123: $lastDayOfMonth");
+            print("매일 456: $YMD_now");
+            for (DateTime date = YMD_now;
+                date.isBefore(lastDayOfMonth) ||
+                    date.isAtSameMomentAs(lastDayOfMonth);
+                date = date.add(Duration(days: 1))) {
+              dayCount++;
+              print("매일 일정: $date");
+              print("매일 dayCount: $dayCount");
+            }
 
-            monthCounts[month] = (monthCounts[month] ?? 0) + differenceDays;
-            // print('달이 바뀌지 않은 경우 (false): ${monthCounts[month]}');
+            monthCounts[month] = (monthCounts[month] ?? 0) + dayCount;
+            print(dayCount);
+            print("dayCount$month // ${monthCounts[month]}");
           }
-        } else if (options == "주중") {
-          int weeksElapsed =
-              (DateTime.now().difference(YMD_now).inDays / 7).floor();
-          int daysToAdd = 5 * (weeksElapsed + 1); // 매주 5일씩 추가
+        }
+        // int weeksElapsed =
+        //     (lastDayOfMonth.difference(YMD_now).inDays / 7).floor();
+        // print('마지막 날: $lastDayOfMonth'); // 예: 2024-07-31
+        // print('주 차이: $weeksElapsed'); //
+        // print(
+        //     '날짜 차이: ${lastDayOfMonth.difference(YMD_now).inDays / 7}'); // 예: 16일
+
+        // 평일 카운트를 위한 변수
+
+        else if (options == "주중") {
+          DateTime lastDayOfMonth =
+              DateTime(YMD_now.year, YMD_now.month + 1, 0);
+          int weekdayCount = 0;
+          // print("주중 평일ff 첫번째 $month // ${monthCounts[month]}");
+          for (DateTime date = YMD_now;
+              date.isBefore(lastDayOfMonth) ||
+                  date.isAtSameMomentAs(lastDayOfMonth);
+              date = date.add(Duration(days: 1))) {
+            if (date.weekday >= DateTime.monday &&
+                date.weekday <= DateTime.friday) {
+              weekdayCount++;
+            }
+          }
+          // print("주중 weekdayCount $weekdayCount");
           if (YMD_now.weekday >= DateTime.monday &&
               YMD_now.weekday <= DateTime.friday) {
-            monthCounts[month] = (monthCounts[month] ?? 0) + daysToAdd;
-            month == DateTime.now().month
-                ? month
-                : month = DateTime.now().month;
-            DateTime YMD_now =
-                DateTime(DateTime.now().year, month, DateTime.now().day);
-            int weeksElapsed =
-                (DateTime.now().difference(YMD_now).inDays / 7).floor();
-            int daysToAdd2 = 5 * (weeksElapsed + 1); // 매주 5일씩 추가
-            monthCounts[month] = (monthCounts[month] ?? 0) + daysToAdd2;
+            // print("주중 weekdayCount2 $weekdayCount");
+            monthCounts[month] = (monthCounts[month] ?? 0) + weekdayCount;
+            for (; month != DateTime.now().month; month++) {
+              // print("주중 평일 $month // ${monthCounts[month]}");
+              if (month > 12) {
+                month = 1;
+              }
+            }
+
+            // print("주중 평일3 $month ${monthCounts[month]}");
+            if (month == DateTime.now().month) {
+              // print("주중 평일ff $month // ${monthCounts[month]}");
+              YMD_now =
+                  DateTime(DateTime.now().year, month, DateTime.now().day);
+              lastDayOfMonth = DateTime(YMD_now.year, month, 1);
+              int Next_Month_weekdayCount = 0;
+              // print("YMD_now $YMD_now lastDayOfMonth $lastDayOfMonth");
+              for (DateTime date = lastDayOfMonth;
+                  date.isBefore(YMD_now) || date.isAtSameMomentAs(YMD_now);
+                  date = date.add(Duration(days: 1))) {
+                if (date.weekday >= DateTime.monday &&
+                    date.weekday <= DateTime.friday) {
+                  Next_Month_weekdayCount++;
+                }
+              }
+
+              // print("Next_Month_weekdayCount$Next_Month_weekdayCount");
+              monthCounts[month] =
+                  (monthCounts[month] ?? 0) + Next_Month_weekdayCount;
+              // print("주중 평일ff 22 $month // ${monthCounts[month]}");
+            }
+            if (month != DateTime.now().month && month != YMD_now.month) {
+              YMD_now = DateTime(DateTime.now().year, month + 1, 0);
+              lastDayOfMonth = DateTime(YMD_now.year, month, 1);
+              int Next_Month_weekdayCount = 0;
+              // print("YMD_now $YMD_now lastDayOfMonth $lastDayOfMonth");
+              for (DateTime date = lastDayOfMonth;
+                  date.isBefore(YMD_now) || date.isAtSameMomentAs(YMD_now);
+                  date = date.add(Duration(days: 1))) {
+                if (date.weekday >= DateTime.monday &&
+                    date.weekday <= DateTime.friday) {
+                  Next_Month_weekdayCount++;
+                }
+                monthCounts[month] =
+                    (monthCounts[month] ?? 0) + Next_Month_weekdayCount;
+              }
+            }
           }
         } else if (options == "주말") {
-          // 만약
-          int weeksElapsed =
-              (DateTime.now().difference(YMD_now).inDays / 7).floor();
-          int daysToAdd = 2 * (weeksElapsed + 1); // 매주 2일씩 추가
+          DateTime lastDayOfMonth =
+              DateTime(YMD_now.year, YMD_now.month + 1, 0);
+          int weekdayCount = 0;
+
+          // print("주말 // 첫번째 $month // ${monthCounts[month]}");
+          for (DateTime date = YMD_now;
+              date.isBefore(lastDayOfMonth) ||
+                  date.isAtSameMomentAs(lastDayOfMonth);
+              date = date.add(Duration(days: 1))) {
+            if (date.weekday == DateTime.saturday ||
+                date.weekday == DateTime.sunday) {
+              weekdayCount++;
+            }
+          }
           if (YMD_now.weekday == DateTime.saturday ||
               YMD_now.weekday == DateTime.sunday) {
-            monthCounts[month] = (monthCounts[month] ?? 0) + daysToAdd;
+            // print("주말 1 // weekdayCount2 $weekdayCount");
+            monthCounts[month] = (monthCounts[month] ?? 0) + weekdayCount;
+            for (; month != DateTime.now().month; month++) {
+              // print("주멀 2 // $month // ${monthCounts[month]}");
+              if (month > 12) {
+                month = 1;
+              }
+            }
+            // print("주말 3 // $month ${monthCounts[month]}");
+            if (month == DateTime.now().month) {
+              // print("주말 4 // $month // ${monthCounts[month]}");
+              YMD_now =
+                  DateTime(DateTime.now().year, month, DateTime.now().day);
+              lastDayOfMonth = DateTime(YMD_now.year, month, 1);
+              int Next_Month_weekdayCount = 0;
+              // print("YMD_now $YMD_now lastDayOfMonth $lastDayOfMonth");
+              for (DateTime date = lastDayOfMonth;
+                  date.isBefore(YMD_now) || date.isAtSameMomentAs(YMD_now);
+                  date = date.add(Duration(days: 1))) {
+                if (date.weekday == DateTime.saturday ||
+                    date.weekday == DateTime.sunday) {
+                  Next_Month_weekdayCount++;
+                }
+              }
 
-            month == DateTime.now().month
-                ? month
-                : month = DateTime.now().month;
-            DateTime YMD_now =
-                DateTime(DateTime.now().year, month, DateTime.now().day);
-            int weeksElapsed2 =
-                (DateTime.now().difference(YMD_now).inDays / 7).floor();
-            int daysToAdd2 = 2 * (weeksElapsed2 + 1); // 매주 2일씩 추가
-            print("주말");
-            print(daysToAdd2);
-            monthCounts[month] = (monthCounts[month] ?? 0) + daysToAdd2;
+              // print("Next_Month_weekdayCount$Next_Month_weekdayCount");
+              monthCounts[month] =
+                  (monthCounts[month] ?? 0) + Next_Month_weekdayCount;
+              // print("주말 // 5 $month // ${monthCounts[month]}");
+            }
+            if (month != DateTime.now().month && month != YMD_now.month) {
+              YMD_now = DateTime(DateTime.now().year, month + 1, 0);
+              lastDayOfMonth = DateTime(YMD_now.year, month, 1);
+              int Next_Month_weekdayCount = 0;
+              // print("YMD_now $YMD_now lastDayOfMonth $lastDayOfMonth");
+              for (DateTime date = lastDayOfMonth;
+                  date.isBefore(YMD_now) || date.isAtSameMomentAs(YMD_now);
+                  date = date.add(Duration(days: 1))) {
+                if (date.weekday == DateTime.saturday ||
+                    date.weekday == DateTime.sunday) {
+                  Next_Month_weekdayCount++;
+                }
+                monthCounts[month] =
+                    (monthCounts[month] ?? 0) + Next_Month_weekdayCount;
+              }
+            }
           }
         } else if (options == "한달") {
+          print("한달 $month");
+          print("한달 $month ${monthCounts[month]} ${YMD_now.day}");
           // 매월 반복 - 현재 달과 다음 달 모두 추가
+
           monthCounts[month] = (monthCounts[month] ?? 0) + 1;
-          int nextMonth = (month % 12) + 1;
-          monthCounts[nextMonth] = (monthCounts[nextMonth] ?? 0) + 1;
+          // 데이터상 등록된 달에 등록.
+          for (; month != DateTime.now().month; month++) {
+            // print("주멀 2 // $month // ${monthCounts[month]}");
+            if (month > 12) {
+              month = 1;
+            }
+          }
+          // Date에 일정 등록한 달이 지낫을
+          //경우 현재 달을 사용.
+          // 매월 13일을 계산하고, 현재 날짜와 일치하면 +1
+          for (int i = 0; i <= 12; i++) {
+            // 등록일의 월에 i개월을 더해 매월 13일을 계산
+            DateTime monthlyEventDate =
+                DateTime(YMD_now.year, YMD_now.month + i, YMD_now.day);
+
+            // 현재 날짜가 매월 13일에 도달했는지 확인
+            if (DateTime.now().year == monthlyEventDate.year &&
+                DateTime.now().month == monthlyEventDate.month &&
+                DateTime.now().day == monthlyEventDate.month.days) {
+              monthCounts[month] = (monthCounts[month] ?? 0) + 1;
+            }
+          }
+          // 같은 month지만 값이 다름.
+          // monthCounts[month] = (monthCounts[month] ?? 0) + 1;
+          print("한달 2 $month");
+          print("한달 2 $month ${monthCounts[month]}");
         } else if (options == "1년") {
+          print("1년 $month");
+          print("1년 $month ${monthCounts[month]}");
           // 매년 반복 - 현재 달에 추가
           monthCounts[month] = (monthCounts[month] ?? 0) + 1;
+          print("1년 2 $month");
+          print("1년 2 $month ${monthCounts[month]}");
         } else {
+          print("아무것도아닌 1 $month // ${monthCounts[month]}");
           monthCounts[month] = 1;
+          print("아무것도아닌 22 $month // ${monthCounts[month]}");
         }
       } else {
         // print("options, monthCounts 또는 YMD_now가 null입니다.");
