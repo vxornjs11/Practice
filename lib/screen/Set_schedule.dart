@@ -347,11 +347,11 @@ class __Set_schedulState extends State<Set_schedul> {
 
   @override
   Widget build(BuildContext context) {
-    String textdate = "";
+    // String textdate = "";
     var size = MediaQuery.of(context).size;
-    TextEditingController text_title;
-    var styles = TextStyle(
-        fontSize: 16, color: Colors.grey.shade600, fontWeight: FontWeight.w500);
+    // TextEditingController text_title;
+    // var styles = TextStyle(
+    //     fontSize: 16, color: Colors.grey.shade600, fontWeight: FontWeight.w500);
     return Scaffold(
         appBar: AppBar(
           title: const Text("일정 등록"),
@@ -408,12 +408,6 @@ class __Set_schedulState extends State<Set_schedul> {
                           child: Text(
                               "${selectedDate_.month}월${selectedDate_.day}일")),
                 ),
-                // -- 구분 --
-                // 처음에 아무것도 없는 빈칸이다가
-                // 일정 하나 등록하면 1줄씩 생기는거임.
-                // 그리고 밑으로 하나씩 밀어.
-                // 대충 5개정도가 최대치로?
-                // 아니면 몇줄 이상이면 스크롤 뷰로 해도될듯.
                 Text(schedule_Write),
                 const SizedBox(
                   height: 5,
@@ -472,17 +466,11 @@ class __Set_schedulState extends State<Set_schedul> {
                     const SizedBox(
                       width: 5,
                     ),
-                    _isSwitch
-                        ? const Icon(
-                            Icons.notifications_active_outlined,
-                            size: 25,
-                            color: Colors.black54,
-                          )
-                        : const Icon(
-                            Icons.notifications_off_outlined,
-                            size: 25,
-                            color: Colors.black54,
-                          ),
+                    const Icon(
+                      Icons.notifications_outlined,
+                      size: 25,
+                      color: Colors.black54,
+                    ),
                     const SizedBox(
                       width: 20,
                     ),
@@ -595,64 +583,121 @@ class __Set_schedulState extends State<Set_schedul> {
                 ),
                 ElevatedButton(
                     onPressed: () async {
-                      // _addNewSchedule();
                       String day = context.read<CounterProvider>().day;
                       String year = context.read<CounterProvider>().year;
                       String month = context.read<CounterProvider>().month;
-                      // print(
-                      //   selectedDate.day,
-                      // );
+                      // _addNewSchedule();
+                      DateTime today = DateTime.now();
 
-                      // int day_init_fire = int.parse(day);
+// 오늘 날짜에서 시간 정보(시, 분, 초)를 제외한 날짜만 비교
+                      DateTime todayWithoutTime =
+                          DateTime(today.year, today.month, today.day);
+                      DateTime selectedDateWithoutTime = DateTime(
+                          selectedDate_.year,
+                          selectedDate_.month,
+                          selectedDate_.day);
 
-                      // String day = context.watch<CounterProvider>().day;
-                      try {
-                        await _firestore.collection("Calender").add(
-                          {
-                            "Schedule": schedule_Write,
-                            "year": year == ""
-                                ? selectedDate.year
-                                : int.parse(year),
-                            "month": month == ""
-                                ? selectedDate.month
-                                : int.parse(month),
-                            "day":
-                                day == "" ? selectedDate.day : int.parse(day),
-                            "hour": _selectedHour,
-                            "minit": _selectedMinute,
-                            "option": option,
-                            "option_day": option == "주말"
-                                ? ["토", "일"]
-                                : option == "주중"
-                                    ? ["월", "화", "수", "목", "금"]
-                                    : [
-                                        DateFormat('E', 'ko_KO')
-                                            .format(selectedDate_)
-                                      ],
-                            "userid": UserManager.userId,
-                            "dates": []
-                          },
-                        );
-                        Get.offAll(const home()); // 홈 페이지로 이동, 이전 페이지 스택을 모두 제거
-                      } catch (e) {}
-                      setState(() {
-                        context
-                            .read<CounterProvider>()
-                            .ChangeText(newYear: '', newMonth: '', newDay: '');
+// 비교: selectedDate_가 오늘 이전인지 확인
+                      if (selectedDateWithoutTime.isBefore(todayWithoutTime)) {
+                        print("선택된 날짜는 오늘보다 이전입니다.");
+                        AlertDialog_Calendar();
+                      } else {
+                        try {
+                          await _firestore.collection("Calender").add(
+                            {
+                              "Schedule": schedule_Write,
+                              "year": year == ""
+                                  ? selectedDate.year
+                                  : int.parse(year),
+                              "month": month == ""
+                                  ? selectedDate.month
+                                  : int.parse(month),
+                              "day":
+                                  day == "" ? selectedDate.day : int.parse(day),
+                              "hour": _selectedHour,
+                              "minit": _selectedMinute,
+                              "option": option,
+                              "option_day": option == "주말"
+                                  ? ["토", "일"]
+                                  : option == "주중"
+                                      ? ["월", "화", "수", "목", "금"]
+                                      : [
+                                          DateFormat('E', 'ko_KO')
+                                              .format(selectedDate_)
+                                        ],
+                              "userid": UserManager.userId,
+                              "dates": []
+                            },
+                          );
+                          Get.offAll(
+                              const home()); // 홈 페이지로 이동, 이전 페이지 스택을 모두 제거
+                        } catch (e) {}
+                        setState(() {
+                          context.read<CounterProvider>().ChangeText(
+                              newYear: '', newMonth: '', newDay: '');
 
-                        _selectedDate = DateTime(
-                          year == "" ? selectedDate.year : int.parse(year),
-                          month == "" ? selectedDate.month : int.parse(month),
-                          day == "" ? selectedDate.day : int.parse(day),
-                          _selectedHour,
-                          _selectedMinute,
-                        );
-                      });
-                      print("_selectedDate");
-                      print(option);
-                      print("_selectedDate");
-                      _scheduleNotification(
-                          _selectedDate, schedule_Write, option);
+                          _selectedDate = DateTime(
+                            year == "" ? selectedDate.year : int.parse(year),
+                            month == "" ? selectedDate.month : int.parse(month),
+                            day == "" ? selectedDate.day : int.parse(day),
+                            _selectedHour,
+                            _selectedMinute,
+                          );
+                        });
+                        print("_selectedDate");
+                        print(option);
+                        print("_selectedDate");
+                        _scheduleNotification(
+                            _selectedDate, schedule_Write, option);
+                      }
+
+                      // try {
+                      //   await _firestore.collection("Calender").add(
+                      //     {
+                      //       "Schedule": schedule_Write,
+                      //       "year": year == ""
+                      //           ? selectedDate.year
+                      //           : int.parse(year),
+                      //       "month": month == ""
+                      //           ? selectedDate.month
+                      //           : int.parse(month),
+                      //       "day":
+                      //           day == "" ? selectedDate.day : int.parse(day),
+                      //       "hour": _selectedHour,
+                      //       "minit": _selectedMinute,
+                      //       "option": option,
+                      //       "option_day": option == "주말"
+                      //           ? ["토", "일"]
+                      //           : option == "주중"
+                      //               ? ["월", "화", "수", "목", "금"]
+                      //               : [
+                      //                   DateFormat('E', 'ko_KO')
+                      //                       .format(selectedDate_)
+                      //                 ],
+                      //       "userid": UserManager.userId,
+                      //       "dates": []
+                      //     },
+                      //   );
+                      //   Get.offAll(const home()); // 홈 페이지로 이동, 이전 페이지 스택을 모두 제거
+                      // } catch (e) {}
+                      // setState(() {
+                      //   context
+                      //       .read<CounterProvider>()
+                      //       .ChangeText(newYear: '', newMonth: '', newDay: '');
+
+                      //   _selectedDate = DateTime(
+                      //     year == "" ? selectedDate.year : int.parse(year),
+                      //     month == "" ? selectedDate.month : int.parse(month),
+                      //     day == "" ? selectedDate.day : int.parse(day),
+                      //     _selectedHour,
+                      //     _selectedMinute,
+                      //   );
+                      // });
+                      // print("_selectedDate");
+                      // print(option);
+                      // print("_selectedDate");
+                      // _scheduleNotification(
+                      //     _selectedDate, schedule_Write, option);
                     },
                     child: Text("등록하기")),
                 ElevatedButton(
@@ -829,6 +874,77 @@ class __Set_schedulState extends State<Set_schedul> {
   //     print('문서 추가 중 오류가 발생했습니다: $e');
   //   }
   // }
+
+  Future<void> AlertDialog_Calendar() {
+    // late String timeText_1 = "오전";
+    return showDialog<Void>(
+        barrierColor: Colors.black.withOpacity(0.8),
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return Dialog(
+              child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    color: Colors.white,
+                    height: 300,
+                    width: 500,
+                    child: Column(children: [
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.05),
+                      const Text(
+                        "일정 등록 불가",
+                        style: TextStyle(
+                            fontSize: 25, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.05,
+                      ),
+                      const Text(
+                        "일정 등록 날짜가 잘못되었습니다",
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.05,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height:
+                                  MediaQuery.of(context).size.height * 0.005,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    // 시간대 설정 메소드 들어가야한다.
+                                  },
+                                  child: Text("삭제"),
+                                ),
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.1,
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text("돌아가기"),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ]),
+                  )));
+        });
+  }
 }// end
 
 

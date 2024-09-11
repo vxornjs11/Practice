@@ -18,6 +18,7 @@ class _calendarState extends State<calendar> {
   double count = 1;
 
   double monthCount1 = 0;
+  bool change_Chart = false;
 
   void _updateMonthCount(scheduleCounts2, scheduleCounts) {
     int value21 = count.toInt();
@@ -430,7 +431,9 @@ class _calendarState extends State<calendar> {
 
   @override
   void initState() {
-    // TODO: implement initState
+    // TODO: implement initStatedouble.parse
+    count = DateTime.now().month.toDouble() - 1;
+    // _updateMonthCount(scheduleCounts2, scheduleCounts);
     super.initState();
   }
 
@@ -466,6 +469,20 @@ class _calendarState extends State<calendar> {
                       scheduleCounts.reduce((a, b) => a + b);
                   List<double> scheduleCounts2 =
                       spots2.map((spot) => spot.y).toList();
+/////////////////////////// 이번 달 퍼센트 구하기 =/////
+                  int value21 = count.toInt();
+                  double value2 = scheduleCounts2[value21];
+                  double value = scheduleCounts[value21];
+
+                  if (value > 0) {
+                    monthCount1 = (value2 / value) * 100;
+                  } else {
+                    monthCount1 = 0.0;
+                  }
+
+                  monthCount1 = double.parse(monthCount1.toStringAsFixed(1));
+                  ///////////////////////////
+                  // _updateMonthCount(scheduleCounts2, scheduleCounts);
                   // for (int i = 0; i < scheduleCounts2.length; i++) {
                   //   double value2 = scheduleCounts2[i];
                   //   double value = scheduleCounts[i];
@@ -501,136 +518,300 @@ class _calendarState extends State<calendar> {
                               SizedBox(
                                 height: c_size.height * 0.01,
                               ),
-                              Container(
-                                width: MediaQuery.of(context).size.width * 0.9,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.35,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(60),
-                                  color: Colors.white,
-                                ),
-                                child: AspectRatio(
-                                  aspectRatio: 2,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 15,
-                                      right: 28,
-                                      top: 22,
-                                      bottom: 10,
+                              Stack(
+                                children: [
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.9,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.35,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(60),
+                                      color: Colors.white,
                                     ),
-                                    child: LineChart(
-                                      LineChartData(
-                                        minY: 0,
-                                        maxY: maxYValue + 5,
-                                        lineTouchData:
-                                            const LineTouchData(enabled: false),
-                                        lineBarsData: [
-                                          LineChartBarData(
-                                            spots: spots2,
-                                            isCurved: true,
-                                            color: Colors.red,
-                                            barWidth: 4,
-                                            belowBarData:
-                                                BarAreaData(show: false),
-                                          ),
-                                          LineChartBarData(
-                                            spots: spots,
-                                            isCurved: true,
-                                            barWidth: 4,
-                                            color: Colors.black,
-                                            // belowBarData: BarAreaData(
-                                            //   show: true,
-                                            //   color: Colors.red,
-                                            //   cutOffY: cutOffYValue,
-                                            //   applyCutOffY: true,
-                                            // ),
-                                            // aboveBarData: BarAreaData(
-                                            //   show: true,
-                                            //   color: Colors.blue,
-                                            //   cutOffY: cutOffYValue,
-                                            //   applyCutOffY: true,
-                                            // ),
-                                            dotData: const FlDotData(
-                                              show: false,
-                                            ),
-                                          ),
-                                        ],
-                                        titlesData: FlTitlesData(
-                                          show: true,
-                                          topTitles: const AxisTitles(
-                                            sideTitles:
-                                                SideTitles(showTitles: false),
-                                          ),
-                                          rightTitles: const AxisTitles(
-                                            sideTitles:
-                                                SideTitles(showTitles: false),
-                                          ),
-                                          bottomTitles: AxisTitles(
-                                            axisNameWidget: Text(
-                                              '2024',
-                                              style: TextStyle(
-                                                fontSize: 10,
-                                                color: Colors.red,
-                                                fontWeight: FontWeight.bold,
+                                    child: change_Chart
+                                        ? AspectRatio(
+                                            aspectRatio: 2,
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                left: 15,
+                                                right: 28,
+                                                top: 22,
+                                                bottom: 10,
                                               ),
-                                            ),
-                                            sideTitles: SideTitles(
-                                              showTitles: true,
-                                              reservedSize: 18,
-                                              interval: 1,
-                                              getTitlesWidget:
-                                                  bottomTitleWidgets,
-                                            ),
-                                          ),
-                                          leftTitles: AxisTitles(
-                                            axisNameSize: 20,
-                                            axisNameWidget: const Text(
-                                              '일정갯수',
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                              ),
-                                            ),
-                                            sideTitles: SideTitles(
-                                              showTitles: true,
-                                              interval: 5,
-                                              reservedSize: 40,
-                                              getTitlesWidget: (double value,
-                                                  TitleMeta meta) {
-                                                if (value % 5 == 0) {
-                                                  // 5의 배수인 경우에만 표시
-                                                  return Text(
-                                                      value.toInt().toString(),
-                                                      style: TextStyle(
+                                              child: LineChart(
+                                                LineChartData(
+                                                  minY: 0,
+                                                  maxY: maxYValue + 5,
+                                                  lineTouchData:
+                                                      const LineTouchData(
+                                                          enabled: false),
+                                                  lineBarsData: [
+                                                    LineChartBarData(
+                                                      spots: spots2,
+                                                      isCurved: true,
+                                                      color: Colors.red,
+                                                      barWidth: 4,
+                                                      belowBarData: BarAreaData(
+                                                          show: false),
+                                                    ),
+                                                    LineChartBarData(
+                                                      spots: spots,
+                                                      isCurved: true,
+                                                      barWidth: 4,
+                                                      color: Colors.black,
+                                                      // belowBarData: BarAreaData(
+                                                      //   show: true,
+                                                      //   color: Colors.red,
+                                                      //   cutOffY: cutOffYValue,
+                                                      //   applyCutOffY: true,
+                                                      // ),
+                                                      // aboveBarData: BarAreaData(
+                                                      //   show: true,
+                                                      //   color: Colors.blue,
+                                                      //   cutOffY: cutOffYValue,
+                                                      //   applyCutOffY: true,
+                                                      // ),
+                                                      dotData: const FlDotData(
+                                                        show: false,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                  titlesData: FlTitlesData(
+                                                    show: true,
+                                                    topTitles: const AxisTitles(
+                                                      sideTitles: SideTitles(
+                                                          showTitles: false),
+                                                    ),
+                                                    rightTitles:
+                                                        const AxisTitles(
+                                                      sideTitles: SideTitles(
+                                                          showTitles: false),
+                                                    ),
+                                                    bottomTitles: AxisTitles(
+                                                      axisNameWidget: Text(
+                                                        '2024',
+                                                        style: TextStyle(
+                                                          fontSize: 10,
+                                                          color: Colors.red,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                      sideTitles: SideTitles(
+                                                        showTitles: true,
+                                                        reservedSize: 18,
+                                                        interval: 1,
+                                                        getTitlesWidget:
+                                                            bottomTitleWidgets,
+                                                      ),
+                                                    ),
+                                                    leftTitles: AxisTitles(
+                                                      axisNameSize: 20,
+                                                      axisNameWidget:
+                                                          const Text(
+                                                        '일정갯수',
+                                                        style: TextStyle(
                                                           color: Colors.black,
-                                                          fontSize: 12));
-                                                }
-                                                return Container();
-                                              },
+                                                        ),
+                                                      ),
+                                                      sideTitles: SideTitles(
+                                                        showTitles: true,
+                                                        interval: 5,
+                                                        reservedSize: 40,
+                                                        getTitlesWidget: (double
+                                                                value,
+                                                            TitleMeta meta) {
+                                                          if (value % 5 == 0) {
+                                                            // 5의 배수인 경우에만 표시
+                                                            return Text(
+                                                                value
+                                                                    .toInt()
+                                                                    .toString(),
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontSize:
+                                                                        12));
+                                                          }
+                                                          return Container();
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  borderData: FlBorderData(
+                                                    show: true,
+                                                    border: Border.all(
+                                                      color: Colors.green,
+                                                    ),
+                                                  ),
+                                                  gridData: FlGridData(
+                                                    show: true,
+                                                    drawVerticalLine: false,
+                                                    horizontalInterval: 1,
+                                                    checkToShowHorizontalLine:
+                                                        (double value) {
+                                                      return value == 1 ||
+                                                          value == 6 ||
+                                                          value == 4 ||
+                                                          value == 5;
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        : Padding(
+                                            padding: const EdgeInsets.only(
+                                              left: 15,
+                                              right: 28,
+                                              top: 22,
+                                              bottom: 10,
+                                            ),
+                                            child: BarChart(
+                                              BarChartData(
+                                                maxY: maxYValue + 5,
+                                                minY: 0,
+                                                barGroups: [
+                                                  BarChartGroupData(
+                                                    x: 1, // x축 인덱스
+                                                    barRods: [
+                                                      BarChartRodData(
+                                                        toY: spots2[0]
+                                                            .y, // 첫 번째 값
+                                                        color: Colors.red,
+                                                        width: 10,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  BarChartGroupData(
+                                                    x: 2, // x축 인덱스
+                                                    barRods: [
+                                                      BarChartRodData(
+                                                        toY: spots[0]
+                                                            .y, // 첫 번째 값
+                                                        color: Colors.black,
+                                                        width: 10,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  // 추가 데이터
+                                                  for (int i = 1;
+                                                      i < spots2.length;
+                                                      i++)
+                                                    BarChartGroupData(
+                                                      x: i + 2,
+                                                      barRods: [
+                                                        BarChartRodData(
+                                                          toY: spots2[i].y,
+                                                          color: Colors.red,
+                                                          width: 10,
+                                                        ),
+                                                        BarChartRodData(
+                                                          toY: spots[i].y,
+                                                          color: Colors.black,
+                                                          width: 10,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                ],
+                                                titlesData: FlTitlesData(
+                                                  show: true,
+                                                  topTitles: const AxisTitles(
+                                                    sideTitles: SideTitles(
+                                                        showTitles: false),
+                                                  ),
+                                                  rightTitles: const AxisTitles(
+                                                    sideTitles: SideTitles(
+                                                        showTitles: false),
+                                                  ),
+                                                  bottomTitles: AxisTitles(
+                                                    axisNameWidget: Text(
+                                                      '2024',
+                                                      style: TextStyle(
+                                                        fontSize: 10,
+                                                        color: Colors.red,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    sideTitles: SideTitles(
+                                                      showTitles: true,
+                                                      reservedSize: 18,
+                                                      interval: 1,
+                                                      getTitlesWidget:
+                                                          bottomTitleWidgets,
+                                                    ),
+                                                  ),
+                                                  leftTitles: AxisTitles(
+                                                    axisNameSize: 20,
+                                                    axisNameWidget: const Text(
+                                                      '일정갯수',
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                      ),
+                                                    ),
+                                                    sideTitles: SideTitles(
+                                                      showTitles: true,
+                                                      interval: 5,
+                                                      reservedSize: 40,
+                                                      getTitlesWidget:
+                                                          (double value,
+                                                              TitleMeta meta) {
+                                                        if (value % 5 == 0) {
+                                                          return Text(
+                                                              value
+                                                                  .toInt()
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontSize:
+                                                                      12));
+                                                        }
+                                                        return Container();
+                                                      },
+                                                    ),
+                                                  ),
+                                                ),
+                                                borderData: FlBorderData(
+                                                  show: true,
+                                                  border: Border.all(
+                                                    color: Colors.green,
+                                                  ),
+                                                ),
+                                                gridData: FlGridData(
+                                                  show: true,
+                                                  drawVerticalLine: false,
+                                                  horizontalInterval: 1,
+                                                  checkToShowHorizontalLine:
+                                                      (double value) {
+                                                    return value == 1 ||
+                                                        value == 6 ||
+                                                        value == 4 ||
+                                                        value == 5;
+                                                  },
+                                                ),
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        borderData: FlBorderData(
-                                          show: true,
-                                          border: Border.all(
-                                            color: Colors.green,
-                                          ),
-                                        ),
-                                        gridData: FlGridData(
-                                          show: true,
-                                          drawVerticalLine: false,
-                                          horizontalInterval: 1,
-                                          checkToShowHorizontalLine:
-                                              (double value) {
-                                            return value == 1 ||
-                                                value == 6 ||
-                                                value == 4 ||
-                                                value == 5;
-                                          },
-                                        ),
-                                      ),
+                                  ),
+                                  Positioned(
+                                    // bottom: 1.0,
+                                    right: 1.0,
+                                    child: FloatingActionButton(
+                                      backgroundColor: Colors.black,
+                                      onPressed: () {
+                                        setState(() {
+                                          change_Chart = !change_Chart;
+                                        });
+                                        print(change_Chart);
+                                      },
+                                      child: Icon(Icons.add),
+                                      tooltip: 'Add Schedule',
                                     ),
                                   ),
-                                ),
+                                ],
                               ),
                               // ElevatedButton(
                               //     onPressed: () {
