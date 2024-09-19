@@ -40,19 +40,23 @@ class _calendarState extends State<calendar> {
     Map<int, int> Clear_dateCounts = {};
 
     for (var doc in documents) {
-      for (var timestamp in doc['dates']) {
-        DateTime fullDateTime = (timestamp as Timestamp).toDate();
-        DateTime dates = fullDateTime;
-        // 시간 부분을 제거하고 year, month, day만 사용합니다.
-        // DateTime dates = (timestamp as Timestamp).toDate();
-        // print("dates${dates.month}");
-        if (Clear_dateCounts.containsKey(dates.month)) {
-          // 특정키가 map에 존재하는지 여부. ??
-          Clear_dateCounts[dates.month] = Clear_dateCounts[dates.month]! + 1;
-        } else {
-          Clear_dateCounts[dates.month] = 1;
+      if (doc["year"] == DateTime.now().year) {
+        for (var timestamp in doc['dates']) {
+          DateTime fullDateTime = (timestamp as Timestamp).toDate();
+          DateTime dates = fullDateTime;
+          // 시간 부분을 제거하고 year, month, day만 사용합니다.
+          // DateTime dates = (timestamp as Timestamp).toDate();
+          // print("dates${dates.month}");
+          if (Clear_dateCounts.containsKey(dates.month)) {
+            // 특정키가 map에 존재하는지 여부. ??
+            Clear_dateCounts[dates.month] = Clear_dateCounts[dates.month]! + 1;
+          } else {
+            Clear_dateCounts[dates.month] = 1;
+          }
+          // print("Clear_dateCounts$Clear_dateCounts");
         }
-        // print("Clear_dateCounts$Clear_dateCounts");
+      } else {
+        print("해당 년도에는 데이터가 없습니다.");
       }
     }
     // FlSpot 리스트 생성
@@ -85,7 +89,10 @@ class _calendarState extends State<calendar> {
       String options = doc['option'];
       int month = doc['month'];
 
-      if (options != null && monthCounts != null && YMD_now != null) {
+      if (options != null &&
+          monthCounts != null &&
+          YMD_now != null &&
+          YMD_now.year == DateTime.now().year) {
         bool hasMonthChanged =
             //  DateTime.now().year != YMD_now.year ||
             DateTime.now().month != YMD_now.month;
@@ -342,40 +349,40 @@ class _calendarState extends State<calendar> {
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
     String text;
     switch (value.toInt()) {
-      case 0:
+      case 1:
         text = 'Jan';
         break;
-      case 1:
+      case 2:
         text = 'Feb';
         break;
-      case 2:
+      case 3:
         text = 'Mar';
         break;
-      case 3:
+      case 4:
         text = 'Apr';
         break;
-      case 4:
+      case 5:
         text = 'May';
         break;
-      case 5:
+      case 6:
         text = 'Jun';
         break;
-      case 6:
+      case 7:
         text = 'Jul';
         break;
-      case 7:
+      case 8:
         text = 'Aug';
         break;
-      case 8:
+      case 9:
         text = 'Sep';
         break;
-      case 9:
+      case 10:
         text = 'Oct';
         break;
-      case 10:
+      case 11:
         text = 'Nov';
         break;
-      case 11:
+      case 12:
         text = 'Dec';
         break;
       default:
@@ -439,7 +446,7 @@ class _calendarState extends State<calendar> {
 
   @override
   Widget build(BuildContext context) {
-    const cutOffYValue = 5.0;
+    // const cutOffYValue = 5.0;
 
     return Scaffold(
       // appBar: AppBar(
@@ -536,7 +543,7 @@ class _calendarState extends State<calendar> {
                                               padding: const EdgeInsets.only(
                                                 left: 15,
                                                 right: 28,
-                                                top: 22,
+                                                top: 30,
                                                 bottom: 10,
                                               ),
                                               child: LineChart(
@@ -547,6 +554,7 @@ class _calendarState extends State<calendar> {
                                                       const LineTouchData(
                                                           enabled: false),
                                                   lineBarsData: [
+                                                    // 추가 데이터
                                                     LineChartBarData(
                                                       spots: spots2,
                                                       isCurved: true,
@@ -560,18 +568,6 @@ class _calendarState extends State<calendar> {
                                                       isCurved: true,
                                                       barWidth: 4,
                                                       color: Colors.black,
-                                                      // belowBarData: BarAreaData(
-                                                      //   show: true,
-                                                      //   color: Colors.red,
-                                                      //   cutOffY: cutOffYValue,
-                                                      //   applyCutOffY: true,
-                                                      // ),
-                                                      // aboveBarData: BarAreaData(
-                                                      //   show: true,
-                                                      //   color: Colors.blue,
-                                                      //   cutOffY: cutOffYValue,
-                                                      //   applyCutOffY: true,
-                                                      // ),
                                                       dotData: const FlDotData(
                                                         show: false,
                                                       ),
@@ -590,7 +586,7 @@ class _calendarState extends State<calendar> {
                                                     ),
                                                     bottomTitles: AxisTitles(
                                                       axisNameWidget: Text(
-                                                        '2024',
+                                                        " ${DateTime.now().year}",
                                                         style: TextStyle(
                                                           fontSize: 10,
                                                           color: Colors.red,
@@ -628,11 +624,12 @@ class _calendarState extends State<calendar> {
                                                                 value
                                                                     .toInt()
                                                                     .toString(),
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .black,
-                                                                    fontSize:
-                                                                        12));
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontSize: 15,
+                                                                ));
                                                           }
                                                           return Container();
                                                         },
@@ -665,7 +662,7 @@ class _calendarState extends State<calendar> {
                                             padding: const EdgeInsets.only(
                                               left: 15,
                                               right: 28,
-                                              top: 22,
+                                              top: 30,
                                               bottom: 10,
                                             ),
                                             child: BarChart(
@@ -673,44 +670,22 @@ class _calendarState extends State<calendar> {
                                                 maxY: maxYValue + 5,
                                                 minY: 0,
                                                 barGroups: [
-                                                  BarChartGroupData(
-                                                    x: 1, // x축 인덱스
-                                                    barRods: [
-                                                      BarChartRodData(
-                                                        toY: spots2[0]
-                                                            .y, // 첫 번째 값
-                                                        color: Colors.red,
-                                                        width: 10,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  BarChartGroupData(
-                                                    x: 2, // x축 인덱스
-                                                    barRods: [
-                                                      BarChartRodData(
-                                                        toY: spots[0]
-                                                            .y, // 첫 번째 값
-                                                        color: Colors.black,
-                                                        width: 10,
-                                                      ),
-                                                    ],
-                                                  ),
                                                   // 추가 데이터
                                                   for (int i = 1;
                                                       i < spots2.length;
                                                       i++)
                                                     BarChartGroupData(
-                                                      x: i + 2,
+                                                      x: i,
                                                       barRods: [
                                                         BarChartRodData(
                                                           toY: spots2[i].y,
                                                           color: Colors.red,
-                                                          width: 10,
+                                                          width: 6,
                                                         ),
                                                         BarChartRodData(
                                                           toY: spots[i].y,
                                                           color: Colors.black,
-                                                          width: 10,
+                                                          width: 6,
                                                         ),
                                                       ],
                                                     ),
@@ -727,7 +702,7 @@ class _calendarState extends State<calendar> {
                                                   ),
                                                   bottomTitles: AxisTitles(
                                                     axisNameWidget: Text(
-                                                      '2024',
+                                                      " ${DateTime.now().year}",
                                                       style: TextStyle(
                                                         fontSize: 10,
                                                         color: Colors.red,
@@ -738,7 +713,7 @@ class _calendarState extends State<calendar> {
                                                     sideTitles: SideTitles(
                                                       showTitles: true,
                                                       reservedSize: 18,
-                                                      interval: 1,
+                                                      interval: 2,
                                                       getTitlesWidget:
                                                           bottomTitleWidgets,
                                                     ),
@@ -767,7 +742,7 @@ class _calendarState extends State<calendar> {
                                                                   color: Colors
                                                                       .black,
                                                                   fontSize:
-                                                                      12));
+                                                                      15));
                                                         }
                                                         return Container();
                                                       },
@@ -797,33 +772,77 @@ class _calendarState extends State<calendar> {
                                           ),
                                   ),
                                   Positioned(
+                                    top: 1.0,
+                                    left: 85,
+                                    child: Column(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              // 빨간색 범례
+                                              Row(
+                                                children: [
+                                                  Container(
+                                                    width: 11,
+                                                    height: 11,
+                                                    color: Colors.red, // 빨간색
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  const Text('완료된 일정',
+                                                      style: TextStyle(
+                                                          fontSize: 10)),
+                                                ],
+                                              ),
+                                              const SizedBox(width: 20),
+                                              // 검은색 범례
+                                              Row(
+                                                children: [
+                                                  Container(
+                                                    width: 11,
+                                                    height: 11,
+                                                    color: Colors.black, // 검은색
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  const Text('전체 일정',
+                                                      style: TextStyle(
+                                                          fontSize: 10)),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Positioned(
                                     // bottom: 1.0,
                                     right: 1.0,
                                     child: FloatingActionButton(
-                                      backgroundColor: Colors.black,
+                                      backgroundColor: Colors.white,
                                       onPressed: () {
                                         setState(() {
                                           change_Chart = !change_Chart;
                                         });
                                         print(change_Chart);
                                       },
-                                      child: Icon(Icons.add),
+                                      child: change_Chart
+                                          ? Icon(
+                                              Icons.bar_chart_outlined,
+                                              size: 50,
+                                            )
+                                          : Icon(
+                                              Icons.line_axis_rounded,
+                                              size: 50,
+                                              // color: Colors.lightBlue[59],
+                                            ),
                                       tooltip: 'Add Schedule',
                                     ),
                                   ),
                                 ],
                               ),
-                              // ElevatedButton(
-                              //     onPressed: () {
-                              //       print("spots");
-                              //       print(totalSchedules);
-                              //       print("spots");
-                              //       print("spots2");
-                              //       print(totalSchedules2);
-                              //       print("spots2");
-                              //     },
-                              //     child: Text(
-                              //         "달성률 ${(totalSchedules2 / totalSchedules) * 100}")),
                               SizedBox(
                                 height:
                                     MediaQuery.of(context).size.height * 0.03,
@@ -859,7 +878,12 @@ class _calendarState extends State<calendar> {
                                               0.02,
                                         ),
                                         Text(
-                                          " ${((totalSchedules2 / totalSchedules) * 100).toStringAsFixed(1)}%",
+                                          // null 또는 0 체크
+                                          totalSchedules == 0 ||
+                                                  totalSchedules == null ||
+                                                  totalSchedules2 == null
+                                              ? "0%"
+                                              : "${((totalSchedules2 / totalSchedules) * 100).toStringAsFixed(1)}%",
                                           style: TextStyle(fontSize: 40),
                                         )
                                       ],
