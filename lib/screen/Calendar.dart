@@ -90,9 +90,11 @@ class _calendarState extends State<calendar> {
       int month = doc['month'];
 
       if (options != null &&
-          monthCounts != null &&
-          YMD_now != null &&
-          YMD_now.year == DateTime.now().year) {
+              monthCounts != null &&
+              YMD_now != null &&
+              YMD_now.year == DateTime.now().year &&
+              YMD_now.isBefore(DateTime.now()) ||
+          YMD_now.isAtSameMomentAs(DateTime.now())) {
         bool hasMonthChanged =
             //  DateTime.now().year != YMD_now.year ||
             DateTime.now().month != YMD_now.month;

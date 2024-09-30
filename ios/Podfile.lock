@@ -999,6 +999,8 @@ PODS:
     - Flutter
   - flutter_localization (0.0.1):
     - Flutter
+  - flutter_native_splash (0.0.1):
+    - Flutter
   - GoogleUtilities/Environment (7.13.3):
     - GoogleUtilities/Privacy
     - PromisesObjC (< 3.0, >= 1.2)
@@ -1103,6 +1105,7 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_localization (from `.symlinks/plugins/flutter_localization/ios`)
+  - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
 
 SPEC REPOS:
@@ -1135,6 +1138,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_local_notifications/ios"
   flutter_localization:
     :path: ".symlinks/plugins/flutter_localization/ios"
+  flutter_native_splash:
+    :path: ".symlinks/plugins/flutter_native_splash/ios"
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
 
@@ -1154,6 +1159,7 @@ SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_local_notifications: 4cde75091f6327eb8517fa068a0a5950212d2086
   flutter_localization: f43b18844a2b3d2c71fd64f04ffd6b1e64dd54d4
+  flutter_native_splash: edf599c81f74d093a4daf8e17bd7a018854bc778
   GoogleUtilities: ea963c370a38a8069cc5f7ba4ca849a60b6d7d15
   "gRPC-C++": e725ef63c4475d7cdb7e2cf16eb0fde84bd9ee51
   gRPC-Core: eee4be35df218649fe66d721a05a7f27a28f069b

@@ -58,10 +58,15 @@ class _MyWidgetState extends State<Mainpage> {
 
   Stream<List<DocumentSnapshot>> _combineStreams() {
     // "매일" 옵션 문서 가져오기
+    DateTime now = DateTime.now();
+
     Stream<QuerySnapshot> dailyStream = FirebaseFirestore.instance
         .collection('Calender')
         .where('option', isEqualTo: "매일")
         .where('userid', isEqualTo: UserManager.userId)
+        // .where('year', isLessThanOrEqualTo: now.year) // 연도가 현재 연도보다 크지 않음
+        // .where('month', isLessThanOrEqualTo: now.month) // 월이 현재 월보다 크지 않음
+        // .where('day', isLessThanOrEqualTo: now.day) // 일이 현재 일보다 크지 않음
         .snapshots();
 
     // "주중" 옵션 문서 가져오기 (월요일부터 금요일까지)
@@ -126,7 +131,13 @@ class _MyWidgetState extends State<Mainpage> {
           ...e.docs,
           ...f.docs
         ];
-        return combinedDocs;
+        // 현재보다 미래인 날짜를 제외하는 필터링 작업
+        List<DocumentSnapshot> filteredDocs = combinedDocs.where((doc) {
+          DateTime dataDate = DateTime(doc["year"], doc["month"], doc["day"]);
+          return dataDate.isBefore(now) || dataDate.isAtSameMomentAs(now);
+        }).toList();
+
+        return filteredDocs;
       },
     );
   }
@@ -202,7 +213,15 @@ class _MyWidgetState extends State<Mainpage> {
           ...e.docs,
           ...f.docs
         ];
-        return combinedDocs;
+        //  DateTime now = DateTime.now();
+        // 현재보다 미래인 날짜를 제외하는 필터링 작업
+        List<DocumentSnapshot> filteredDocs = combinedDocs.where((doc) {
+          DateTime dataDate = DateTime(doc["year"], doc["month"], doc["day"]);
+          return dataDate.isBefore(selectedDate_) ||
+              dataDate.isAtSameMomentAs(selectedDate_);
+        }).toList();
+
+        return filteredDocs;
       },
     );
   }
@@ -491,6 +510,8 @@ class _MyWidgetState extends State<Mainpage> {
                                                 initialCount:
                                                     uniqueDocuments.length);
                                       });
+
+                                      print(uniqueDocuments);
                                       // 시간과 분을 기준으로 정렬
                                       uniqueDocuments.sort((a, b) {
                                         final dataA =
@@ -526,6 +547,11 @@ class _MyWidgetState extends State<Mainpage> {
                                           final data = doc.data()
                                               as Map<String, dynamic>;
                                           DateTime now = DateTime.now();
+                                          print(data);
+                                          print(DateTime(data["year"],
+                                              data["month"], data["day"]));
+                                          // DateTime(data["year"],data["month"],data["day"]);
+                                          // if (data[""])
                                           DateTime scheduleTime = DateTime(
                                             now.year,
                                             now.month,

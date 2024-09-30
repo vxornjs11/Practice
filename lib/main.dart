@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:practice_01_app/firebase_options.dart';
 import 'package:practice_01_app/home.dart';
@@ -45,6 +46,9 @@ class UserManager {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -52,6 +56,7 @@ void main() async {
   // 사용자 아이디 저장
   await UserManager.initializeUserId();
   runApp(MyApp());
+  FlutterNativeSplash.remove();
 }
 
 class MyApp extends StatelessWidget {

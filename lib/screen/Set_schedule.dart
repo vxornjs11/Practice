@@ -185,18 +185,39 @@ class __Set_schedulState extends State<Set_schedul> {
         );
         break;
       case '주중':
-        for (int i = 1; i <= 5; i++) {
+        // 현재 요일을 가져오기
+        int currentWeekday = dateTime.weekday;
+        //// 씨이이이발 알람을 두번하잖아 ㅋㅋ
+        // 첫 주의 남은 주중 날짜에만 알림 설정 (수요일 이후)
+        for (int i = currentWeekday; i <= DateTime.friday; i++) {
           await flutterLocalNotificationsPlugin.zonedSchedule(
             i, // 고유한 ID
             '일정 알림', // 알림 제목
             message, // 알림 메시지
-            _nextInstanceOfWeekday(dateTime, i), // 다음 주중 날짜 계산
+            _nextInstanceOfWeekday(dateTime, i), // 주중 날짜 계산 (수요일 이후)
+            platformChannelSpecifics,
+            uiLocalNotificationDateInterpretation:
+                UILocalNotificationDateInterpretation.absoluteTime,
+            androidAllowWhileIdle: true, // 백그라운드에서도 알림을 허용
+            // matchDateTimeComponents 생략: 주중 특정 날짜에만 한 번 알림 설정
+          );
+        }
+
+        // 첫 주 이후, 즉 다음 주부터는 월요일부터 금요일까지 알림 설정
+        // 첫 주 알림이 중복되지 않도록, 다음 주 월요일부터 시작
+        for (int i = DateTime.monday; i <= DateTime.friday; i++) {
+          await flutterLocalNotificationsPlugin.zonedSchedule(
+            i + 100, // 다른 고유한 ID (중복 방지)
+            '일정 알림', // 알림 제목
+            message, // 알림 메시지
+            _nextInstanceOfWeekday(
+                dateTime.add(Duration(days: 7)), i), // 다음 주부터 월~금 알림 설정
             platformChannelSpecifics,
             uiLocalNotificationDateInterpretation:
                 UILocalNotificationDateInterpretation.absoluteTime,
             androidAllowWhileIdle: true,
             matchDateTimeComponents:
-                DateTimeComponents.dayOfWeekAndTime, // 매주 특정 요일에 반복
+                DateTimeComponents.dayOfWeekAndTime, // 매주 반복되는 주중 알림
           );
         }
         break;
@@ -307,9 +328,16 @@ class __Set_schedulState extends State<Set_schedul> {
       dateTime.hour,
       dateTime.minute,
     );
-    while (scheduledDate.weekday != weekday) {
+
+    // 주어진 요일에 맞는 날짜가 오늘보다 이전이면 다음 주로 설정
+    while (scheduledDate.weekday != weekday ||
+        scheduledDate.isBefore(tz.TZDateTime.now(tz.local))) {
       scheduledDate = scheduledDate.add(Duration(days: 1));
+      print("dateTime${dateTime.weekday}");
+      print("scheduledDate1$scheduledDate");
+      print("scheduledDate2${scheduledDate.weekday}");
     }
+
     return scheduledDate;
   }
 
