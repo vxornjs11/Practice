@@ -186,40 +186,27 @@ class __Set_schedulState extends State<Set_schedul> {
         break;
       case '주중':
         // 현재 요일을 가져오기
-        int currentWeekday = dateTime.weekday;
-        //// 씨이이이발 알람을 두번하잖아 ㅋㅋ
-        // 첫 주의 남은 주중 날짜에만 알림 설정 (수요일 이후)
-        for (int i = currentWeekday; i <= DateTime.friday; i++) {
-          await flutterLocalNotificationsPlugin.zonedSchedule(
-            i, // 고유한 ID
+        // int currentWeekday = dateTime.weekday;
+        tz.TZDateTime schedule = tz.TZDateTime(
+          tz.local,
+          dateTime.year,
+          dateTime.month,
+          dateTime.day,
+          dateTime.hour,
+          dateTime.minute,
+        );
+        await flutterLocalNotificationsPlugin.zonedSchedule(
+            10, // 고유한 ID
             '일정 알림', // 알림 제목
             message, // 알림 메시지
-            _nextInstanceOfWeekday(dateTime, i), // 주중 날짜 계산 (수요일 이후)
+            schedule,
             platformChannelSpecifics,
             uiLocalNotificationDateInterpretation:
                 UILocalNotificationDateInterpretation.absoluteTime,
             androidAllowWhileIdle: true, // 백그라운드에서도 알림을 허용
+            payload: "set_weekly_alarm1"
             // matchDateTimeComponents 생략: 주중 특정 날짜에만 한 번 알림 설정
-          );
-        }
-
-        // 첫 주 이후, 즉 다음 주부터는 월요일부터 금요일까지 알림 설정
-        // 첫 주 알림이 중복되지 않도록, 다음 주 월요일부터 시작
-        for (int i = DateTime.monday; i <= DateTime.friday; i++) {
-          await flutterLocalNotificationsPlugin.zonedSchedule(
-            i + 100, // 다른 고유한 ID (중복 방지)
-            '일정 알림', // 알림 제목
-            message, // 알림 메시지
-            _nextInstanceOfWeekday(
-                dateTime.add(Duration(days: 7)), i), // 다음 주부터 월~금 알림 설정
-            platformChannelSpecifics,
-            uiLocalNotificationDateInterpretation:
-                UILocalNotificationDateInterpretation.absoluteTime,
-            androidAllowWhileIdle: true,
-            matchDateTimeComponents:
-                DateTimeComponents.dayOfWeekAndTime, // 매주 반복되는 주중 알림
-          );
-        }
+            );
         break;
       case '주말':
         for (int i = 6; i <= 7; i++) {
@@ -228,7 +215,7 @@ class __Set_schedulState extends State<Set_schedul> {
             i + 5, // 고유한 ID 설정 (주중 알림 ID와 겹치지 않도록 5를 더함)
             '일정 알림', // 알림 제목
             message, // 알림 메시지
-            _nextInstanceOfWeekend(dateTime, i), // 다음 주말 날짜 계산
+            scheduledDate,
             platformChannelSpecifics,
             uiLocalNotificationDateInterpretation:
                 UILocalNotificationDateInterpretation.absoluteTime,
@@ -318,61 +305,52 @@ class __Set_schedulState extends State<Set_schedul> {
     }
   }
 
-  /// 다음 주중 날짜를 계산하는 함수
-  tz.TZDateTime _nextInstanceOfWeekday(DateTime dateTime, int weekday) {
-    tz.TZDateTime scheduledDate = tz.TZDateTime(
-      tz.local,
-      dateTime.year,
-      dateTime.month,
-      dateTime.day,
-      dateTime.hour,
-      dateTime.minute,
+  Future<void> _setWeeklyAlarm() async {
+    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+    // 현재 날짜에서 가장 가까운 금요일로 설정
+    tz.TZDateTime nextWeekly = _nextInstanceOfFriday(now);
+
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      1,
+      '주간 반복 알람',
+      '매주 평일에 반복되는 알람입니다.',
+      nextWeekly,
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'weekly_channel_id',
+          'weekly_channel_name',
+          channelDescription: '주간 반복 알람',
+          importance: Importance.max,
+          priority: Priority.high,
+        ),
+      ),
+      androidAllowWhileIdle: true,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime, // 주간 반복 설정
     );
-
-    // 주어진 요일에 맞는 날짜가 오늘보다 이전이면 다음 주로 설정
-    while (scheduledDate.weekday != weekday ||
-        scheduledDate.isBefore(tz.TZDateTime.now(tz.local))) {
-      scheduledDate = scheduledDate.add(Duration(days: 1));
-      print("dateTime${dateTime.weekday}");
-      print("scheduledDate1$scheduledDate");
-      print("scheduledDate2${scheduledDate.weekday}");
-    }
-
-    return scheduledDate;
   }
 
-  /// 다음 주말 날짜를 계산하는 함수
-  tz.TZDateTime _nextInstanceOfWeekend(DateTime dateTime, int weekendDay) {
-    tz.TZDateTime scheduledDate = tz.TZDateTime(
+  tz.TZDateTime _nextInstanceOfFriday(tz.TZDateTime now) {
+    tz.TZDateTime schedule = tz.TZDateTime(
       tz.local,
-      dateTime.year,
-      dateTime.month,
-      dateTime.day,
-      dateTime.hour,
-      dateTime.minute,
+      _selectedDate.year,
+      _selectedDate.month,
+      _selectedDate.day,
+      _selectedDate.hour,
+      _selectedDate.minute,
     );
-    while (scheduledDate.weekday != weekendDay) {
-      scheduledDate = scheduledDate.add(Duration(days: 1));
-    }
-    return scheduledDate;
+
+    return schedule;
   }
 
-  // makeDate(){
-  //   var now =tz.TZDateTime.now(tz.local);
-  //   var when = tz.TZDateTime(tz.local,now.year)
-  // }
-
-  // Future<void> _addNewDocument(String newTitle) async {
-  //   try {
-  //     await _firestore.collection('newCollection').add({
-  //       'title': newTitle,
-  //       // 'created_at': Timestamp.now(),
-  //     });
-  //     print('새 문서가 성공적으로 추가되었습니다.');
-  //   } catch (e) {
-  //     print('문서 추가 중 오류가 발생했습니다: $e');
-  //   }
-  // }
+  // 알람이 울렸을 때 호출될 함수
+  void _onAlarmTriggered(String? payload) {
+    if (payload == 'set_weekly_alarm1') {
+      _setWeeklyAlarm(); // 주간 반복 알람 설정
+      print("objectobjec되면집에간다tobjectobject");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1041,8 +1019,7 @@ class __Set_schedulState extends State<Set_schedul> {
                   )));
         });
   }
-}// end
-
+} // end
 
 // {
 //     "user_id": {
