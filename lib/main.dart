@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:practice_01_app/firebase_options.dart';
@@ -12,6 +13,9 @@ import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
+import 'package:background_fetch/background_fetch.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tz;
 
 class UserManager {
   static String? userId;
@@ -52,9 +56,11 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
+  WidgetsFlutterBinding.ensureInitialized();
+  initBackgroundFetch(); // 백그라운드 페치 초기화
   // 사용자 아이디 저장
   await UserManager.initializeUserId();
+  // initBackgroundFetch(); // 백그라운드 페치 초기화
   runApp(MyApp());
   FlutterNativeSplash.remove();
 }
@@ -92,4 +98,72 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
+}
+
+late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+// 백그라운드 페치 초기화
+void initBackgroundFetch() {
+  BackgroundFetch.configure(
+    BackgroundFetchConfig(
+      minimumFetchInterval: 15, // 15분마다 실행
+      stopOnTerminate: false, // 앱이 종료되어도 실행
+      enableHeadless: true, // 앱이 완전히 종료된 상태에서 실행 가능
+    ),
+    (String taskId) async {
+      print("[BackgroundFetch] 백그라운드 작업 실행됨: $taskId");
+
+      // payload 확인 후 "주중" 알람만 처리
+      if (taskId == 'weekday') {
+        print('주중 알람 처리');
+
+        // 주간 반복 알람 설정 함수 (월~금)
+        Future<void> _setWeekdayAlarms() async {
+          const List<int> weekdays = [
+            DateTime.monday,
+            DateTime.tuesday,
+            DateTime.wednesday,
+            DateTime.thursday,
+            DateTime.friday
+          ];
+
+          for (int weekday in weekdays) {
+            final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+
+            await flutterLocalNotificationsPlugin.zonedSchedule(
+              weekday, // 각 요일에 고유한 ID 사용
+              '주중 반복 알람', // 알람 제목
+              '주중 반복 알람입니다.', // 알람 내용
+              now,
+              const NotificationDetails(
+                android: AndroidNotificationDetails(
+                  'weekday_repeat_channel_id',
+                  'Weekday Repeat Alarm',
+                  channelDescription: '주중 반복 알람 채널',
+                  importance: Importance.max,
+                  priority: Priority.high,
+                ),
+              ),
+              androidAllowWhileIdle: true,
+              uiLocalNotificationDateInterpretation:
+                  UILocalNotificationDateInterpretation.absoluteTime,
+              matchDateTimeComponents:
+                  DateTimeComponents.dayOfWeekAndTime, // 요일에 맞춰 반복 알람 설정
+            );
+            print('주중 알람 처리$weekday ㅏㅏㅏㅏ ');
+          }
+        }
+        // 주중 알람 처리 로직 추가
+      }
+
+      // 작업 종료
+      BackgroundFetch.finish(taskId);
+    },
+  ).then((int status) {
+    print("[BackgroundFetch] 초기화 성공: $status");
+  }).catchError((e) {
+    print("[BackgroundFetch] 초기화 에러: $e");
+  });
+
+  // 강제로 백그라운드 작업 실행 (테스트용)
+  BackgroundFetch.start();
 }

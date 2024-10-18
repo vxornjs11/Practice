@@ -154,7 +154,6 @@ class __Set_schedulState extends State<Set_schedul> {
     );
     final pendingNotifications =
         await flutterLocalNotificationsPlugin.pendingNotificationRequests();
-    print('Pending notifications: ${pendingNotifications.length}');
     const NotificationDetails platformChannelSpecifics = NotificationDetails(
         android: androidPlatformChannelSpecifics,
         iOS: DarwinNotificationDetails(
@@ -204,7 +203,7 @@ class __Set_schedulState extends State<Set_schedul> {
             uiLocalNotificationDateInterpretation:
                 UILocalNotificationDateInterpretation.absoluteTime,
             androidAllowWhileIdle: true, // 백그라운드에서도 알림을 허용
-            payload: "set_weekly_alarm1"
+            payload: "weekday"
             // matchDateTimeComponents 생략: 주중 특정 날짜에만 한 번 알림 설정
             );
         break;
@@ -264,14 +263,6 @@ class __Set_schedulState extends State<Set_schedul> {
                 UILocalNotificationDateInterpretation.absoluteTime,
             androidAllowWhileIdle: true,
           );
-          print("Scheduled yearly notification $id for ${tz.TZDateTime(
-            tz.local,
-            dateTime.year + i,
-            dateTime.month,
-            dateTime.day,
-            dateTime.hour,
-            dateTime.minute,
-          )}");
         }
         break;
 
@@ -342,14 +333,6 @@ class __Set_schedulState extends State<Set_schedul> {
     );
 
     return schedule;
-  }
-
-  // 알람이 울렸을 때 호출될 함수
-  void _onAlarmTriggered(String? payload) {
-    if (payload == 'set_weekly_alarm1') {
-      _setWeeklyAlarm(); // 주간 반복 알람 설정
-      print("objectobjec되면집에간다tobjectobject");
-    }
   }
 
   @override
@@ -697,9 +680,6 @@ class __Set_schedulState extends State<Set_schedul> {
                                   _selectedMinute,
                                 );
                               });
-                              print("_selectedDate");
-                              print(option);
-                              print("_selectedDate");
                               _scheduleNotification(
                                   _selectedDate, schedule_Write, option);
                             }
