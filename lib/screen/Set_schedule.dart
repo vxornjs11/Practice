@@ -1,4 +1,5 @@
 import 'dart:ffi';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -84,32 +85,32 @@ class __Set_schedulState extends State<Set_schedul> {
     timeText_1 = "오전";
     timeText_2 = "오후";
 
-    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    // flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+    // const AndroidInitializationSettings initializationSettingsAndroid =
+    //     AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    DarwinInitializationSettings iosInitializationSettings =
-        const DarwinInitializationSettings(
-      requestAlertPermission: false,
-      requestBadgePermission: false,
-      requestSoundPermission: false,
-    );
-    flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin>()
-        ?.requestPermissions(
-          alert: true,
-          badge: true,
-          sound: true,
-        );
+    // DarwinInitializationSettings iosInitializationSettings =
+    //     const DarwinInitializationSettings(
+    //   requestAlertPermission: false,
+    //   requestBadgePermission: false,
+    //   requestSoundPermission: false,
+    // );
+    // flutterLocalNotificationsPlugin
+    //     .resolvePlatformSpecificImplementation<
+    //         IOSFlutterLocalNotificationsPlugin>()
+    //     ?.requestPermissions(
+    //       alert: true,
+    //       badge: true,
+    //       sound: true,
+    //     );
 
-    final InitializationSettings initializationSettings =
-        InitializationSettings(
-            android: initializationSettingsAndroid,
-            iOS: iosInitializationSettings);
+    // final InitializationSettings initializationSettings =
+    //     InitializationSettings(
+    //         android: initializationSettingsAndroid,
+    //         iOS: iosInitializationSettings);
 
-    flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    // flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
     // _fetchAndScheduleNotifications();
   }
@@ -130,8 +131,8 @@ class __Set_schedulState extends State<Set_schedul> {
   //   }
   // }
 
-  Future<void> _scheduleNotification(
-      DateTime dateTime, String message, String option) async {
+  Future<void> _scheduleNotification(int randomtimestampPart, DateTime dateTime,
+      String message, String option) async {
     tz.initializeTimeZones();
     tz.setLocalLocation(tz.getLocation('Asia/Seoul'));
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
@@ -152,8 +153,8 @@ class __Set_schedulState extends State<Set_schedul> {
       dateTime.hour,
       dateTime.minute,
     );
-    final pendingNotifications =
-        await flutterLocalNotificationsPlugin.pendingNotificationRequests();
+    // final pendingNotifications =
+    //     await flutterLocalNotificationsPlugin.pendingNotificationRequests();
     const NotificationDetails platformChannelSpecifics = NotificationDetails(
         android: androidPlatformChannelSpecifics,
         iOS: DarwinNotificationDetails(
@@ -172,7 +173,7 @@ class __Set_schedulState extends State<Set_schedul> {
           dateTime.minute,
         );
         await flutterLocalNotificationsPlugin.zonedSchedule(
-          8,
+          randomtimestampPart,
           '일정 알림',
           message,
           schedule,
@@ -195,7 +196,7 @@ class __Set_schedulState extends State<Set_schedul> {
           dateTime.minute,
         );
         await flutterLocalNotificationsPlugin.zonedSchedule(
-            10, // 고유한 ID
+            randomtimestampPart, // 고유한 ID
             '일정 알림', // 알림 제목
             message, // 알림 메시지
             schedule,
@@ -211,7 +212,7 @@ class __Set_schedulState extends State<Set_schedul> {
         for (int i = 6; i <= 7; i++) {
           // 토요일(6)과 일요일(7)
           await flutterLocalNotificationsPlugin.zonedSchedule(
-            i + 5, // 고유한 ID 설정 (주중 알림 ID와 겹치지 않도록 5를 더함)
+            i + randomtimestampPart, // 고유한 ID 설정 (주중 알림 ID와 겹치지 않도록 5를 더함)
             '일정 알림', // 알림 제목
             message, // 알림 메시지
             scheduledDate,
@@ -226,7 +227,7 @@ class __Set_schedulState extends State<Set_schedul> {
         break;
       case '한달':
         await flutterLocalNotificationsPlugin.zonedSchedule(
-          0,
+          randomtimestampPart,
           '일정 알림',
           message,
           tz.TZDateTime(
@@ -245,7 +246,7 @@ class __Set_schedulState extends State<Set_schedul> {
         break;
       case '1년':
         for (var i = 0; i < 10; i++) {
-          final id = i + 1; // 고유한 ID 설정
+          final id = i + randomtimestampPart; // 고유한 ID 설정
           await flutterLocalNotificationsPlugin.zonedSchedule(
             id,
             '일정 알림',
@@ -268,7 +269,7 @@ class __Set_schedulState extends State<Set_schedul> {
 
       default:
         await flutterLocalNotificationsPlugin.zonedSchedule(
-          0,
+          randomtimestampPart,
           '일정 알림',
           message,
           tz.TZDateTime(
@@ -612,6 +613,17 @@ class __Set_schedulState extends State<Set_schedul> {
                       ),
                       ElevatedButton(
                           onPressed: () async {
+                            // int generateUniqueId() {
+                            final random = Random();
+                            int randomPart = random.nextInt(1000); // 난수
+                            int timestampPart =
+                                DateTime.now().millisecondsSinceEpoch; // 타임스탬프
+                            // return int.parse(
+                            //     '$timestampPart$randomPart'); // 조합
+                            // }
+                            int randomtimestampPart =
+                                int.parse('$timestampPart$randomPart'); // 조합
+
                             String day = context.read<CounterProvider>().day;
                             String year = context.read<CounterProvider>().year;
                             String month =
@@ -658,7 +670,8 @@ class __Set_schedulState extends State<Set_schedul> {
                                                     .format(selectedDate_)
                                               ],
                                     "userid": UserManager.userId,
-                                    "dates": []
+                                    "dates": [],
+                                    "uniqueID": randomtimestampPart,
                                   },
                                 );
                                 Get.offAll(
@@ -680,7 +693,7 @@ class __Set_schedulState extends State<Set_schedul> {
                                   _selectedMinute,
                                 );
                               });
-                              _scheduleNotification(
+                              _scheduleNotification(randomtimestampPart,
                                   _selectedDate, schedule_Write, option);
                             }
 

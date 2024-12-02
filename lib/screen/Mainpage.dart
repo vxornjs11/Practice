@@ -747,7 +747,8 @@ class _MyWidgetState extends State<Mainpage> {
                                                                         onPressed:
                                                                             () {
                                                                           AlertDialog(
-                                                                              doc);
+                                                                              doc,
+                                                                              data["uniqueID"]);
 
                                                                           // FirebaseFirestore
                                                                           //     .instance
@@ -1043,7 +1044,7 @@ class _MyWidgetState extends State<Mainpage> {
                                                                               child: IconButton(
                                                                                   color: Colors.red,
                                                                                   onPressed: () {
-                                                                                    AlertDialog(doc);
+                                                                                    AlertDialog(doc, data['uniqueID']);
                                                                                   },
                                                                                   icon: const Icon(Icons.close)),
                                                                             ),
@@ -1127,7 +1128,7 @@ class _MyWidgetState extends State<Mainpage> {
     );
   }
 
-  Future<void> AlertDialog(doc) {
+  Future<void> AlertDialog(doc, uniqueID) {
     // late String timeText_1 = "오전";
     return showDialog<Void>(
         barrierColor: Colors.black.withOpacity(0.8),
@@ -1187,6 +1188,16 @@ class _MyWidgetState extends State<Mainpage> {
                                               content:
                                                   Text('일정 삭제 실패: $error')));
                                     });
+
+                                    Future<void> cancelNotification(
+                                        int uniqueID) async {
+                                      await flutterLocalNotificationsPlugin
+                                          .cancel(uniqueID);
+                                      // ScaffoldMessenger.of(context)
+                                      //     .showSnackBar(SnackBar(
+                                      //         content:
+                                      //             Text('uniqueId delete')));
+                                    }
 
                                     invitaionList();
                                     _loadEvents();

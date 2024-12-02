@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:practice_01_app/main.dart';
 import 'package:practice_01_app/provinder/color_provinder.dart';
 import 'package:provider/provider.dart';
@@ -255,6 +256,18 @@ class _SettingsState extends State<Settings> {
                           Text("색 메타"),
                         ],
                       ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        if (flutterLocalNotificationsPlugin == null) {
+                          print(
+                              'flutterLocalNotificationsPlugin이 초기화되지 않았습니다!');
+                          return;
+                        }
+                        await flutterLocalNotificationsPlugin.cancelAll();
+                        print('모든 알람이 삭제되었습니다.');
+                      },
+                      child: Text("모든 알람 삭제"),
                     )
                   ],
                 ),

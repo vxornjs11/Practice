@@ -48,20 +48,64 @@ class UserManager {
   }
 }
 
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Flutter Native Splash 유지
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-  WidgetsFlutterBinding.ensureInitialized();
+
+  // Firebase 초기화
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  WidgetsFlutterBinding.ensureInitialized();
-  initBackgroundFetch(); // 백그라운드 페치 초기화
-  // 사용자 아이디 저장
+
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  DarwinInitializationSettings iosInitializationSettings =
+      const DarwinInitializationSettings(
+    requestAlertPermission: false,
+    requestBadgePermission: false,
+    requestSoundPermission: false,
+  );
+  flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin>()
+      ?.requestPermissions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+
+  final InitializationSettings initializationSettings = InitializationSettings(
+      android: initializationSettingsAndroid, iOS: iosInitializationSettings);
+
+  flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+  await flutterLocalNotificationsPlugin.initialize(
+    initializationSettings,
+    onDidReceiveNotificationResponse: (details) {
+      print('알림 클릭됨: ${details.payload}');
+    },
+  );
+
+  /////// Set_schedule.dart에서 알람 실행시 발동하는 함수 옮겨왔음. 여기에 있는게 맞는듯
+  ////// 그럼 Set_~~에 있는거는 어떻게 해야 할지 생각.. 없어도 되나?
+
+  // 사용자 ID 초기화
   await UserManager.initializeUserId();
-  // initBackgroundFetch(); // 백그라운드 페치 초기화
+
+  // 백그라운드 작업 초기화
+  initBackgroundFetch();
+
+  // 앱 실행
   runApp(MyApp());
+
+  // Splash 제거
   FlutterNativeSplash.remove();
 }
 
@@ -100,7 +144,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+// late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 // 백그라운드 페치 초기화
 void initBackgroundFetch() {
   BackgroundFetch.configure(
