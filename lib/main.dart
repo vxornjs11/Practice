@@ -15,8 +15,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:background_fetch/background_fetch.dart';
 import 'package:timezone/timezone.dart' as tz;
-import 'package:timezone/data/latest.dart' as tz;
 
+// import 'package:timezone/data/latest.dart' as tz;
+// 특정 날짜에 매주 반복 알람을 설정하려면
+// 지금 바로 DateTimeComponents.dayOfWeekAndTime를 활용하는것이 아니라:
+// 특정 날짜에 알람이 발동되고 난 이후
+// 그 알람 메세지 내용을 동일하게 DateTimeComponents.dayOfWeekAndTime으로 실행시켜서
+// 그 날짜 이후부터 자동 반복되게 만들면 된다
+// 지금 안되고 있는 것은. 특정날짜 알람이 발동된후 알람을 클릭하지 않아도 자동으로 백그라운드에서
+// 알람이 울리자마자 그 해당 데이터를 가지고 DateTimeComponents.dayOfWeekAndTime를 실행시키는게 안되는거임.
+// 방법을 알아해
 class UserManager {
   static String? userId;
 

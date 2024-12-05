@@ -52,6 +52,7 @@ dependencies:
   fl_chart: ^0.68.0
   flutter_native_splash: ^2.4.1
   background_fetch: ^1.0.0  # 백그라운드 작업 패키지
+  shared_preferences: ^2.3.3
   # get: ^4.6.6
 
 dev_dependencies:
