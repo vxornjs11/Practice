@@ -25,6 +25,7 @@ import 'package:timezone/timezone.dart' as tz;
 // 지금 안되고 있는 것은. 특정날짜 알람이 발동된후 알람을 클릭하지 않아도 자동으로 백그라운드에서
 // 알람이 울리자마자 그 해당 데이터를 가지고 DateTimeComponents.dayOfWeekAndTime를 실행시키는게 안되는거임.
 // 방법을 알아해
+// djfdll..
 class UserManager {
   static String? userId;
 
