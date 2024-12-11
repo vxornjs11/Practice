@@ -109,13 +109,65 @@ void main() async {
   await UserManager.initializeUserId();
 
   // 백그라운드 작업 초기화
-  initBackgroundFetch();
+  // initBackgroundFetch();
+
+  BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
 
   // 앱 실행
   runApp(MyApp());
 
   // Splash 제거
   FlutterNativeSplash.remove();
+} // main /////=======
+
+void backgroundFetchHeadlessTask(String taskId) async {
+  print('백그라운드에서 알람 설정 작업 수행');
+  await scheduleWeeklyNotification(); // 반복 알람 예약
+  BackgroundFetch.finish(taskId);
+}
+
+Future<void> scheduleWeeklyNotification() async {
+  // 만약 12월 11일 수요일 오후 6시에 매일 반복 알람이면
+  // 내 아이디랑 그 알람 정보를 가져와서
+  // 새로 대체하면 그알람은 삭제되고 이거로 된다는건데 그럼 상관없네 오히려 좋네 ...
+  // 그럼 내 UID랑 게시글의 UID 비교해서 내거만 가져오고
+  // 그걸로 오늘
+  // 12월 11일 수요일 내용 정리
+  // ==== 백그라운드에서 날짜에 맞는 알람이 있는지 그날 탐색해서
+  // 그날 알람이 만약 반복설정되는게 있다면 그걸 덮어씌워 알람이 울리던 말던 덮어씌우면 됨
+  // 그러면 이게 15분마다 반복이던 말던 알람이 울릴꺼 같은데?
+  // 근데 이제 문제는 시간이 되면 그만되게 만들어야 하나?
+  // 그날 하루종일 반복할 수도 있잖아.
+  // 백그라운드 작업이 어떻게 되는건지 모르겠네 계속 반복하는건지 먼지
+  // 시간까지 일치하는게 맞는거 같긴해.
+  // 그렇게 해보고 안되면 바꾸는게 맞다;
+  // 근데 이제 6시 다 되어 가니까 집에 갈까.
+  // 이게 제발 되어야 할텐데
+  // 이번주 금요일 까지는 끝내자.
+
+  final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+  final tz.TZDateTime nextWeek =
+      now.add(Duration(days: 7 - now.weekday)); // 다음 주 동일 시간
+
+  await flutterLocalNotificationsPlugin.zonedSchedule(
+    1, // 반복 알람 ID
+    '반복 알람',
+    '매주 동일 시간에 울립니다!',
+    nextWeek,
+    const NotificationDetails(
+      android: AndroidNotificationDetails(
+        'channel_id',
+        'channel_name',
+        channelDescription: '반복 알람 채널 설명',
+        importance: Importance.high,
+        priority: Priority.high,
+      ),
+    ),
+    androidAllowWhileIdle: true,
+    uiLocalNotificationDateInterpretation:
+        UILocalNotificationDateInterpretation.absoluteTime,
+    matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime, // 매주 반복
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -155,68 +207,68 @@ class MyApp extends StatelessWidget {
 
 // late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 // 백그라운드 페치 초기화
-void initBackgroundFetch() {
-  BackgroundFetch.configure(
-    BackgroundFetchConfig(
-      minimumFetchInterval: 15, // 15분마다 실행
-      stopOnTerminate: false, // 앱이 종료되어도 실행
-      enableHeadless: true, // 앱이 완전히 종료된 상태에서 실행 가능
-    ),
-    (String taskId) async {
-      print("[BackgroundFetch] 백그라운드 작업 실행됨: $taskId");
+// void initBackgroundFetch() {
+//   BackgroundFetch.configure(
+//     BackgroundFetchConfig(
+//       minimumFetchInterval: 15, // 15분마다 실행
+//       stopOnTerminate: false, // 앱이 종료되어도 실행
+//       enableHeadless: true, // 앱이 완전히 종료된 상태에서 실행 가능
+//     ),
+//     (String taskId) async {
+//       print("[BackgroundFetch] 백그라운드 작업 실행됨: $taskId");
 
-      // payload 확인 후 "주중" 알람만 처리
-      if (taskId == 'weekday') {
-        print('주중 알람 처리');
+//       // payload 확인 후 "주중" 알람만 처리
+//       if (taskId == 'weekday') {
+//         print('주중 알람 처리');
 
-        // 주간 반복 알람 설정 함수 (월~금)
-        Future<void> _setWeekdayAlarms() async {
-          const List<int> weekdays = [
-            DateTime.monday,
-            DateTime.tuesday,
-            DateTime.wednesday,
-            DateTime.thursday,
-            DateTime.friday
-          ];
+//         // 주간 반복 알람 설정 함수 (월~금)
+//         Future<void> _setWeekdayAlarms() async {
+//           const List<int> weekdays = [
+//             DateTime.monday,
+//             DateTime.tuesday,
+//             DateTime.wednesday,
+//             DateTime.thursday,
+//             DateTime.friday
+//           ];
 
-          for (int weekday in weekdays) {
-            final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+//           for (int weekday in weekdays) {
+//             final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
 
-            await flutterLocalNotificationsPlugin.zonedSchedule(
-              weekday, // 각 요일에 고유한 ID 사용
-              '주중 반복 알람', // 알람 제목
-              '주중 반복 알람입니다.', // 알람 내용
-              now,
-              const NotificationDetails(
-                android: AndroidNotificationDetails(
-                  'weekday_repeat_channel_id',
-                  'Weekday Repeat Alarm',
-                  channelDescription: '주중 반복 알람 채널',
-                  importance: Importance.max,
-                  priority: Priority.high,
-                ),
-              ),
-              androidAllowWhileIdle: true,
-              uiLocalNotificationDateInterpretation:
-                  UILocalNotificationDateInterpretation.absoluteTime,
-              matchDateTimeComponents:
-                  DateTimeComponents.dayOfWeekAndTime, // 요일에 맞춰 반복 알람 설정
-            );
-            print('주중 알람 처리$weekday ㅏㅏㅏㅏ ');
-          }
-        }
-        // 주중 알람 처리 로직 추가
-      }
+//             await flutterLocalNotificationsPlugin.zonedSchedule(
+//               weekday, // 각 요일에 고유한 ID 사용
+//               '주중 반복 알람', // 알람 제목
+//               '주중 반복 알람입니다.', // 알람 내용
+//               now,
+//               const NotificationDetails(
+//                 android: AndroidNotificationDetails(
+//                   'weekday_repeat_channel_id',
+//                   'Weekday Repeat Alarm',
+//                   channelDescription: '주중 반복 알람 채널',
+//                   importance: Importance.max,
+//                   priority: Priority.high,
+//                 ),
+//               ),
+//               androidAllowWhileIdle: true,
+//               uiLocalNotificationDateInterpretation:
+//                   UILocalNotificationDateInterpretation.absoluteTime,
+//               matchDateTimeComponents:
+//                   DateTimeComponents.dayOfWeekAndTime, // 요일에 맞춰 반복 알람 설정
+//             );
+//             print('주중 알람 처리$weekday ㅏㅏㅏㅏ ');
+//           }
+//         }
+//         // 주중 알람 처리 로직 추가
+//       }
 
-      // 작업 종료
-      BackgroundFetch.finish(taskId);
-    },
-  ).then((int status) {
-    print("[BackgroundFetch] 초기화 성공: $status");
-  }).catchError((e) {
-    print("[BackgroundFetch] 초기화 에러: $e");
-  });
+//       // 작업 종료
+//       BackgroundFetch.finish(taskId);
+//     },
+//   ).then((int status) {
+//     print("[BackgroundFetch] 초기화 성공: $status");
+//   }).catchError((e) {
+//     print("[BackgroundFetch] 초기화 에러: $e");
+//   });
 
-  // 강제로 백그라운드 작업 실행 (테스트용)
-  BackgroundFetch.start();
-}
+//   // 강제로 백그라운드 작업 실행 (테스트용)
+//   BackgroundFetch.start();
+// }
