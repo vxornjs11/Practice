@@ -111,6 +111,29 @@ void main() async {
   // 백그라운드 작업 초기화
   // initBackgroundFetch();
 
+  // Background Fetch 초기화
+  BackgroundFetch.configure(
+    BackgroundFetchConfig(
+      minimumFetchInterval: 1, // 최소 실행 간격
+      stopOnTerminate: false, // 앱 종료 후에도 유지
+      enableHeadless: true, // 헤드리스 모드 활성화
+    ),
+    (taskId) async {
+      // 포그라운드 작업
+      print('포그라운드에서 BackgroundFetch 실행: $taskId');
+      await scheduleWeeklyNotification();
+      BackgroundFetch.finish(taskId);
+    },
+    (taskId) async {
+      // 헤드리스 작업
+      print('헤드리스 모드에서 BackgroundFetch 실행: $taskId');
+      await scheduleWeeklyNotification();
+      BackgroundFetch.finish(taskId);
+    },
+  );
+
+  // 헤드리스 작업 등록
+
   BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
 
   // 앱 실행
@@ -127,6 +150,7 @@ void backgroundFetchHeadlessTask(String taskId) async {
 }
 
 Future<void> scheduleWeeklyNotification() async {
+  print("메인실행시발동하는건가");
   // 만약 12월 11일 수요일 오후 6시에 매일 반복 알람이면
   // 내 아이디랑 그 알람 정보를 가져와서
   // 새로 대체하면 그알람은 삭제되고 이거로 된다는건데 그럼 상관없네 오히려 좋네 ...
@@ -145,29 +169,31 @@ Future<void> scheduleWeeklyNotification() async {
   // 이게 제발 되어야 할텐데
   // 이번주 금요일 까지는 끝내자.
 
-  final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-  final tz.TZDateTime nextWeek =
-      now.add(Duration(days: 7 - now.weekday)); // 다음 주 동일 시간
+  // 안드로이드에서는 설정칸이 픽셀에러 뜬다. 좀 더 여유 두게 해야할듯.
+//==================================================//
+  // final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+  // final tz.TZDateTime nextWeek =
+  //     now.add(Duration(days: 7 - now.weekday)); // 다음 주 동일 시간
 
-  await flutterLocalNotificationsPlugin.zonedSchedule(
-    1, // 반복 알람 ID
-    '반복 알람',
-    '매주 동일 시간에 울립니다!',
-    nextWeek,
-    const NotificationDetails(
-      android: AndroidNotificationDetails(
-        'channel_id',
-        'channel_name',
-        channelDescription: '반복 알람 채널 설명',
-        importance: Importance.high,
-        priority: Priority.high,
-      ),
-    ),
-    androidAllowWhileIdle: true,
-    uiLocalNotificationDateInterpretation:
-        UILocalNotificationDateInterpretation.absoluteTime,
-    matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime, // 매주 반복
-  );
+  // await flutterLocalNotificationsPlugin.zonedSchedule(
+  //   1, // 반복 알람 ID
+  //   '반복 알람',
+  //   '매주 동일 시간에 울립니다!',
+  //   nextWeek,
+  //   const NotificationDetails(
+  //     android: AndroidNotificationDetails(
+  //       'channel_id',
+  //       'channel_name',
+  //       channelDescription: '반복 알람 채널 설명',
+  //       importance: Importance.high,
+  //       priority: Priority.high,
+  //     ),
+  //   ),
+  //   androidAllowWhileIdle: true,
+  //   uiLocalNotificationDateInterpretation:
+  //       UILocalNotificationDateInterpretation.absoluteTime,
+  //   matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime, // 매주 반복
+  // );
 }
 
 class MyApp extends StatelessWidget {

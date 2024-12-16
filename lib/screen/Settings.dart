@@ -244,6 +244,9 @@ class _SettingsState extends State<Settings> {
                               ),
                             ),
                     ),
+                    SizedBox(
+                      height: 10,
+                    ),
                     Container(
                       height: cSize.height * 0.075,
                       width: cSize.width * 1,
@@ -256,6 +259,9 @@ class _SettingsState extends State<Settings> {
                           Text("색 메타"),
                         ],
                       ),
+                    ),
+                    SizedBox(
+                      height: 10,
                     ),
                     ElevatedButton(
                       onPressed: () async {
