@@ -170,6 +170,7 @@ Future<void> scheduleWeeklyNotification() async {
   // 이번주 금요일 까지는 끝내자.
 
   // 안드로이드에서는 설정칸이 픽셀에러 뜬다. 좀 더 여유 두게 해야할듯.
+  // ㅇㅅㅇ...
 //==================================================//
   // final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
   // final tz.TZDateTime nextWeek =
