@@ -172,7 +172,7 @@ class _SettingsState extends State<Settings> {
                               ),
                             )
                           : Container(
-                              height: cSize.height * 0.2,
+                              height: cSize.height * 0.275,
                               width: cSize.width * 1,
                               decoration: BoxDecoration(
                                   color: Colors.white,

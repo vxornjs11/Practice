@@ -110,7 +110,7 @@ void main() async {
 
   // 백그라운드 작업 초기화
   // initBackgroundFetch();
-
+  print('백그라운드 앞');
   // Background Fetch 초기화
   BackgroundFetch.configure(
     BackgroundFetchConfig(
@@ -135,6 +135,7 @@ void main() async {
   // 헤드리스 작업 등록
 
   BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
+  print('백그라운드 뒤');
 
   // 앱 실행
   runApp(MyApp());
