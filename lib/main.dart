@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -117,18 +118,28 @@ void main() async {
       minimumFetchInterval: 1, // 최소 실행 간격
       stopOnTerminate: false, // 앱 종료 후에도 유지
       enableHeadless: true, // 헤드리스 모드 활성화
+      startOnBoot: true, // 디바이스 재부팅후 다시 작업.
+      forceAlarmManager: true,
     ),
     (taskId) async {
-      // 포그라운드 작업
-      print('포그라운드에서 BackgroundFetch 실행: $taskId');
-      await scheduleWeeklyNotification();
-      BackgroundFetch.finish(taskId);
+      try {
+        print('포그라운드에서 BackgroundFetch 실행: $taskId');
+        await scheduleWeeklyNotification(); // 알림 예약 작업
+      } catch (e) {
+        print('오류 발생: $e');
+      } finally {
+        BackgroundFetch.finish(taskId); // 항상 호출
+      }
     },
     (taskId) async {
-      // 헤드리스 작업
-      print('헤드리스 모드에서 BackgroundFetch 실행: $taskId');
-      await scheduleWeeklyNotification();
-      BackgroundFetch.finish(taskId);
+      try {
+        print('헤드리스 모드에서 BackgroundFetch 실행: $taskId');
+        await scheduleWeeklyNotification();
+      } catch (e) {
+        print('오류 발생: $e');
+      } finally {
+        BackgroundFetch.finish(taskId);
+      }
     },
   );
 
@@ -169,6 +180,23 @@ Future<void> scheduleWeeklyNotification() async {
   // 근데 이제 6시 다 되어 가니까 집에 갈까.
   // 이게 제발 되어야 할텐데
   // 이번주 금요일 까지는 끝내자.
+  final snapshot = await FirebaseFirestore.instance
+      .collection('Calender')
+      .where('userid', isEqualTo: UserManager.userId)
+      .where('option', isNotEqualTo: null)
+      .get();
+
+  //   for (var doc in snapshot.docs) {
+  //   final data = doc.data();
+  //   final date = DateTime(data['year'], data['month'], data['day']);
+  //   final event = data['Schedule'];
+  //   final option = data['option'];
+  //   final optionDay =
+  //       data.containsKey('option_day') ? data['option_day'] : null;
+
+  // }
+
+  print(snapshot);
 
   // 안드로이드에서는 설정칸이 픽셀에러 뜬다. 좀 더 여유 두게 해야할듯.
   // ㅇㅅㅇ...
