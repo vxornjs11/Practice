@@ -180,7 +180,7 @@ Future<void> scheduleWeeklyNotification() async {
         .collection('Calender')
         .where('userid', isEqualTo: UserManager.userId)
         .where('option', isNotEqualTo: null)
-        .where('day', isEqualTo: DateTime.now().day)
+        // .where('day', isEqualTo: DateTime.now().day)
         .get();
 
     if (snapshot.docs.isEmpty) {
@@ -191,7 +191,48 @@ Future<void> scheduleWeeklyNotification() async {
     for (var doc in snapshot.docs) {
       final data = doc.data() as Map<String, dynamic>;
       print('[scheduleWeeklyNotification] 데이터: $data');
+      print('[scheduleWeeklyNotification] 데이터 옵션: ${data['option']}');
+      print(
+          '[scheduleWeeklyNotification] 데이터 option_day: ${data['option_day']}');
+      print('[scheduleWeeklyNotification] 데이터 userid: ${data['userid']}');
+      print('[scheduleWeeklyNotification] 데이터 스케쥴: ${data['Schedule']}');
       // 필요한 작업 수행
+      tz.TZDateTime schedule = tz.TZDateTime(
+        tz.local,
+        data['year'],
+        data['month'],
+        data['day'],
+        data['hour'],
+        data['minute'],
+      );
+
+      /// 아 이거 요일별로 하는거 있지 않았나>?????????
+      /// 날짜로 하는거 아니라 흐미ㅣㅣㅣㅣ;아ㅏ아아아아ㅏㅣ;;;
+// if(data['option'] == "주중"){
+//   for (int weekday = DateTime.monday; weekday <= DateTime.friday; weekday++) {
+//     print("print(weekday); $weekday");
+//     print("print(data['uniqueID'] + weekday); ${data['uniqueID'] + weekday}");
+//   await flutterLocalNotificationsPlugin.zonedSchedule(
+//           data['uniqueID'] + weekday, // 각 요일에 고유 ID 사용, // 반복 알람 ID
+//           '반복 알람',
+//           data['Schedule'],
+//           schedule,
+//           const NotificationDetails(
+//             android: AndroidNotificationDetails(
+//               'channel_id',
+//               'channel_name',
+//               channelDescription: '반복 알람 채널 설명',
+//               importance: Importance.high,
+//               priority: Priority.high,
+//             ),
+//           ),
+//           androidAllowWhileIdle: true,
+//           uiLocalNotificationDateInterpretation:
+//               UILocalNotificationDateInterpretation.absoluteTime,
+//           matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime, // 매주 반복
+//         );
+//   }
+// }
     }
   } catch (e) {
     print('[scheduleWeeklyNotification] 오류: $e');
