@@ -17,6 +17,9 @@ import 'package:uuid/uuid.dart';
 import 'package:background_fetch/background_fetch.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
+import 'package:flutter/services.dart';
+import 'package:app_settings/app_settings.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 // import 'package:timezone/data/latest.dart' as tz;
 // 특정 날짜에 매주 반복 알람을 설정하려면
@@ -155,7 +158,38 @@ void backgroundFetchHeadlessTask(String taskId) async {
   BackgroundFetch.finish(taskId);
 }
 
+///// 권한설정 ./////
+Future<void> requestExactAlarmsPermission() async {
+  const MethodChannel platform =
+      MethodChannel('dexterous.com/flutter/local_notifications');
+
+  try {
+    final bool granted =
+        await platform.invokeMethod<bool>('requestExactAlarmsPermission') ??
+            false;
+    if (granted) {
+      print("정확한 알람 권한이 허용되었습니다.");
+    } else {
+      print("정확한 알람 권한이 거부되었습니다.");
+    }
+  } on PlatformException catch (e) {
+    print("정확한 알람 권한 요청 중 오류 발생: ${e.message}");
+  }
+}
+
+void openAppSettings() {
+  AppSettings.openAppSettings();
+}
+
+Future<void> requestNotificationsPermission() async {
+  if (await Permission.notification.isDenied) {
+    await Permission.notification.request();
+  }
+}
+
 Future<void> scheduleWeeklyNotification() async {
+  await requestExactAlarmsPermission(); // 정확한 알람 권한 요청
+  await requestNotificationsPermission(); // 알림 권한 요청
   const AndroidNotificationDetails androidPlatformChannelSpecifics =
       AndroidNotificationDetails(
     'high_importance_channel', // channelId
@@ -166,6 +200,7 @@ Future<void> scheduleWeeklyNotification() async {
     priority: Priority.high,
     showWhen: false,
   );
+  // alarms&reminders에서 테스트어플의 Allow setting alarms and reminders 버튼이 비활성화
   const NotificationDetails platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,
       iOS: DarwinNotificationDetails(
@@ -212,17 +247,8 @@ Future<void> scheduleWeeklyNotification() async {
       print('[scheduleWeeklyNotification] 데이터 옵션: ${data['option']}');
       print(
           '[scheduleWeeklyNotification] 데이터 option_day: ${data['option_day']}');
-      print('[scheduleWeeklyNotification] 데이터 userid: ${data['userid']}');
+      print('[scheduleWeeklyNotification] 데이터 uniqueID: ${data['uniqueID']}');
       print('===========================');
-      print(
-          '[scheduleWeeklyNotification] uniqueID: ${data['uniqueID'].runtimeType}');
-      print('[scheduleWeeklyNotification] year: ${data['year'].runtimeType}');
-      print('[scheduleWeeklyNotification] month: ${data['month'].runtimeType}');
-      print('[scheduleWeeklyNotification] day: ${data['day'].runtimeType}');
-      print('[scheduleWeeklyNotification] hour: ${data['hour'].runtimeType}');
-      print('[scheduleWeeklyNotification] minit: ${data['minit'].runtimeType}');
-      print('===========================');
-      print("@@@@@@@${(data['option'] == "주중")}@@@@@@@");
       // 필요한 작업 수행
       // tz.TZDateTime schedule = tz.TZDateTime(
       //   tz.local,
@@ -245,11 +271,6 @@ Future<void> scheduleWeeklyNotification() async {
           int weekday2 = weekday;
           int hour = data['hour'];
           int minit = data['minit'];
-          print("weekday: $weekday2");
-          print("weekdayh: $hour");
-          print("weekdaym: $minit");
-          print("weekday dh: ${data['hour']}");
-          print("weekday dm: ${data['minit']}");
 
           // 알림 ID와 예약 시간 디버깅
           try {

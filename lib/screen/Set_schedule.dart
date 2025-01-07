@@ -336,8 +336,6 @@ class __Set_schedulState extends State<Set_schedul> {
     return schedule;
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
     // String textdate = "";
@@ -615,16 +613,13 @@ class __Set_schedulState extends State<Set_schedul> {
                       ),
                       ElevatedButton(
                           onPressed: () async {
-                            // int generateUniqueId() {
                             final random = Random();
-                            int randomPart = random.nextInt(1000); // 난수
+                            int randomPart = random.nextInt(1000); // 0~999 난수
                             int timestampPart =
                                 DateTime.now().millisecondsSinceEpoch; // 타임스탬프
-                            // return int.parse(
-                            //     '$timestampPart$randomPart'); // 조합
-                            // }
-                            int randomtimestampPart =
-                                int.parse('$timestampPart$randomPart'); // 조합
+
+                            // 고유 ID 생성: 해시 기반 또는 Modulo 기반으로 선택 가능
+                            String combined = "$timestampPart$randomPart";
 
                             String day = context.read<CounterProvider>().day;
                             String year = context.read<CounterProvider>().year;
@@ -673,7 +668,7 @@ class __Set_schedulState extends State<Set_schedul> {
                                               ],
                                     "userid": UserManager.userId,
                                     "dates": [],
-                                    "uniqueID": randomtimestampPart,
+                                    "uniqueID": combined.hashCode & 0x7FFFFFFF,
                                   },
                                 );
                                 Get.offAll(
@@ -695,8 +690,11 @@ class __Set_schedulState extends State<Set_schedul> {
                                   _selectedMinute,
                                 );
                               });
-                              _scheduleNotification(randomtimestampPart,
-                                  _selectedDate, schedule_Write, option);
+                              _scheduleNotification(
+                                  combined.hashCode & 0x7FFFFFFF,
+                                  _selectedDate,
+                                  schedule_Write,
+                                  option);
                             }
 
                             // try {
