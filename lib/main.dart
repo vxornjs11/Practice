@@ -119,7 +119,7 @@ void main() async {
   // Background Fetch 초기화
   BackgroundFetch.configure(
     BackgroundFetchConfig(
-      minimumFetchInterval: 1, // 최소 실행 간격
+      minimumFetchInterval: 5, // 최소 실행 간격
       stopOnTerminate: false, // 앱 종료 후에도 유지
       enableHeadless: true, // 헤드리스 모드 활성화
       startOnBoot: true, // 디바이스 재부팅후 다시 작업.
@@ -188,6 +188,7 @@ Future<void> requestNotificationsPermission() async {
 }
 
 Future<void> scheduleWeeklyNotification() async {
+  //// 알람권한 그냥 애뮬레이터에 있는 앱 설정 열어서 하니까 되던데 다시 해볼까?
   await requestExactAlarmsPermission(); // 정확한 알람 권한 요청
   await requestNotificationsPermission(); // 알림 권한 요청
   const AndroidNotificationDetails androidPlatformChannelSpecifics =
@@ -209,23 +210,10 @@ Future<void> scheduleWeeklyNotification() async {
           presentSound: true,
           badgeNumber: 1));
   print("메인실행시발동하는건가");
-  // 만약 12월 11일 수요일 오후 6시에 매일 반복 알람이면
-  // 내 아이디랑 그 알람 정보를 가져와서
-  // 새로 대체하면 그알람은 삭제되고 이거로 된다는건데 그럼 상관없네 오히려 좋네 ...
-  // 그럼 내 UID랑 게시글의 UID 비교해서 내거만 가져오고
-  // 그걸로 오늘
-  // 12월 11일 수요일 내용 정리
-  // ==== 백그라운드에서 날짜에 맞는 알람이 있는지 그날 탐색해서
-  // 그날 알람이 만약 반복설정되는게 있다면 그걸 덮어씌워 알람이 울리던 말던 덮어씌우면 됨
-  // 그러면 이게 15분마다 반복이던 말던 알람이 울릴꺼 같은데?
-  // 근데 이제 문제는 시간이 되면 그만되게 만들어야 하나?
-  // 그날 하루종일 반복할 수도 있잖아.
-  // 백그라운드 작업이 어떻게 되는건지 모르겠네 계속 반복하는건지 먼지
-  // 시간까지 일치하는게 맞는거 같긴해.
-  // 그렇게 해보고 안되면 바꾸는게 맞다;
-  // 근데 이제 6시 다 되어 가니까 집에 갈까.
-  // 이게 제발 되어야 할텐데
-  // 이번주 금요일 까지는 끝내자.
+  // day로 하면 아닌 날에도 반복되는건 멈출거야.
+  // 하지만 그날 내내 알람을 재설정 하는 개찐빠가 벌어지겠지
+  // 어쩌면 기존알람과 함께 2번 울릴지도.
+  //
   print('[scheduleWeeklyNotification] 실행 시작');
 
   try {
