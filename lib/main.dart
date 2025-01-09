@@ -131,6 +131,7 @@ void main() async {
       BackgroundFetch.finish(taskId); // 항상 호출
       print('finally b');
     },
+    // ahfnfprtjddy.
     (taskId) async {
       print('헤드리스 모드에서 BackgroundFetch 실행: $taskId');
       await scheduleWeeklyNotification();
