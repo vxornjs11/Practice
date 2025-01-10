@@ -1213,11 +1213,24 @@ class _MyWidgetState extends State<Mainpage> {
                                           print(uniqueID + i);
                                         }
                                         break;
+                                      case "1년":
+                                        cancelNotification(uniqueID + 1000);
+                                        print(uniqueID + 1000);
+                                        break;
+                                      case "매일":
+                                        cancelNotification(uniqueID);
+                                        print(uniqueID);
+                                        break;
+
+                                      // 1년이면  data['uniqueID'] + 1000
+                                      // 매일  data['uniqueID']
+                                      //
                                       default:
                                         cancelNotification(uniqueID);
                                         break;
                                     }
-                                    cancelNotification(uniqueID);
+                                    // cancelNotification(uniqueID);
+                                    // 이건 왜 있는거야?
 
                                     invitaionList();
                                     _loadEvents();

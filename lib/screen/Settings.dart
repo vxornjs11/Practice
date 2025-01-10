@@ -276,33 +276,6 @@ class _SettingsState extends State<Settings> {
                         // print('모든 알람이 삭제되었습니다.');
                         // testdragon
 
-                        // 오늘 날짜를 구함 (예: "2024-12-19")
-                        // String today =
-                        //     DateFormat('yyyy-MM-dd').format(DateTime.now());
-                        // final snapshot = await FirebaseFirestore.instance
-                        //     .collection('Calender')
-                        //     .where('userid', isEqualTo: UserManager.userId)
-                        //     .where('option', isNotEqualTo: null)
-                        //     .get();
-
-                        // // 가져온 데이터를 필터링
-                        // final filteredData = snapshot.docs.where((doc) {
-                        //   final data = doc.data() as Map<String, dynamic>;
-
-                        //   // 날짜와 옵션 필드 가져오기
-                        //   // final date = data['date']; // Firestore의 'date' 필드
-                        //   final option = data['option'];
-
-                        //   // 조건: date가 오늘 날짜와 같고, option이 "주중"
-                        //   return option == "주중";
-                        // }).toList();
-
-                        // // 결과 출력
-                        // print("필터링된 데이터: ${filteredData.length}개");
-                        // for (var doc in filteredData) {
-                        //   print(doc.data());
-                        // }
-
                         // 현재 등록된 알람 찾기
                         getScheduledNotifications();
                       },

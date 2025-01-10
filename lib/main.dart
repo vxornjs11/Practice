@@ -21,16 +21,6 @@ import 'package:flutter/services.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-// import 'package:timezone/data/latest.dart' as tz;
-// 특정 날짜에 매주 반복 알람을 설정하려면
-// 지금 바로 DateTimeComponents.dayOfWeekAndTime를 활용하는것이 아니라:
-// 특정 날짜에 알람이 발동되고 난 이후
-// 그 알람 메세지 내용을 동일하게 DateTimeComponents.dayOfWeekAndTime으로 실행시켜서
-// 그 날짜 이후부터 자동 반복되게 만들면 된다
-// 지금 안되고 있는 것은. 특정날짜 알람이 발동된후 알람을 클릭하지 않아도 자동으로 백그라운드에서
-// 알람이 울리자마자 그 해당 데이터를 가지고 DateTimeComponents.dayOfWeekAndTime를 실행시키는게 안되는거임.
-// 방법을 알아해
-// djfdll..
 class UserManager {
   static String? userId;
 
@@ -238,59 +228,182 @@ Future<void> scheduleWeeklyNotification() async {
           '[scheduleWeeklyNotification] 데이터 option_day: ${data['option_day']}');
       print('[scheduleWeeklyNotification] 데이터 uniqueID: ${data['uniqueID']}');
       print('===========================');
-      // 필요한 작업 수행
-      // tz.TZDateTime schedule = tz.TZDateTime(
-      //   tz.local,
-      //   data['year'],
-      //   data['month'],
-      //   data['day'],
-      //   data['hour'],
-      //   data['minit'],
-      // );
 
       /// 아 이거 요일별로 하는거 있지 않았나>?????????
       /// 날짜로 하는거 아니라 흐미ㅣㅣㅣㅣ;아ㅏ아아아아ㅏㅣ;;;
+      switch (data['option']) {
+        case "주중":
+          for (int weekday = DateTime.monday;
+              weekday <= DateTime.friday;
+              weekday++) {
+            int weekday2 = weekday;
+            int hour = data['hour'];
+            int minit = data['minit'];
 
-      if (data['option'] == "주중") {
-        print("if문 통과");
-        // int weekday = 0;
-        for (int weekday = DateTime.monday;
-            weekday <= DateTime.friday;
-            weekday++) {
-          int weekday2 = weekday;
-          int hour = data['hour'];
-          int minit = data['minit'];
+            // 알림 ID와 예약 시간 디버깅
+            try {
+              final notificationId = data['uniqueID'] + weekday2;
+              print("알림 ID: $notificationId");
 
-          // 알림 ID와 예약 시간 디버깅
-          try {
-            final notificationId = data['uniqueID'] + weekday2;
-            print("알림 ID: $notificationId");
+              final scheduledTime = _nextInstanceOfWeekday(
+                weekday2,
+                hour,
+                minit,
+              );
+              print("예약된 시간: $scheduledTime");
 
-            final scheduledTime = _nextInstanceOfWeekday(
-              weekday2,
-              hour,
-              minit,
-            );
-            print("예약된 시간: $scheduledTime");
+              // 알림 예약
+              await flutterLocalNotificationsPlugin.zonedSchedule(
+                notificationId,
+                '반복 알람',
+                data['Schedule'],
+                scheduledTime,
+                platformChannelSpecifics,
+                androidAllowWhileIdle: true,
+                uiLocalNotificationDateInterpretation:
+                    UILocalNotificationDateInterpretation.absoluteTime,
+                matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
+              );
 
-            // 알림 예약
+              print("알림 예약 성공: $notificationId");
+            } catch (e) {
+              print("zonedSchedule 실행 중 오류 발생: $e");
+            }
+          }
+          {
+            break;
+          }
+        case "주말":
+          for (int weekday = DateTime.saturday;
+              weekday <= DateTime.sunday;
+              weekday++) {
+            int hour = data['hour'];
+            int minit = data['minit'];
+
+            // 알림 ID와 예약 시간 디버깅
+            try {
+              final notificationId = data['uniqueID'] + weekday;
+              print("알림 ID: $notificationId");
+
+              final scheduledTime = _nextInstanceOfWeekday(
+                weekday,
+                hour,
+                minit,
+              );
+              print("예약된 시간: $scheduledTime");
+
+              // 알림 예약
+              await flutterLocalNotificationsPlugin.zonedSchedule(
+                notificationId,
+                '주말 반복 알람',
+                data['Schedule'],
+                scheduledTime,
+                platformChannelSpecifics,
+                androidAllowWhileIdle: true,
+                uiLocalNotificationDateInterpretation:
+                    UILocalNotificationDateInterpretation.absoluteTime,
+                matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
+              );
+
+              print("알림 예약 성공: $notificationId");
+            } catch (e) {
+              print("zonedSchedule 실행 중 오류 발생: $e");
+            }
+          }
+
+          {
+            break;
+          }
+        case "한달":
+// print("매달반복은 이거 필요없다.");
+
+          break;
+
+        case "1년":
+          if (DateTime.now().month == data['month'] &&
+              DateTime.now().day == data['day']) {
+            try {
+              int hour = data['hour'];
+              int minit = data['minit'];
+              int day = data['day'];
+              int month = data['month']; // 반복할 특정 월
+
+              final notificationId = data['uniqueID'] + 1000; // 고유 ID 생성
+              print("알림 ID: $notificationId");
+
+              final now = tz.TZDateTime.now(tz.local);
+
+              // 1년 뒤 알림 예약
+              final scheduledTime = tz.TZDateTime(
+                tz.local,
+                now.year + 1, // 1년 뒤
+                month,
+                day,
+                hour,
+                minit,
+              );
+
+              print("예약된 시간 (1년 반복): $scheduledTime");
+
+              await flutterLocalNotificationsPlugin.zonedSchedule(
+                notificationId,
+                '1년 반복 알람',
+                data['Schedule'],
+                scheduledTime,
+                const NotificationDetails(
+                  android: AndroidNotificationDetails(
+                    'yearly_channel_id',
+                    'Yearly Notifications',
+                    channelDescription: '1년 반복 알람 채널',
+                  ),
+                ),
+                androidAllowWhileIdle: true,
+                uiLocalNotificationDateInterpretation:
+                    UILocalNotificationDateInterpretation.absoluteTime,
+              );
+
+              print("1년 반복 알림 예약 성공: $notificationId");
+            } catch (e) {
+              print("1년 반복 zonedSchedule 실행 중 오류 발생: $e");
+            }
+          } else {
+            // 1년 반복 실행할 필요 없는 경우.
+          }
+
+          break;
+        case "매일":
+          if (DateTime.now().year == data['year'] &&
+              DateTime.now().month == data['month'] &&
+              DateTime.now().day == data['day']) {
+            final now = tz.TZDateTime.now(tz.local);
+
+            // 알림 예약 시간 계산 (현재 시간보다 이후로 설정)
+            final scheduledTime = tz.TZDateTime(tz.local, now.year, now.month,
+                now.day, data['hour'], data['minit']);
             await flutterLocalNotificationsPlugin.zonedSchedule(
-              notificationId,
-              '반복 알람',
+              data['uniqueID'], // 알림 ID
+              '매일 반복 알림',
               data['Schedule'],
               scheduledTime,
-              platformChannelSpecifics,
+              const NotificationDetails(
+                android: AndroidNotificationDetails(
+                  'daily_channel_id',
+                  'Daily Notifications',
+                  channelDescription: '매일 반복 알림 채널 설명',
+                  importance: Importance.high,
+                  priority: Priority.high,
+                ),
+              ),
               androidAllowWhileIdle: true,
               uiLocalNotificationDateInterpretation:
                   UILocalNotificationDateInterpretation.absoluteTime,
-              matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
+              matchDateTimeComponents: DateTimeComponents.time, // 매일 같은 시간 반복
             );
-
-            print("알림 예약 성공: $notificationId");
-          } catch (e) {
-            print("zonedSchedule 실행 중 오류 발생: $e");
           }
-        }
+          break;
+
+        default:
+          break;
       }
     }
   } catch (e) {
@@ -298,43 +411,6 @@ Future<void> scheduleWeeklyNotification() async {
   } finally {
     print('[scheduleWeeklyNotification] 실행 완료');
   }
-
-  //   for (var doc in snapshot.docs) {
-  //   final data = doc.data();
-  //   final date = DateTime(data['year'], data['month'], data['day']);
-  //   final event = data['Schedule'];
-  //   final option = data['option'];
-  //   final optionDay =
-  //       data.containsKey('option_day') ? data['option_day'] : null;
-
-  // }
-
-  // 안드로이드에서는 설정칸이 픽셀에러 뜬다. 좀 더 여유 두게 해야할듯.
-  // ㅇㅅㅇ...
-//==================================================//
-  // final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-  // final tz.TZDateTime nextWeek =
-  //     now.add(Duration(days: 7 - now.weekday)); // 다음 주 동일 시간
-
-  // await flutterLocalNotificationsPlugin.zonedSchedule(
-  //   1, // 반복 알람 ID
-  //   '반복 알람',
-  //   '매주 동일 시간에 울립니다!',
-  //   nextWeek,
-  //   const NotificationDetails(
-  //     android: AndroidNotificationDetails(
-  //       'channel_id',
-  //       'channel_name',
-  //       channelDescription: '반복 알람 채널 설명',
-  //       importance: Importance.high,
-  //       priority: Priority.high,
-  //     ),
-  //   ),
-  //   androidAllowWhileIdle: true,
-  //   uiLocalNotificationDateInterpretation:
-  //       UILocalNotificationDateInterpretation.absoluteTime,
-  //   matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime, // 매주 반복
-  // );
 }
 
 _nextInstanceOfWeekday(int weekday, int hour, int minute) {

@@ -181,12 +181,11 @@ class __Set_schedulState extends State<Set_schedul> {
           uiLocalNotificationDateInterpretation:
               UILocalNotificationDateInterpretation.absoluteTime,
           // androidAllowWhileIdle: true,
-          matchDateTimeComponents: DateTimeComponents.time, // 매일 같은 시간에 알림.
+          matchDateTimeComponents:
+              DateTimeComponents.dateAndTime, // 매일 같은 시간에 알림.
         );
         break;
       case '주중':
-        // 현재 요일을 가져오기
-        // int currentWeekday = dateTime.weekday;
         tz.TZDateTime schedule = tz.TZDateTime(
           tz.local,
           dateTime.year,
@@ -196,34 +195,39 @@ class __Set_schedulState extends State<Set_schedul> {
           dateTime.minute,
         );
         await flutterLocalNotificationsPlugin.zonedSchedule(
-            randomtimestampPart, // 고유한 ID
-            '일정 알림', // 알림 제목
-            message, // 알림 메시지
-            schedule,
-            platformChannelSpecifics,
-            uiLocalNotificationDateInterpretation:
-                UILocalNotificationDateInterpretation.absoluteTime,
-            androidAllowWhileIdle: true, // 백그라운드에서도 알림을 허용
-            payload: "weekday"
-            // matchDateTimeComponents 생략: 주중 특정 날짜에만 한 번 알림 설정
-            );
+          randomtimestampPart,
+          '일정 알림',
+          message,
+          schedule,
+          platformChannelSpecifics,
+          uiLocalNotificationDateInterpretation:
+              UILocalNotificationDateInterpretation.absoluteTime,
+          // androidAllowWhileIdle: true,
+          matchDateTimeComponents:
+              DateTimeComponents.dateAndTime, // 매일 같은 시간에 알림.
+        );
         break;
       case '주말':
-        for (int i = 6; i <= 7; i++) {
-          // 토요일(6)과 일요일(7)
-          await flutterLocalNotificationsPlugin.zonedSchedule(
-            i + randomtimestampPart, // 고유한 ID 설정 (주중 알림 ID와 겹치지 않도록 5를 더함)
-            '일정 알림', // 알림 제목
-            message, // 알림 메시지
-            scheduledDate,
-            platformChannelSpecifics,
-            uiLocalNotificationDateInterpretation:
-                UILocalNotificationDateInterpretation.absoluteTime,
-            androidAllowWhileIdle: true,
-            matchDateTimeComponents:
-                DateTimeComponents.dayOfWeekAndTime, // 매주 특정 요일에 반복
-          );
-        }
+        tz.TZDateTime schedule = tz.TZDateTime(
+          tz.local,
+          dateTime.year,
+          dateTime.month,
+          dateTime.day,
+          dateTime.hour,
+          dateTime.minute,
+        );
+        await flutterLocalNotificationsPlugin.zonedSchedule(
+          randomtimestampPart,
+          '일정 알림',
+          message,
+          schedule,
+          platformChannelSpecifics,
+          uiLocalNotificationDateInterpretation:
+              UILocalNotificationDateInterpretation.absoluteTime,
+          // androidAllowWhileIdle: true,
+          matchDateTimeComponents:
+              DateTimeComponents.dateAndTime, // 매일 같은 시간에 알림.
+        );
         break;
       case '한달':
         await flutterLocalNotificationsPlugin.zonedSchedule(
@@ -245,26 +249,27 @@ class __Set_schedulState extends State<Set_schedul> {
         );
         break;
       case '1년':
-        for (var i = 0; i < 10; i++) {
-          final id = i + randomtimestampPart; // 고유한 ID 설정
-          await flutterLocalNotificationsPlugin.zonedSchedule(
-            id,
-            '일정 알림',
-            message,
-            tz.TZDateTime(
-              tz.local,
-              dateTime.year + i,
-              dateTime.month,
-              dateTime.day,
-              dateTime.hour,
-              dateTime.minute,
-            ),
-            platformChannelSpecifics,
-            uiLocalNotificationDateInterpretation:
-                UILocalNotificationDateInterpretation.absoluteTime,
-            androidAllowWhileIdle: true,
-          );
-        }
+        tz.TZDateTime schedule = tz.TZDateTime(
+          tz.local,
+          dateTime.year,
+          dateTime.month,
+          dateTime.day,
+          dateTime.hour,
+          dateTime.minute,
+        );
+        await flutterLocalNotificationsPlugin.zonedSchedule(
+          randomtimestampPart,
+          '일정 알림',
+          message,
+          schedule,
+          platformChannelSpecifics,
+          uiLocalNotificationDateInterpretation:
+              UILocalNotificationDateInterpretation.absoluteTime,
+          // androidAllowWhileIdle: true,
+          matchDateTimeComponents:
+              DateTimeComponents.dateAndTime, // 매일 같은 시간에 알림.
+        );
+
         break;
 
       default:
