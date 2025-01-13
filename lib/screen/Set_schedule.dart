@@ -272,6 +272,29 @@ class __Set_schedulState extends State<Set_schedul> {
 
         break;
 
+      case '매주':
+        tz.TZDateTime schedule = tz.TZDateTime(
+          tz.local,
+          dateTime.year,
+          dateTime.month,
+          dateTime.day,
+          dateTime.hour,
+          dateTime.minute,
+        );
+        await flutterLocalNotificationsPlugin.zonedSchedule(
+          randomtimestampPart,
+          '일정 알림',
+          message,
+          schedule,
+          platformChannelSpecifics,
+          uiLocalNotificationDateInterpretation:
+              UILocalNotificationDateInterpretation.absoluteTime,
+          // androidAllowWhileIdle: true,
+          matchDateTimeComponents:
+              DateTimeComponents.dateAndTime, // 매일 같은 시간에 알림.
+        );
+        break;
+
       default:
         await flutterLocalNotificationsPlugin.zonedSchedule(
           randomtimestampPart,
@@ -680,6 +703,7 @@ class __Set_schedulState extends State<Set_schedul> {
                                     const home()); // 홈 페이지로 이동, 이전 페이지 스택을 모두 제거
                               } catch (e) {}
                               setState(() {
+                                print("+++++++++++++++++option$option");
                                 context.read<CounterProvider>().ChangeText(
                                     newYear: '', newMonth: '', newDay: '');
 

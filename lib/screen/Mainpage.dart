@@ -87,6 +87,15 @@ class _MyWidgetState extends State<Mainpage> {
       DateFormat('E', 'ko_KO').format(today)
     ]).snapshots();
 
+    // "매주" 옵션 문서 가져오기 (특정 선택일을 주마다 반복)
+    Stream<QuerySnapshot> weeklyStream = FirebaseFirestore.instance
+        .collection('Calender')
+        .where('option', isEqualTo: "매주") // "매주" 옵션만 가져오기
+        .where('userid', isEqualTo: UserManager.userId) // 사용자 필터
+        .where('option_day',
+            arrayContains: DateFormat('E', 'ko_KO').format(today)) // 현재 요일 일치
+        .snapshots();
+
     // "한달" 옵션 문서 가져오기 (현재 달)
     Stream<QuerySnapshot> monthlyStream = FirebaseFirestore.instance
         .collection('Calender')
@@ -114,23 +123,34 @@ class _MyWidgetState extends State<Mainpage> {
         .snapshots();
 
     // 모든 스트림을 결합하여 반환
-    return Rx.combineLatest6(
+    return Rx.combineLatest7(
       dailyStream,
       weekdayStream,
       weekendStream,
       monthlyStream,
       yearlyStream,
       dateStream,
-      (QuerySnapshot a, QuerySnapshot b, QuerySnapshot c, QuerySnapshot d,
-          QuerySnapshot e, QuerySnapshot f) {
+      weeklyStream, // 매주 옵션 스트림 추가
+      (
+        QuerySnapshot a,
+        QuerySnapshot b,
+        QuerySnapshot c,
+        QuerySnapshot d,
+        QuerySnapshot e,
+        QuerySnapshot f,
+        QuerySnapshot g, // 매주 옵션 스트림
+      ) {
+        // 모든 스트림의 문서를 결합
         List<DocumentSnapshot> combinedDocs = [
           ...a.docs,
           ...b.docs,
           ...c.docs,
           ...d.docs,
           ...e.docs,
-          ...f.docs
+          ...f.docs,
+          ...g.docs, // 매주 옵션 문서 추가
         ];
+
         // 현재보다 미래인 날짜를 제외하는 필터링 작업
         List<DocumentSnapshot> filteredDocs = combinedDocs.where((doc) {
           DateTime dataDate = DateTime(doc["year"], doc["month"], doc["day"]);
@@ -169,6 +189,16 @@ class _MyWidgetState extends State<Mainpage> {
       DateFormat('E', 'ko_KO').format(selectedDate_)
     ]).snapshots();
 
+    // "매주" 옵션 문서 가져오기 (특정 선택일을 주마다 반복)
+    Stream<QuerySnapshot> weeklyStream = FirebaseFirestore.instance
+        .collection('Calender')
+        .where('option', isEqualTo: "매주") // "매주" 옵션만 가져오기
+        .where('userid', isEqualTo: UserManager.userId) // 사용자 필터
+        .where('option_day',
+            arrayContains:
+                DateFormat('E', 'ko_KO').format(selectedDate_)) // 현재 요일 일치
+        .snapshots();
+
     // "한달" 옵션 문서 가져오기 (현재 달)
     Stream<QuerySnapshot> monthlyStream = FirebaseFirestore.instance
         .collection('Calender')
@@ -196,23 +226,34 @@ class _MyWidgetState extends State<Mainpage> {
         .snapshots();
 
     // 모든 스트림을 결합하여 반환
-    return Rx.combineLatest6(
+    return Rx.combineLatest7(
       dailyStream,
       weekdayStream,
       weekendStream,
       monthlyStream,
       yearlyStream,
       dateStream,
-      (QuerySnapshot a, QuerySnapshot b, QuerySnapshot c, QuerySnapshot d,
-          QuerySnapshot e, QuerySnapshot f) {
+      weeklyStream, // 매주 옵션 스트림 추가
+      (
+        QuerySnapshot a,
+        QuerySnapshot b,
+        QuerySnapshot c,
+        QuerySnapshot d,
+        QuerySnapshot e,
+        QuerySnapshot f,
+        QuerySnapshot g, // 매주 옵션 스트림
+      ) {
+        // 모든 스트림의 문서를 결합
         List<DocumentSnapshot> combinedDocs = [
           ...a.docs,
           ...b.docs,
           ...c.docs,
           ...d.docs,
           ...e.docs,
-          ...f.docs
+          ...f.docs,
+          ...g.docs, // 매주 옵션 문서 추가
         ];
+
         //  DateTime now = DateTime.now();
         // 현재보다 미래인 날짜를 제외하는 필터링 작업
         List<DocumentSnapshot> filteredDocs = combinedDocs.where((doc) {
@@ -254,15 +295,13 @@ class _MyWidgetState extends State<Mainpage> {
 
   void _addEventToMap(Map<DateTime, List<String>> events, DateTime date,
       String event, String option, List<dynamic> optionDay) {
-    // print("optionDay");
-    // print(optionDay as List<String>);
-    // print("optionDay");
     switch (option) {
       case '매일':
         for (var i = 0; i < 365; i++) {
           _addEvent(events, date.add(Duration(days: i)), event);
         }
         break;
+
       case '주중':
         for (var i = 0; i < 365; i++) {
           final currentDate = date.add(Duration(days: i));
@@ -271,13 +310,12 @@ class _MyWidgetState extends State<Mainpage> {
           }
         }
         break;
+
       case '주말':
         for (var i = 0; i < 365; i++) {
           final currentDate = date.add(Duration(days: i));
           if ((currentDate.weekday == 6 || currentDate.weekday == 7)) {
             _addEvent(events, currentDate, event);
-
-            // 365일 돌리는건데 그중에
           }
         }
         break;
@@ -288,15 +326,62 @@ class _MyWidgetState extends State<Mainpage> {
               events, DateTime(date.year, date.month + i, date.day), event);
         }
         break;
+
       case '1년':
         for (var i = 0; i < 10; i++) {
           _addEvent(
               events, DateTime(date.year + i, date.month, date.day), event);
         }
         break;
+
+      case '매주':
+        if (optionDay.isNotEmpty && optionDay.length == 1) {
+          // 선택된 단일 요일을 weekday로 변환
+          final selectedWeekday = _convertDayToWeekday(optionDay.first);
+
+          if (selectedWeekday != null) {
+            DateTime currentDate = date;
+
+            // 시작 날짜가 선택한 요일에 맞지 않으면, 해당 요일로 이동
+            while (currentDate.weekday != selectedWeekday) {
+              currentDate = currentDate.add(Duration(days: 1));
+            }
+
+            // 매주 반복
+            for (var i = 0; i < 52; i++) {
+              // 최대 52주
+              _addEvent(events, currentDate, event);
+              currentDate = currentDate.add(Duration(days: 7)); // 다음 주로 이동
+            }
+          }
+        }
+        break;
+
       default:
         _addEvent(events, date, event);
         break;
+    }
+  }
+
+// 요일 이름을 weekday 값으로 변환
+  int? _convertDayToWeekday(String day) {
+    switch (day) {
+      case '월':
+        return DateTime.monday;
+      case '화':
+        return DateTime.tuesday;
+      case '수':
+        return DateTime.wednesday;
+      case '목':
+        return DateTime.thursday;
+      case '금':
+        return DateTime.friday;
+      case '토':
+        return DateTime.saturday;
+      case '일':
+        return DateTime.sunday;
+      default:
+        return null; // 잘못된 입력 처리
     }
   }
 

@@ -314,6 +314,56 @@ Future<void> scheduleWeeklyNotification() async {
           {
             break;
           }
+        case "매주":
+          int hour = data['hour'];
+          int minit = data['minit'];
+          int day = data['day'];
+          int month = data['month']; // 반복할 특정 월
+
+          if (DateTime.now().year == data['year'] &&
+              DateTime.now().month == data['month'] &&
+              DateTime.now().day == data['day']) {
+            final notificationId = data['uniqueID']; // 고유 ID 생성
+            print("알림 ID: $notificationId");
+
+            final now = tz.TZDateTime.now(tz.local);
+
+            // 1년 뒤 알림 예약
+            final scheduledTime = tz.TZDateTime(
+              tz.local,
+              now.year, // 1년 뒤
+              month,
+              day,
+              hour,
+              minit,
+            );
+
+            print("예약된 시간 (매주): $scheduledTime");
+
+            try {
+              await flutterLocalNotificationsPlugin.zonedSchedule(
+                notificationId,
+                '매주 반복 알림',
+                data['Schedule'],
+                scheduledTime,
+                const NotificationDetails(
+                  android: AndroidNotificationDetails(
+                    'weekly_channel_id',
+                    'Weekly Notifications',
+                    channelDescription: '매주 반복 알림 채널',
+                  ),
+                ),
+                androidAllowWhileIdle: true,
+                uiLocalNotificationDateInterpretation:
+                    UILocalNotificationDateInterpretation.absoluteTime,
+                matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
+              );
+              print("매주 반복 알림 예약 성공: $scheduledTime");
+            } catch (e) {
+              print("매주 반복 알림 예약 실패: $e");
+            }
+          }
+          break;
         case "한달":
 // print("매달반복은 이거 필요없다.");
 
@@ -403,6 +453,11 @@ Future<void> scheduleWeeklyNotification() async {
           break;
 
         default:
+          // 반복없음 인데 이거는 상관없고...
+          // 여기 넣을게 없는데?
+          // 흠....?
+          // 매주 추가하면 어떻게 될까.
+
           break;
       }
     }
@@ -412,6 +467,8 @@ Future<void> scheduleWeeklyNotification() async {
     print('[scheduleWeeklyNotification] 실행 완료');
   }
 }
+// 237318673
+//593466206
 
 _nextInstanceOfWeekday(int weekday, int hour, int minute) {
   print("디버디버깅: now");

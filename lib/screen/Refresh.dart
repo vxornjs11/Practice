@@ -36,6 +36,7 @@ class _RepeatState extends State<Repeat> {
     "반복 안함",
     "매일",
     "주중",
+    "매주",
     "한달",
     "1년",
   ];
@@ -44,6 +45,7 @@ class _RepeatState extends State<Repeat> {
     "반복 안함",
     "매일",
     "주말",
+    "매주",
     "한달",
     "1년",
   ];
