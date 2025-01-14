@@ -85,32 +85,32 @@ class __Set_schedulState extends State<Set_schedul> {
     timeText_1 = "오전";
     timeText_2 = "오후";
 
-    // flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-    // const AndroidInitializationSettings initializationSettingsAndroid =
-    //     AndroidInitializationSettings('@mipmap/ic_launcher');
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    // DarwinInitializationSettings iosInitializationSettings =
-    //     const DarwinInitializationSettings(
-    //   requestAlertPermission: false,
-    //   requestBadgePermission: false,
-    //   requestSoundPermission: false,
-    // );
-    // flutterLocalNotificationsPlugin
-    //     .resolvePlatformSpecificImplementation<
-    //         IOSFlutterLocalNotificationsPlugin>()
-    //     ?.requestPermissions(
-    //       alert: true,
-    //       badge: true,
-    //       sound: true,
-    //     );
+    DarwinInitializationSettings iosInitializationSettings =
+        const DarwinInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
+    );
+    flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin>()
+        ?.requestPermissions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
 
-    // final InitializationSettings initializationSettings =
-    //     InitializationSettings(
-    //         android: initializationSettingsAndroid,
-    //         iOS: iosInitializationSettings);
+    final InitializationSettings initializationSettings =
+        InitializationSettings(
+            android: initializationSettingsAndroid,
+            iOS: iosInitializationSettings);
 
-    // flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
     // _fetchAndScheduleNotifications();
   }
@@ -133,8 +133,8 @@ class __Set_schedulState extends State<Set_schedul> {
 
   Future<void> _scheduleNotification(int randomtimestampPart, DateTime dateTime,
       String message, String option) async {
-    tz.initializeTimeZones();
-    tz.setLocalLocation(tz.getLocation('Asia/Seoul'));
+    // tz.initializeTimeZones();
+    // tz.setLocalLocation(tz.getLocation('Asia/Seoul'));
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
       'high_importance_channel', // channelId
@@ -145,14 +145,15 @@ class __Set_schedulState extends State<Set_schedul> {
       priority: Priority.high,
       showWhen: false,
     );
-    tz.TZDateTime scheduledDate = tz.TZDateTime(
-      tz.local,
-      dateTime.year,
-      dateTime.month,
-      dateTime.day,
-      dateTime.hour,
-      dateTime.minute,
-    );
+
+    // tz.TZDateTime scheduledDate = tz.TZDateTime(
+    //   tz.local,
+    //   dateTime.year,
+    //   dateTime.month,
+    //   dateTime.day,
+    //   dateTime.hour,
+    //   dateTime.minute,
+    // );
     // final pendingNotifications =
     //     await flutterLocalNotificationsPlugin.pendingNotificationRequests();
     const NotificationDetails platformChannelSpecifics = NotificationDetails(
@@ -186,6 +187,7 @@ class __Set_schedulState extends State<Set_schedul> {
         );
         break;
       case '주중':
+        print("일정 알림 주중 0");
         tz.TZDateTime schedule = tz.TZDateTime(
           tz.local,
           dateTime.year,
@@ -194,6 +196,7 @@ class __Set_schedulState extends State<Set_schedul> {
           dateTime.hour,
           dateTime.minute,
         );
+        print("일정 알림 주중 0.5");
         await flutterLocalNotificationsPlugin.zonedSchedule(
           randomtimestampPart,
           '일정 알림',
@@ -206,6 +209,7 @@ class __Set_schedulState extends State<Set_schedul> {
           matchDateTimeComponents:
               DateTimeComponents.dateAndTime, // 매일 같은 시간에 알림.
         );
+        print("일정 알림 주중 1");
         break;
       case '주말':
         tz.TZDateTime schedule = tz.TZDateTime(
