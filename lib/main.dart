@@ -109,7 +109,7 @@ void main() async {
   // Background Fetch 초기화
   BackgroundFetch.configure(
     BackgroundFetchConfig(
-      minimumFetchInterval: 5, // 최소 실행 간격
+      minimumFetchInterval: 2, // 최소 실행 간격
       stopOnTerminate: false, // 앱 종료 후에도 유지
       enableHeadless: true, // 헤드리스 모드 활성화
       startOnBoot: true, // 디바이스 재부팅후 다시 작업.
