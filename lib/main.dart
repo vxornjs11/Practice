@@ -102,7 +102,7 @@ void main() async {
 
   // 사용자 ID 초기화
   await UserManager.initializeUserId();
-
+  // 캘린더 쪽에 버튼 누를때마다 ui 엄청 반짝거리는데 별로임 눈아픔
   // 백그라운드 작업 초기화
   // initBackgroundFetch();
   print('백그라운드 앞');
@@ -122,6 +122,7 @@ void main() async {
       print('finally b');
     },
     // ahfnfprtjddy.
+    // 매일 옵션이 현재시간보다 이전이면 제대로 작동 안하는듯.
     (taskId) async {
       print('헤드리스 모드에서 BackgroundFetch 실행: $taskId');
       await scheduleWeeklyNotification();
@@ -144,8 +145,16 @@ void main() async {
 } // main /////=======
 
 void backgroundFetchHeadlessTask(String taskId) async {
-  print('백그라운드에서 알람 설정 작업 수행');
-  await scheduleWeeklyNotification(); // 반복 알람 예약
+  print("헤드리스 작업 실행: $taskId");
+
+  // 백그라운드 작업 실행
+  try {
+    await scheduleWeeklyNotification(); // 사용자 작업
+  } catch (e) {
+    print("헤드리스 작업 오류: $e");
+  }
+
+  // 작업 완료 알림
   BackgroundFetch.finish(taskId);
 }
 
@@ -231,7 +240,10 @@ Future<void> scheduleWeeklyNotification() async {
 
       /// 아 이거 요일별로 하는거 있지 않았나>?????????
       /// 날짜로 하는거 아니라 흐미ㅣㅣㅣㅣ;아ㅏ아아아아ㅏㅣ;;;
+      /// // 그래프가 이상한데 휴대폰으로 테스트한거에서 목표치 25 달성 5가 될수가 없는데.
+      /// 그래프 주중이 근야 전체일정을 10씩 증가시키는데 뭐냐 ㅋㅋ
       switch (data['option']) {
+        // if가없음.
         case "주중":
           for (int weekday = DateTime.monday;
               weekday <= DateTime.friday;
@@ -274,6 +286,8 @@ Future<void> scheduleWeeklyNotification() async {
             break;
           }
         case "주말":
+          // if가없음. 그래서 그날 알림 +
+          // 미리 포그라운드에서 발동해버려서 만들어진 알람 2개 해서 주말에 알람이 3개네
           for (int weekday = DateTime.saturday;
               weekday <= DateTime.sunday;
               weekday++) {
