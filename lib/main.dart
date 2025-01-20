@@ -109,7 +109,7 @@ void main() async {
   // Background Fetch 초기화
   BackgroundFetch.configure(
     BackgroundFetchConfig(
-      minimumFetchInterval: 2, // 최소 실행 간격
+      minimumFetchInterval: 10, // 최소 실행 간격
       stopOnTerminate: false, // 앱 종료 후에도 유지
       enableHeadless: true, // 헤드리스 모드 활성화
       startOnBoot: true, // 디바이스 재부팅후 다시 작업.
@@ -245,41 +245,45 @@ Future<void> scheduleWeeklyNotification() async {
       switch (data['option']) {
         // if가없음.
         case "주중":
-          for (int weekday = DateTime.monday;
-              weekday <= DateTime.friday;
-              weekday++) {
-            int weekday2 = weekday;
-            int hour = data['hour'];
-            int minit = data['minit'];
+          if (DateTime.now().year == data['year'] &&
+              DateTime.now().month == data['month'] &&
+              DateTime.now().day == data['day']) {
+            for (int weekday = DateTime.monday;
+                weekday <= DateTime.friday;
+                weekday++) {
+              int weekday2 = weekday;
+              int hour = data['hour'];
+              int minit = data['minit'];
 
-            // 알림 ID와 예약 시간 디버깅
-            try {
-              final notificationId = data['uniqueID'] + weekday2;
-              print("알림 ID: $notificationId");
+              // 알림 ID와 예약 시간 디버깅
+              try {
+                final notificationId = data['uniqueID'] + weekday2;
+                print("알림 ID: $notificationId");
 
-              final scheduledTime = _nextInstanceOfWeekday(
-                weekday2,
-                hour,
-                minit,
-              );
-              print("예약된 시간: $scheduledTime");
+                final scheduledTime = _nextInstanceOfWeekday(
+                  weekday2,
+                  hour,
+                  minit,
+                );
+                print("예약된 시간: $scheduledTime");
 
-              // 알림 예약
-              await flutterLocalNotificationsPlugin.zonedSchedule(
-                notificationId,
-                '반복 알람',
-                data['Schedule'],
-                scheduledTime,
-                platformChannelSpecifics,
-                androidAllowWhileIdle: true,
-                uiLocalNotificationDateInterpretation:
-                    UILocalNotificationDateInterpretation.absoluteTime,
-                matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
-              );
+                // 알림 예약
+                await flutterLocalNotificationsPlugin.zonedSchedule(
+                  notificationId,
+                  '반복 알람',
+                  data['Schedule'],
+                  scheduledTime,
+                  platformChannelSpecifics,
+                  androidAllowWhileIdle: true,
+                  uiLocalNotificationDateInterpretation:
+                      UILocalNotificationDateInterpretation.absoluteTime,
+                  matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
+                );
 
-              print("알림 예약 성공: $notificationId");
-            } catch (e) {
-              print("zonedSchedule 실행 중 오류 발생: $e");
+                print("알림 예약 성공: $notificationId");
+              } catch (e) {
+                print("zonedSchedule 실행 중 오류 발생: $e");
+              }
             }
           }
           {
@@ -288,43 +292,46 @@ Future<void> scheduleWeeklyNotification() async {
         case "주말":
           // if가없음. 그래서 그날 알림 +
           // 미리 포그라운드에서 발동해버려서 만들어진 알람 2개 해서 주말에 알람이 3개네
-          for (int weekday = DateTime.saturday;
-              weekday <= DateTime.sunday;
-              weekday++) {
-            int hour = data['hour'];
-            int minit = data['minit'];
+          if (DateTime.now().year == data['year'] &&
+              DateTime.now().month == data['month'] &&
+              DateTime.now().day == data['day']) {
+            for (int weekday = DateTime.saturday;
+                weekday <= DateTime.sunday;
+                weekday++) {
+              int hour = data['hour'];
+              int minit = data['minit'];
 
-            // 알림 ID와 예약 시간 디버깅
-            try {
-              final notificationId = data['uniqueID'] + weekday;
-              print("알림 ID: $notificationId");
+              // 알림 ID와 예약 시간 디버깅
+              try {
+                final notificationId = data['uniqueID'] + weekday;
+                print("알림 ID: $notificationId");
 
-              final scheduledTime = _nextInstanceOfWeekday(
-                weekday,
-                hour,
-                minit,
-              );
-              print("예약된 시간: $scheduledTime");
+                final scheduledTime = _nextInstanceOfWeekday(
+                  weekday,
+                  hour,
+                  minit,
+                );
+                print("예약된 시간: $scheduledTime");
 
-              // 알림 예약
-              await flutterLocalNotificationsPlugin.zonedSchedule(
-                notificationId,
-                '주말 반복 알람',
-                data['Schedule'],
-                scheduledTime,
-                platformChannelSpecifics,
-                androidAllowWhileIdle: true,
-                uiLocalNotificationDateInterpretation:
-                    UILocalNotificationDateInterpretation.absoluteTime,
-                matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
-              );
+                // 알림 예약
+                await flutterLocalNotificationsPlugin.zonedSchedule(
+                  notificationId,
+                  '주말 반복 알람',
+                  data['Schedule'],
+                  scheduledTime,
+                  platformChannelSpecifics,
+                  androidAllowWhileIdle: true,
+                  uiLocalNotificationDateInterpretation:
+                      UILocalNotificationDateInterpretation.absoluteTime,
+                  matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
+                );
 
-              print("알림 예약 성공: $notificationId");
-            } catch (e) {
-              print("zonedSchedule 실행 중 오류 발생: $e");
+                print("알림 예약 성공: $notificationId");
+              } catch (e) {
+                print("zonedSchedule 실행 중 오류 발생: $e");
+              }
             }
           }
-
           {
             break;
           }

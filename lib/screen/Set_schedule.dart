@@ -329,32 +329,6 @@ class __Set_schedulState extends State<Set_schedul> {
     }
   }
 
-  Future<void> _setWeeklyAlarm() async {
-    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-    // 현재 날짜에서 가장 가까운 금요일로 설정
-    tz.TZDateTime nextWeekly = _nextInstanceOfFriday(now);
-
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-      1,
-      '주간 반복 알람',
-      '매주 평일에 반복되는 알람입니다.',
-      nextWeekly,
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'weekly_channel_id',
-          'weekly_channel_name',
-          channelDescription: '주간 반복 알람',
-          importance: Importance.max,
-          priority: Priority.high,
-        ),
-      ),
-      androidAllowWhileIdle: true,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
-      matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime, // 주간 반복 설정
-    );
-  }
-
   tz.TZDateTime _nextInstanceOfFriday(tz.TZDateTime now) {
     tz.TZDateTime schedule = tz.TZDateTime(
       tz.local,

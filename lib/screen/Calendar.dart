@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get_utils/get_utils.dart';
+import 'package:practice_01_app/main.dart';
 import 'package:practice_01_app/provinder/color_provinder.dart';
 import 'package:provider/provider.dart';
 
@@ -88,7 +88,7 @@ class _calendarState extends State<calendar> {
       DateTime YMD_now = DateTime(doc['year'], doc['month'], doc['day']);
       String options = doc['option'];
       int month = doc['month'];
-
+      print("시작입니다 $YMD_now $options");
       if (options != null &&
               monthCounts != null &&
               YMD_now != null &&
@@ -185,71 +185,55 @@ class _calendarState extends State<calendar> {
         // 평일 카운트를 위한 변수
 
         else if (options == "주중") {
-          DateTime lastDayOfMonth =
-              DateTime(YMD_now.year, YMD_now.month + 1, 0);
+          // 1월20일 개선판. "매일"을 참고해서 개선했다
+          // 아마도 주말,매주, 이쪽 부분이 문제가 생길거임.
+          // 그러네 매주 추가해야되네 시이이이발 이번주에 다 해보자.
           int weekdayCount = 0;
-          // print("주중 평일ff 첫번째 $month // ${monthCounts[month]}");
-          for (DateTime date = YMD_now;
-              date.isBefore(lastDayOfMonth) ||
-                  date.isAtSameMomentAs(lastDayOfMonth);
-              date = date.add(Duration(days: 1))) {
-            if (date.weekday >= DateTime.monday &&
-                date.weekday <= DateTime.friday) {
-              weekdayCount++;
-            }
-          }
-          // print("주중 weekdayCount $weekdayCount");
-          if (YMD_now.weekday >= DateTime.monday &&
-              YMD_now.weekday <= DateTime.friday) {
-            // print("주중 weekdayCount2 $weekdayCount");
-            for (; month != DateTime.now().month; month++) {
-              // print("주중 평일 $month // ${monthCounts[month]}");
-              if (month > 12) {
-                month = 1;
-              }
-              if (month != YMD_now.month) {
-                YMD_now = DateTime(DateTime.now().year, month + 1, 0);
-                lastDayOfMonth = DateTime(YMD_now.year, month, 1);
-                int Next_Month_weekdayCount = 0;
-                // print("YMD_now $YMD_now lastDayOfMonth $lastDayOfMonth");
-                for (DateTime date = lastDayOfMonth;
-                    date.isBefore(YMD_now) || date.isAtSameMomentAs(YMD_now);
-                    date = date.add(Duration(days: 1))) {
-                  if (date.weekday >= DateTime.monday &&
-                      date.weekday <= DateTime.friday) {
-                    Next_Month_weekdayCount++;
-                  }
-                }
-                monthCounts[month] =
-                    (monthCounts[month] ?? 0) + Next_Month_weekdayCount;
-              } else {
-                monthCounts[month] = (monthCounts[month] ?? 0) + weekdayCount;
-              }
-            }
 
-            // print("주중 평일3 $month ${monthCounts[month]}");
-            if (month == DateTime.now().month) {
-              // print("주중 평일ff $month // ${monthCounts[month]}");
-              YMD_now =
-                  DateTime(DateTime.now().year, month, DateTime.now().day);
-              lastDayOfMonth = DateTime(YMD_now.year, month, 1);
-              int Next_Month_weekdayCount = 0;
-              // print("YMD_now $YMD_now lastDayOfMonth $lastDayOfMonth");
-              for (DateTime date = lastDayOfMonth;
-                  date.isBefore(YMD_now) || date.isAtSameMomentAs(YMD_now);
+          // 현재 월의 마지막 날짜 계산
+          DateTime lastDayOfMonth =
+              DateTime(YMD_now.year, YMD_now.month, DateTime.now().day);
+
+          // 현재 달 평일 계산
+          if (month == DateTime.now().month) {
+            for (DateTime date = YMD_now;
+                !date.isAfter(lastDayOfMonth);
+                date = date.add(Duration(days: 1))) {
+              if (date.weekday >= DateTime.monday &&
+                  date.weekday <= DateTime.friday) {
+                weekdayCount++;
+              }
+            }
+            monthCounts[month] = (monthCounts[month] ?? 0) + weekdayCount;
+          }
+
+          // 다음 달 이상으로 넘어가는 경우
+          if (month != DateTime.now().month) {
+            for (; month != DateTime.now().month; month++) {
+              if (month > 12) month = 1;
+
+              // 다음 달의 범위 계산
+              DateTime lastDayOfNextMonth =
+                  DateTime(YMD_now.year, month + 1 > 12 ? 1 : month + 1, 0);
+              DateTime firstDayOfNextMonth = DateTime(YMD_now.year, month, 1);
+
+              int nextMonthWeekdayCount = 0;
+
+              for (DateTime date = firstDayOfNextMonth;
+                  !date.isAfter(lastDayOfNextMonth);
                   date = date.add(Duration(days: 1))) {
                 if (date.weekday >= DateTime.monday &&
                     date.weekday <= DateTime.friday) {
-                  Next_Month_weekdayCount++;
+                  nextMonthWeekdayCount++;
                 }
               }
 
-              // print("Next_Month_weekdayCount$Next_Month_weekdayCount");
               monthCounts[month] =
-                  (monthCounts[month] ?? 0) + Next_Month_weekdayCount;
-              // print("주중 평일ff 22 $month // ${monthCounts[month]}");
+                  (monthCounts[month] ?? 0) + nextMonthWeekdayCount;
             }
           }
+
+          print("최종 주중 평일 계산: $month => ${monthCounts[month]}");
         } else if (options == "주말") {
           DateTime lastDayOfMonth =
               DateTime(YMD_now.year, YMD_now.month + 1, 0);
@@ -450,6 +434,7 @@ class _calendarState extends State<calendar> {
   Stream invitaionList() async* {
     yield* FirebaseFirestore.instance
         .collection('Calender')
+        .where('userid', isEqualTo: UserManager.userId)
         .where('day')
         .where('month')
         .where('year')
@@ -505,6 +490,8 @@ class _calendarState extends State<calendar> {
                   List<FlSpot> spots2 = _generateFlSpots2(documents);
                   List<double> scheduleCounts =
                       spots.map((spot) => spot.y).toList();
+                  // print("a10101010101 //${spots2[0].y}");
+                  // print("b10101010101 // ${spots[0].y}");
                   double totalSchedules =
                       scheduleCounts.reduce((a, b) => a + b);
                   List<double> scheduleCounts2 =
@@ -699,6 +686,7 @@ class _calendarState extends State<calendar> {
                                               bottom: 10,
                                             ),
                                             child: BarChart(
+                                              // 작동안하는 바차트
                                               BarChartData(
                                                 maxY: maxYValue + 5,
                                                 minY: 0,
@@ -711,12 +699,12 @@ class _calendarState extends State<calendar> {
                                                       x: i,
                                                       barRods: [
                                                         BarChartRodData(
-                                                          toY: spots2[i].y,
+                                                          toY: spots2[i - 1].y,
                                                           color: Colors.red,
                                                           width: 6,
                                                         ),
                                                         BarChartRodData(
-                                                          toY: spots[i].y,
+                                                          toY: spots[i - 1].y,
                                                           color: Colors.black,
                                                           width: 6,
                                                         ),
