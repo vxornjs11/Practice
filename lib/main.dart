@@ -187,6 +187,7 @@ Future<void> requestNotificationsPermission() async {
   }
 }
 
+///dd
 Future<void> scheduleWeeklyNotification() async {
   //// 알람권한 그냥 애뮬레이터에 있는 앱 설정 열어서 하니까 되던데 다시 해볼까?
   await requestExactAlarmsPermission(); // 정확한 알람 권한 요청
