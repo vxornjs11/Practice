@@ -201,6 +201,7 @@ Future<void> scheduleWeeklyNotification() async {
     priority: Priority.high,
     showWhen: false,
   );
+
   // alarms&reminders에서 테스트어플의 Allow setting alarms and reminders 버튼이 비활성화
   const NotificationDetails platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,
@@ -367,13 +368,7 @@ Future<void> scheduleWeeklyNotification() async {
                 '매주 반복 알림',
                 data['Schedule'],
                 scheduledTime,
-                const NotificationDetails(
-                  android: AndroidNotificationDetails(
-                    'weekly_channel_id',
-                    'Weekly Notifications',
-                    channelDescription: '매주 반복 알림 채널',
-                  ),
-                ),
+                platformChannelSpecifics,
                 androidAllowWhileIdle: true,
                 uiLocalNotificationDateInterpretation:
                     UILocalNotificationDateInterpretation.absoluteTime,
@@ -421,13 +416,7 @@ Future<void> scheduleWeeklyNotification() async {
                 '1년 반복 알람',
                 data['Schedule'],
                 scheduledTime,
-                const NotificationDetails(
-                  android: AndroidNotificationDetails(
-                    'yearly_channel_id',
-                    'Yearly Notifications',
-                    channelDescription: '1년 반복 알람 채널',
-                  ),
-                ),
+                platformChannelSpecifics,
                 androidAllowWhileIdle: true,
                 uiLocalNotificationDateInterpretation:
                     UILocalNotificationDateInterpretation.absoluteTime,
@@ -456,15 +445,7 @@ Future<void> scheduleWeeklyNotification() async {
               '매일 반복 알림',
               data['Schedule'],
               scheduledTime,
-              const NotificationDetails(
-                android: AndroidNotificationDetails(
-                  'daily_channel_id',
-                  'Daily Notifications',
-                  channelDescription: '매일 반복 알림 채널 설명',
-                  importance: Importance.high,
-                  priority: Priority.high,
-                ),
-              ),
+              platformChannelSpecifics,
               androidAllowWhileIdle: true,
               uiLocalNotificationDateInterpretation:
                   UILocalNotificationDateInterpretation.absoluteTime,

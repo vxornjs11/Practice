@@ -280,7 +280,13 @@ class _SettingsState extends State<Settings> {
                         getScheduledNotifications();
                       },
                       child: Text("모든 알람 삭제"),
-                    )
+                    ),
+                    // Image.asset(
+                    //   "images/small.png",
+                    // ),
+                    // Image.asset(
+                    //   "images/Frame 1 3.png",
+                    // ),
                   ],
                 ),
               ),
