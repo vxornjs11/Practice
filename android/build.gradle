@@ -8,6 +8,19 @@ allprojects {
     }
 }
 
+buildscript {
+    ext.kotlin_version = "1.9.0" // 최신 버전으로 업데이트
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+
+
 ext {
  compileSdkVersion   = 33  
     targetSdkVersion    = 33  

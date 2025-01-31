@@ -32,7 +32,7 @@ class _SettingsScreenState extends State<home> {
 
   @override
   Widget build(BuildContext context) {
-    var c_size = MediaQuery.of(context).size;
+    // var c_size = MediaQuery.of(context).size;
     return Scaffold(
       bottomNavigationBar: NavigationBar(
         destinations: const [

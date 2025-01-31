@@ -20,6 +20,7 @@ import 'package:timezone/data/latest.dart' as tz;
 import 'package:flutter/services.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:permission_handler/permission_handler.dart';
+// import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 class UserManager {
   static String? userId;
