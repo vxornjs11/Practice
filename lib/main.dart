@@ -437,6 +437,9 @@ Future<void> scheduleWeeklyNotification() async {
           if (DateTime.now().year == data['year'] &&
               DateTime.now().month == data['month'] &&
               DateTime.now().day == data['day']) {
+            // "매일"옵션이 1월31일 금요일이라서 2월1일 토요일에는 작동을 안한듯?
+            // 근데 그래도 1월31일 금요일에 DateTimeComponents.time으로 작동해서
+            // 매일알람이 되어야 하는거 아닌감?
             final now = tz.TZDateTime.now(tz.local);
 
             // 알림 예약 시간 계산 (현재 시간보다 이후로 설정)
