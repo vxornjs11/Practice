@@ -1,4 +1,4 @@
-package ToDaysToDo
+package practice_01_app
 
 import io.flutter.embedding.android.FlutterActivity
 

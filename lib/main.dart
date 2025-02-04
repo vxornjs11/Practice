@@ -110,7 +110,7 @@ void main() async {
   // Background Fetch 초기화
   BackgroundFetch.configure(
     BackgroundFetchConfig(
-      minimumFetchInterval: 10, // 최소 실행 간격
+      minimumFetchInterval: 2, // 최소 실행 간격
       stopOnTerminate: false, // 앱 종료 후에도 유지
       enableHeadless: true, // 헤드리스 모드 활성화
       startOnBoot: true, // 디바이스 재부팅후 다시 작업.
@@ -132,17 +132,18 @@ void main() async {
       print('finally 2');
     },
   );
-
+// 🔹 백그라운드 작업 강제 시작
+  BackgroundFetch.start();
   // 헤드리스 작업 등록
 
   BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
   print('백그라운드 뒤');
 
+  // Splash 제거
+  Duration(seconds: 2);
+  FlutterNativeSplash.remove();
   // 앱 실행
   runApp(MyApp());
-
-  // Splash 제거
-  FlutterNativeSplash.remove();
 } // main /////=======
 
 void backgroundFetchHeadlessTask(String taskId) async {
@@ -434,6 +435,7 @@ Future<void> scheduleWeeklyNotification() async {
 
           break;
         case "매일":
+          print("매일매일");
           if (DateTime.now().year == data['year'] &&
               DateTime.now().month == data['month'] &&
               DateTime.now().day == data['day']) {
@@ -441,6 +443,7 @@ Future<void> scheduleWeeklyNotification() async {
             // 근데 그래도 1월31일 금요일에 DateTimeComponents.time으로 작동해서
             // 매일알람이 되어야 하는거 아닌감?
             final now = tz.TZDateTime.now(tz.local);
+            print("매일매일$now");
 
             // 알림 예약 시간 계산 (현재 시간보다 이후로 설정)
             final scheduledTime = tz.TZDateTime(tz.local, now.year, now.month,

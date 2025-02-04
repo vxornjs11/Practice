@@ -99,7 +99,7 @@ flutter_native_splash:
   ios : true
   web : true
   color : "#91DDFD"
-  image : images/splash.png
+  image : images/splash1.png
   icon_background_color: "#ffffff"
   icon_background_color_dark: "#121212"  
   # android_gravity: center
@@ -108,7 +108,7 @@ flutter_native_splash:
   # branding_mode: bottom
   android_12:
     color: "#91DDFD"  # ✅ Map 타입으로 설정
-    image: images/splash.png  # ✅ Android 12 전용 이미지 추가
+    image: images/splash1.png  # ✅ Android 12 전용 이미지 추가
     icon_background_color: "#ffffff"
     icon_background_color_dark: "#121212"
 
