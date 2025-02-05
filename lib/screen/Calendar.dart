@@ -478,7 +478,503 @@ class _calendarState extends State<calendar> {
                   }
 
                   if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                    return Text("데이터가 읍서용.");
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Consumer<ColorProvider>(
+                            builder: (context, value, child) {
+                          var c_size = MediaQuery.of(context).size;
+                          return Container(
+                            width: c_size.width * 1,
+                            height: c_size.height * 1,
+                            decoration: BoxDecoration(
+                              color: value.backgroundColor,
+                            ),
+                            child: Column(
+                              children: [
+                                SizedBox(height: c_size.height * 0.07),
+                                Text(
+                                  "목표달성률",
+                                  style: TextStyle(fontSize: 35),
+                                ),
+                                SizedBox(
+                                  height: c_size.height * 0.01,
+                                ),
+                                Stack(
+                                  children: [
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.9,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.35,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(60),
+                                        color: Colors.white,
+                                      ),
+                                      child: change_Chart
+                                          ? AspectRatio(
+                                              aspectRatio: 2,
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                  left: 15,
+                                                  right: 28,
+                                                  top: 30,
+                                                  bottom: 10,
+                                                ),
+                                                child: LineChart(
+                                                  LineChartData(
+                                                    minY: 0,
+                                                    maxY: 5,
+                                                    lineTouchData:
+                                                        const LineTouchData(
+                                                            enabled: false),
+                                                    lineBarsData: [
+                                                      // 추가 데이터
+                                                      LineChartBarData(
+                                                        spots: const [
+                                                          FlSpot(1.0, 0.0),
+                                                          FlSpot(2.0, 0.0),
+                                                          FlSpot(3.0, 0.0),
+                                                          FlSpot(4.0, 0.0),
+                                                          FlSpot(5.0, 0.0),
+                                                          FlSpot(6.0, 0.0),
+                                                          FlSpot(7.0, 0.0),
+                                                          FlSpot(8.0, 0.0),
+                                                          FlSpot(9.0, 0.0),
+                                                          FlSpot(10.0, 0.0),
+                                                          FlSpot(11.0, 0.0),
+                                                          FlSpot(12.0, 0.0)
+                                                        ],
+                                                        isCurved: true,
+                                                        color: Colors.red,
+                                                        barWidth: 4,
+                                                        belowBarData:
+                                                            BarAreaData(
+                                                                show: false),
+                                                      ),
+                                                      LineChartBarData(
+                                                        spots: const [
+                                                          FlSpot(1.0, 0.0),
+                                                          FlSpot(2.0, 0.0),
+                                                          FlSpot(3.0, 0.0),
+                                                          FlSpot(4.0, 0.0),
+                                                          FlSpot(5.0, 0.0),
+                                                          FlSpot(6.0, 0.0),
+                                                          FlSpot(7.0, 0.0),
+                                                          FlSpot(8.0, 0.0),
+                                                          FlSpot(9.0, 0.0),
+                                                          FlSpot(10.0, 0.0),
+                                                          FlSpot(11.0, 0.0),
+                                                          FlSpot(12.0, 0.0)
+                                                        ],
+                                                        isCurved: true,
+                                                        barWidth: 4,
+                                                        color: Colors.black,
+                                                        dotData:
+                                                            const FlDotData(
+                                                          show: false,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                    titlesData: FlTitlesData(
+                                                      show: true,
+                                                      topTitles:
+                                                          const AxisTitles(
+                                                        sideTitles: SideTitles(
+                                                            showTitles: false),
+                                                      ),
+                                                      rightTitles:
+                                                          const AxisTitles(
+                                                        sideTitles: SideTitles(
+                                                            showTitles: false),
+                                                      ),
+                                                      bottomTitles: AxisTitles(
+                                                        axisNameWidget: Text(
+                                                          " ${DateTime.now().year}",
+                                                          style: TextStyle(
+                                                            fontSize: 10,
+                                                            color: Colors.red,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                        sideTitles: SideTitles(
+                                                          showTitles: true,
+                                                          reservedSize: 18,
+                                                          interval: 1,
+                                                          getTitlesWidget:
+                                                              bottomTitleWidgets,
+                                                        ),
+                                                      ),
+                                                      leftTitles: AxisTitles(
+                                                        axisNameSize: 20,
+                                                        axisNameWidget:
+                                                            const Text(
+                                                          '일정갯수',
+                                                          style: TextStyle(
+                                                            color: Colors.black,
+                                                          ),
+                                                        ),
+                                                        sideTitles: SideTitles(
+                                                          showTitles: true,
+                                                          interval: 5,
+                                                          reservedSize: 40,
+                                                          getTitlesWidget:
+                                                              (double value,
+                                                                  TitleMeta
+                                                                      meta) {
+                                                            if (value % 5 ==
+                                                                0) {
+                                                              // 5의 배수인 경우에만 표시
+                                                              return Text(
+                                                                  value
+                                                                      .toInt()
+                                                                      .toString(),
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontSize:
+                                                                        15,
+                                                                  ));
+                                                            }
+                                                            return Container();
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    borderData: FlBorderData(
+                                                      show: true,
+                                                      border: Border.all(
+                                                        color: Colors.green,
+                                                      ),
+                                                    ),
+                                                    gridData: FlGridData(
+                                                      show: true,
+                                                      drawVerticalLine: false,
+                                                      horizontalInterval: 1,
+                                                      checkToShowHorizontalLine:
+                                                          (double value) {
+                                                        return value == 1 ||
+                                                            value == 6 ||
+                                                            value == 4 ||
+                                                            value == 5;
+                                                      },
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                          : Padding(
+                                              padding: const EdgeInsets.only(
+                                                left: 15,
+                                                right: 28,
+                                                top: 30,
+                                                bottom: 10,
+                                              ),
+                                              child: BarChart(
+                                                // 작동안하는 바차트
+                                                BarChartData(
+                                                  maxY: 5,
+                                                  minY: 0,
+                                                  barGroups: [
+                                                    // 추가 데이터
+                                                    for (int i = 1; i < 12; i++)
+                                                      BarChartGroupData(
+                                                        x: i,
+                                                        barRods: [
+                                                          BarChartRodData(
+                                                            toY: 0,
+                                                            color: Colors.red,
+                                                            width: 6,
+                                                          ),
+                                                          BarChartRodData(
+                                                            toY: 0,
+                                                            color: Colors.black,
+                                                            width: 6,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                  ],
+                                                  titlesData: FlTitlesData(
+                                                    show: true,
+                                                    topTitles: const AxisTitles(
+                                                      sideTitles: SideTitles(
+                                                          showTitles: false),
+                                                    ),
+                                                    rightTitles:
+                                                        const AxisTitles(
+                                                      sideTitles: SideTitles(
+                                                          showTitles: false),
+                                                    ),
+                                                    bottomTitles: AxisTitles(
+                                                      axisNameWidget: Text(
+                                                        " ${DateTime.now().year}",
+                                                        style: TextStyle(
+                                                          fontSize: 10,
+                                                          color: Colors.red,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                      sideTitles: SideTitles(
+                                                        showTitles: true,
+                                                        reservedSize: 18,
+                                                        interval: 2,
+                                                        getTitlesWidget:
+                                                            bottomTitleWidgets,
+                                                      ),
+                                                    ),
+                                                    leftTitles: AxisTitles(
+                                                      axisNameSize: 20,
+                                                      axisNameWidget:
+                                                          const Text(
+                                                        '일정갯수',
+                                                        style: TextStyle(
+                                                          color: Colors.black,
+                                                        ),
+                                                      ),
+                                                      sideTitles: SideTitles(
+                                                        showTitles: true,
+                                                        interval: 5,
+                                                        reservedSize: 40,
+                                                        getTitlesWidget: (double
+                                                                value,
+                                                            TitleMeta meta) {
+                                                          if (value % 5 == 0) {
+                                                            return Text(
+                                                                value
+                                                                    .toInt()
+                                                                    .toString(),
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontSize:
+                                                                        15));
+                                                          }
+                                                          return Container();
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  borderData: FlBorderData(
+                                                    show: true,
+                                                    border: Border.all(
+                                                      color: Colors.green,
+                                                    ),
+                                                  ),
+                                                  gridData: FlGridData(
+                                                    show: true,
+                                                    drawVerticalLine: false,
+                                                    horizontalInterval: 1,
+                                                    checkToShowHorizontalLine:
+                                                        (double value) {
+                                                      return value == 1 ||
+                                                          value == 6 ||
+                                                          value == 4 ||
+                                                          value == 5;
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                    ),
+                                    Positioned(
+                                      top: 1.0,
+                                      left: 85,
+                                      child: Column(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                // 빨간색 범례
+                                                Row(
+                                                  children: [
+                                                    Container(
+                                                      width: 11,
+                                                      height: 11,
+                                                      color: Colors.red, // 빨간색
+                                                    ),
+                                                    const SizedBox(width: 8),
+                                                    const Text('완료된 일정',
+                                                        style: TextStyle(
+                                                            fontSize: 10)),
+                                                  ],
+                                                ),
+                                                const SizedBox(width: 20),
+                                                // 검은색 범례
+                                                Row(
+                                                  children: [
+                                                    Container(
+                                                      width: 11,
+                                                      height: 11,
+                                                      color:
+                                                          Colors.black, // 검은색
+                                                    ),
+                                                    const SizedBox(width: 8),
+                                                    const Text('전체 일정',
+                                                        style: TextStyle(
+                                                            fontSize: 10)),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Positioned(
+                                      // bottom: 1.0,
+                                      right: 1.0,
+                                      child: FloatingActionButton(
+                                        backgroundColor: Colors.white,
+                                        onPressed: () {
+                                          setState(() {
+                                            change_Chart = !change_Chart;
+                                          });
+                                          print(change_Chart);
+                                        },
+                                        child: change_Chart
+                                            ? Icon(
+                                                Icons.bar_chart_outlined,
+                                                size: 50,
+                                              )
+                                            : Icon(
+                                                Icons.line_axis_rounded,
+                                                size: 50,
+                                                // color: Colors.lightBlue[59],
+                                              ),
+                                        tooltip: 'Add Schedule',
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.03,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.45,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.23,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(60),
+                                        color: Colors.white,
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.035,
+                                          ),
+                                          Text(
+                                            "년/달성률",
+                                            style: TextStyle(fontSize: 30),
+                                          ),
+                                          SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.02,
+                                          ),
+                                          Text(
+                                            "0",
+                                            style: TextStyle(fontSize: 40),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.05,
+                                    ),
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.45,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.23,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(60),
+                                        color: Colors.white,
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.035,
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              IconButton(
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      count = (count > 0)
+                                                          ? count - 1
+                                                          : 11;
+                                                      // _updateMonthCount(
+                                                      //     scheduleCounts2,
+                                                      //     scheduleCounts);
+                                                    });
+                                                  },
+                                                  icon: Icon(
+                                                      Icons.arrow_back_ios)),
+                                              Text(
+                                                "${(count + 1).toInt()}월",
+                                                style: TextStyle(fontSize: 30),
+                                              ),
+                                              IconButton(
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      count = (count < 11)
+                                                          ? count + 1
+                                                          : 0;
+                                                      // _updateMonthCount(
+                                                      //     scheduleCounts2,
+                                                      //     scheduleCounts
+                                                      //     );
+                                                    });
+                                                  },
+                                                  icon: Icon(
+                                                      Icons.arrow_forward_ios)),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.02,
+                                          ),
+                                          Text(
+                                            " ${monthCount1 >= 0 ? double.parse(monthCount1.toStringAsFixed(1)) : monthCount1 = 0}%",
+                                            style: TextStyle(fontSize: 40),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          );
+                        }),
+                      ],
+                    );
                   }
                   // final documents = snapshot.data!.docs;
                   final documents = snapshot.data!.docs;

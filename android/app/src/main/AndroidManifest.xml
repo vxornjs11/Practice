@@ -6,7 +6,7 @@ xmlns:tools="http://schemas.android.com/tools">
 
     <application
     tools:replace="android:label"
-        android:label="practice_01_app"
+        android:label="오늘의할일"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

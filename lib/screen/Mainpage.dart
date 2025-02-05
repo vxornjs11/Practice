@@ -835,7 +835,8 @@ class _MyWidgetState extends State<Mainpage> {
                                                                           AlertDialog(
                                                                               doc,
                                                                               data["uniqueID"],
-                                                                              data['option']);
+                                                                              data['option'],
+                                                                              uniqueDocuments.length);
 
                                                                           // FirebaseFirestore
                                                                           //     .instance
@@ -1131,7 +1132,7 @@ class _MyWidgetState extends State<Mainpage> {
                                                                               child: IconButton(
                                                                                   color: Colors.red,
                                                                                   onPressed: () {
-                                                                                    AlertDialog(doc, data['uniqueID'], data['option']);
+                                                                                    AlertDialog(doc, data['uniqueID'], data['option'], uniqueDocuments.length);
                                                                                   },
                                                                                   icon: const Icon(Icons.close)),
                                                                             ),
@@ -1183,39 +1184,13 @@ class _MyWidgetState extends State<Mainpage> {
             const SizedBox(
               height: 5,
             ),
-            Row(
-              children: [
-                Container(
-                  width: c_size.width * 0.5,
-                  height: c_size.height * 0.2,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.black, // 원하는 색상을 지정
-                      width: 1.0, // 원하는 선의 두께를 지정
-                    ),
-                  ),
-                  child: Text("그래프"),
-                ),
-                Container(
-                  width: c_size.width * 0.5,
-                  height: c_size.height * 0.2,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.black, // 원하는 색상을 지정
-                      width: 1.0, // 원하는 선의 두께를 지정
-                    ),
-                  ),
-                  child: Text("통계"),
-                )
-              ],
-            )
           ],
         ),
       ),
     );
   }
 
-  Future<void> AlertDialog(doc, uniqueID, String option) {
+  Future<void> AlertDialog(doc, uniqueID, String option, count) {
     // late String timeText_1 = "오전";
     return showDialog<Void>(
         barrierColor: Colors.black.withOpacity(0.8),
@@ -1274,6 +1249,13 @@ class _MyWidgetState extends State<Mainpage> {
                                           .showSnackBar(SnackBar(
                                               content:
                                                   Text('일정 삭제 실패: $error')));
+                                    });
+                                    WidgetsBinding.instance
+                                        .addPostFrameCallback((_) {
+                                      context
+                                          .read<ScheduleCountProvider>()
+                                          .changeScheduleCount(
+                                              initialCount: count - 1);
                                     });
 
                                     // if (option == "주중") {
