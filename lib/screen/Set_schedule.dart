@@ -24,13 +24,16 @@ class Set_schedul extends StatefulWidget {
   final int selectedHour;
   final int selectedMinute;
   final String option;
-  const Set_schedul(
-      {super.key,
-      required this.option,
-      required this.selectedDate_,
-      required this.schedule_Write,
-      required this.selectedHour,
-      required this.selectedMinute});
+  final bool isCheck;
+  const Set_schedul({
+    super.key,
+    required this.option,
+    required this.selectedDate_,
+    required this.schedule_Write,
+    required this.selectedHour,
+    required this.selectedMinute,
+    required this.isCheck,
+  });
   @override
   State<Set_schedul> createState() => __Set_schedulState();
 }
@@ -78,10 +81,10 @@ class __Set_schedulState extends State<Set_schedul> {
     schedule_Write = widget.schedule_Write;
     _selectedHour = widget.selectedHour;
     _selectedMinute = widget.selectedMinute;
-    titlecontroller = TextEditingController();
+    titlecontroller = TextEditingController(text: schedule_Write);
     textdate = "";
     _isSwitch = false;
-    _isCheck = false;
+    _isCheck = widget.isCheck;
     timeText_1 = "오전";
     timeText_2 = "오후";
 
@@ -399,11 +402,11 @@ class __Set_schedulState extends State<Set_schedul> {
                             weekendDecoration: BoxDecoration(
                               color: Colors.red.shade100, // 주말 날짜 셀 배경색
                             ),
-                            selectedDecoration: BoxDecoration(
+                            selectedDecoration: const BoxDecoration(
                               color: Colors.blueAccent, // 선택된 날짜 셀 배경색
                               shape: BoxShape.circle,
                             ),
-                            todayDecoration: BoxDecoration(
+                            todayDecoration: const BoxDecoration(
                               color: Colors.orangeAccent, // 오늘 날짜 셀 배경색
                               shape: BoxShape.circle,
                             ),
@@ -411,7 +414,7 @@ class __Set_schedulState extends State<Set_schedul> {
                         ),
                       ),
                       const SizedBox(
-                        height: 5,
+                        height: 10,
                       ),
                       Container(
                         decoration: BoxDecoration(
@@ -431,9 +434,9 @@ class __Set_schedulState extends State<Set_schedul> {
                                 child: Text(
                                     "${selectedDate_.month}월${selectedDate_.day}일")),
                       ),
-                      Text(schedule_Write),
+                      // Text(schedule_Write),
                       const SizedBox(
-                        height: 5,
+                        height: 10,
                       ),
                       Container(
                         decoration: BoxDecoration(
@@ -527,15 +530,25 @@ class __Set_schedulState extends State<Set_schedul> {
                                     //             ),
                                     //       )
                                     //     :
-                                    Text(
-                                  "$_selectedHour시 $_selectedMinute분",
-                                  style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w400,
-                                      color: Colors.black
-                                      // fontFamily: 'roboto'
-                                      ),
-                                ),
+                                    _isCheck
+                                        ? Text(
+                                            "$_selectedHour시 $_selectedMinute분",
+                                            style: const TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w400,
+                                                color: Colors.black
+                                                // fontFamily: 'roboto'
+                                                ),
+                                          )
+                                        : const Text(
+                                            "알람 없음",
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w400,
+                                                color: Colors.black
+                                                // fontFamily: 'roboto'
+                                                ),
+                                          ),
                               ),
                             ),
                           ),
@@ -567,7 +580,8 @@ class __Set_schedulState extends State<Set_schedul> {
                                         selectedDate_: selectedDate_,
                                         schedule_Write: schedule_Write,
                                         selectedHour: _selectedHour,
-                                        selectedMinute: _selectedMinute)),
+                                        selectedMinute: _selectedMinute,
+                                        isCheck: _isCheck)),
                                   ),
                                 );
                                 // AlertDialog_Refresh();
@@ -580,7 +594,7 @@ class __Set_schedulState extends State<Set_schedul> {
                                   borderRadius: BorderRadius.circular(12.0),
                                   color: Colors.white),
                               child: Padding(
-                                padding: EdgeInsets.all(4.0),
+                                padding: const EdgeInsets.all(4.0),
                                 child: option == ""
                                     ? const Text(
                                         "반복 안 함",
@@ -624,18 +638,24 @@ class __Set_schedulState extends State<Set_schedul> {
                             DateTime today = DateTime.now();
 
                             // 오늘 날짜에서 시간 정보(시, 분, 초)를 제외한 날짜만 비교
-                            DateTime todayWithoutTime =
-                                DateTime(today.year, today.month, today.day);
+                            DateTime todayWithoutTime = DateTime(
+                                today.year,
+                                today.month,
+                                today.day,
+                                today.hour,
+                                today.minute);
                             DateTime selectedDateWithoutTime = DateTime(
                                 selectedDate_.year,
                                 selectedDate_.month,
-                                selectedDate_.day);
+                                selectedDate_.day,
+                                _selectedHour,
+                                _selectedMinute);
 
                             // 비교: selectedDate_가 오늘 이전인지 확인
                             //
                             if (selectedDateWithoutTime
                                     .isBefore(todayWithoutTime) ||
-                                _selectedHour == 0) {
+                                _isCheck == false) {
                               print("========================.");
                               print("1$selectedDate_.");
                               print("2$schedule_Write.");
@@ -700,7 +720,7 @@ class __Set_schedulState extends State<Set_schedul> {
                                   option);
                             }
                           },
-                          child: Text("등록하기")),
+                          child: const Text("등록하기")),
                     ],
                   ),
                 );
@@ -714,9 +734,10 @@ class __Set_schedulState extends State<Set_schedul> {
     setState(() {
       this.selectedDate = selectedDate;
       selectedDate_ = selectedDate;
-      print("selectedDate$selectedDate");
-      textdate =
-          "${selectedDate.year.toString() + selectedDate.month.toString() + selectedDate.day.toString()}";
+      // print("selectedDate$selectedDate");
+      textdate = selectedDate.year.toString() +
+          selectedDate.month.toString() +
+          selectedDate.day.toString();
       context.read<CounterProvider>().ChangeText(
           newYear: selectedDate.year.toString(),
           newMonth: selectedDate.month.toString(),
@@ -724,6 +745,7 @@ class __Set_schedulState extends State<Set_schedul> {
     });
   }
 
+  // ignore: non_constant_identifier_names
   Future<void> AlertDialog() {
     // late String timeText_1 = "오전";
     return showDialog<Void>(
@@ -746,7 +768,7 @@ class __Set_schedulState extends State<Set_schedul> {
                       style: TextStyle(fontSize: 20),
                     ),
                     SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.05,
+                      height: MediaQuery.of(context).size.height * 0.04,
                     ),
                     Padding(
                       padding: const EdgeInsets.all(10.0),
@@ -768,7 +790,7 @@ class __Set_schedulState extends State<Set_schedul> {
                               onSelectedItemChanged: (int index) {
                                 setState(() {
                                   _selectedHour = Hour[index];
-                                  print(_selectedHour);
+                                  // print(_selectedHour);
                                   if (_selectedHour > 12) {
                                     timeText_1 = "오후";
                                     context
@@ -835,8 +857,11 @@ class __Set_schedulState extends State<Set_schedul> {
                           onPressed: () {
                             Navigator.pop(context);
                             // 시간대 설정 메소드 들어가야한다.
+                            setState(() {
+                              _isCheck = true;
+                            });
                           },
-                          child: Text("OK"),
+                          child: const Text("확인"),
                         ),
                         SizedBox(
                           width: MediaQuery.of(context).size.width * 0.1,
@@ -844,8 +869,11 @@ class __Set_schedulState extends State<Set_schedul> {
                         ElevatedButton(
                           onPressed: () {
                             Navigator.pop(context);
+                            // setState(() {
+                            //   _isCheck = false;
+                            // });
                           },
-                          child: Text("back"),
+                          child: const Text("돌아가기"),
                         ),
                       ],
                     ),
@@ -871,7 +899,7 @@ class __Set_schedulState extends State<Set_schedul> {
 
   Widget _buildEventsMarker(DateTime date, List events) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         shape: BoxShape.circle,
         color: Colors.blueAccent,
       ),
@@ -880,14 +908,15 @@ class __Set_schedulState extends State<Set_schedul> {
       child: Center(
         child: Text(
           '${events.length}',
-          style: TextStyle().copyWith(
+          style: const TextStyle().copyWith(
               color: Colors.white, fontSize: 10.0, fontWeight: FontWeight.bold),
         ),
       ),
     );
   }
 
-  Future<void> AlertDialog_Calendar(int _selectedHour) {
+  // ignore: non_constant_identifier_names
+  Future<void> AlertDialog_Calendar(int selectedHour) {
     // late String timeText_1 = "오전";
     return showDialog<Void>(
         barrierColor: Colors.black.withOpacity(0.8),
@@ -912,10 +941,15 @@ class __Set_schedulState extends State<Set_schedul> {
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.05,
                       ),
-                      const Text(
-                        "일정 등록 날짜가 잘못되었습니다",
-                        style: TextStyle(fontSize: 20),
-                      ),
+                      _isCheck
+                          ? const Text(
+                              "일정 등록 날짜가 잘못되었습니다",
+                              style: TextStyle(fontSize: 20),
+                            )
+                          : const Text(
+                              "알람 시간대를 선택하십시오",
+                              style: TextStyle(fontSize: 20),
+                            ),
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.05,
                       ),
@@ -935,7 +969,7 @@ class __Set_schedulState extends State<Set_schedul> {
                                   onPressed: () {
                                     Navigator.pop(context);
                                   },
-                                  child: Text("돌아가기"),
+                                  child: const Text("돌아가기"),
                                 ),
                               ],
                             ),

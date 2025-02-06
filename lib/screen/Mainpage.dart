@@ -447,22 +447,22 @@ class _MyWidgetState extends State<Mainpage> {
     String formattedWeekday = DateFormat('E', 'ko_KO').format(now);
     // CounterProvider counter = Provider.of<CounterProvider>(context);
     // print(formattedWeekday);
-    var c_size = MediaQuery.of(context).size;
+    var cSize = MediaQuery.of(context).size;
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
           children: [
             SizedBox(
-              height: c_size.height * 0.06,
+              height: cSize.height * 0.06,
             ),
             SizedBox(
-              width: c_size.width * 1,
-              height: c_size.height * 0.06,
+              width: cSize.width * 1,
+              height: cSize.height * 0.06,
               child: Row(
                 children: [
                   SizedBox(
-                    width: c_size.width * 1,
-                    height: c_size.height * 0.05,
+                    width: cSize.width * 1,
+                    height: cSize.height * 0.05,
                     child: ListView.builder(
                         // 여기 오늘이 몇 요일인지 표시해주면 좋을듯?
                         // 빨간색 동그라미 띄우거나 아니면 글자 색을 바꾸거나.
@@ -484,8 +484,8 @@ class _MyWidgetState extends State<Mainpage> {
                                     width: 1.0, // 원하는 선의 두께를 지정
                                   ),
                                 ),
-                                width: c_size.width * 0.135,
-                                height: c_size.height * 0.1,
+                                width: cSize.width * 0.135,
+                                height: cSize.height * 0.1,
                                 child: Text(
                                   week[index],
                                   style: TextStyle(
@@ -505,8 +505,8 @@ class _MyWidgetState extends State<Mainpage> {
               padding: const EdgeInsets.all(1.0),
               child: Consumer<ColorProvider>(builder: (context, value, child) {
                 return Container(
-                  width: c_size.width * 1,
-                  height: c_size.height * 0.8,
+                  width: cSize.width * 1,
+                  height: cSize.height * 0.8,
                   decoration: BoxDecoration(
                     color: value.backgroundColor,
                   ),
@@ -527,7 +527,7 @@ class _MyWidgetState extends State<Mainpage> {
                                   },
                                 ),
                                 SizedBox(
-                                  width: c_size.width * 0.4,
+                                  width: cSize.width * 0.4,
                                 ),
                                 IconButton(
                                   onPressed: () {
@@ -568,6 +568,7 @@ class _MyWidgetState extends State<Mainpage> {
                                                     schedule_Write: "",
                                                     selectedHour: 0,
                                                     selectedMinute: 0,
+                                                    isCheck: false,
                                                   ),
                                                 ),
                                               );
@@ -680,7 +681,7 @@ class _MyWidgetState extends State<Mainpage> {
                                               child: delete_list == false
                                                   ? Container(
                                                       height:
-                                                          c_size.height * 0.1,
+                                                          cSize.height * 0.1,
                                                       decoration: BoxDecoration(
                                                         borderRadius:
                                                             BorderRadius
@@ -736,7 +737,7 @@ class _MyWidgetState extends State<Mainpage> {
                                                                             12),
                                                                   ),
                                                                   showButton
-                                                                      ? Text(
+                                                                      ? const Text(
                                                                           "축하합니다")
                                                                       : Container(
                                                                           width:
@@ -756,18 +757,18 @@ class _MyWidgetState extends State<Mainpage> {
                                                                             ),
                                                                             onPressed:
                                                                                 () {
-                                                                              DateTime YMD_now;
-                                                                              YMD_now = DateTime(now.year, now.month, now.day);
+                                                                              DateTime ymdNow;
+                                                                              ymdNow = DateTime(now.year, now.month, now.day);
                                                                               firebase.collection("Calender").doc(uniqueDocuments[index].id).update({
                                                                                 'dates': FieldValue.arrayUnion([
-                                                                                  YMD_now
+                                                                                  ymdNow
                                                                                 ])
                                                                               });
                                                                               print("${uniqueDocuments[index].id}");
-                                                                              print(YMD_now);
+                                                                              print(ymdNow);
                                                                             },
                                                                             child:
-                                                                                Text(
+                                                                                const Text(
                                                                               "완료",
                                                                               style: TextStyle(fontSize: 18),
                                                                             ),
@@ -779,7 +780,7 @@ class _MyWidgetState extends State<Mainpage> {
                                                     )
                                                   : Container(
                                                       height:
-                                                          c_size.height * 0.1,
+                                                          cSize.height * 0.1,
                                                       decoration: BoxDecoration(
                                                         borderRadius:
                                                             BorderRadius
@@ -790,10 +791,9 @@ class _MyWidgetState extends State<Mainpage> {
                                                       ),
                                                       child: Row(
                                                         children: [
-                                                          Container(
-                                                            width:
-                                                                c_size.width *
-                                                                    0.85,
+                                                          SizedBox(
+                                                            width: cSize.width *
+                                                                0.85,
                                                             child: ListTile(
                                                               title: Text(
                                                                 data['Schedule'] ??
@@ -821,7 +821,7 @@ class _MyWidgetState extends State<Mainpage> {
                                                                     .start,
                                                             children: [
                                                               SizedBox(
-                                                                width: c_size
+                                                                width: cSize
                                                                         .width *
                                                                     0.1,
                                                                 // height:
@@ -870,8 +870,8 @@ class _MyWidgetState extends State<Mainpage> {
                               : Padding(
                                   padding: const EdgeInsets.all(3.0),
                                   child: Container(
-                                    width: c_size.width * 1,
-                                    height: c_size.height * 0.7,
+                                    width: cSize.width * 1,
+                                    height: cSize.height * 0.7,
                                     decoration: BoxDecoration(
                                         // 달력순간이동
                                         borderRadius:
@@ -917,12 +917,14 @@ class _MyWidgetState extends State<Mainpage> {
                                                 color: Colors.red
                                                     .shade100, // 주말 날짜 셀 배경색
                                               ),
-                                              selectedDecoration: BoxDecoration(
+                                              selectedDecoration:
+                                                  const BoxDecoration(
                                                 color: Colors
                                                     .blueAccent, // 선택된 날짜 셀 배경색
                                                 shape: BoxShape.circle,
                                               ),
-                                              todayDecoration: BoxDecoration(
+                                              todayDecoration:
+                                                  const BoxDecoration(
                                                 color: Colors
                                                     .orangeAccent, // 오늘 날짜 셀 배경색
                                                 shape: BoxShape.circle,
@@ -983,6 +985,7 @@ class _MyWidgetState extends State<Mainpage> {
                                                 return Center(
                                                   child: ElevatedButton(
                                                     onPressed: () {
+                                                      print("아무데이터없을때?");
                                                       Navigator.push(
                                                         context,
                                                         MaterialPageRoute(
@@ -990,10 +993,11 @@ class _MyWidgetState extends State<Mainpage> {
                                                               Set_schedul(
                                                             option: '반복 안 함',
                                                             selectedDate_:
-                                                                DateTime.now(),
+                                                                selectedDate_,
                                                             schedule_Write: "",
                                                             selectedHour: 0,
                                                             selectedMinute: 0,
+                                                            isCheck: false,
                                                           ),
                                                         ),
                                                       );
@@ -1050,7 +1054,7 @@ class _MyWidgetState extends State<Mainpage> {
                                                             delete_list == false
                                                                 ? Container(
                                                                     height:
-                                                                        c_size.height *
+                                                                        cSize.height *
                                                                             0.1,
                                                                     decoration:
                                                                         BoxDecoration(
@@ -1087,7 +1091,7 @@ class _MyWidgetState extends State<Mainpage> {
                                                                   )
                                                                 : Container(
                                                                     height:
-                                                                        c_size.height *
+                                                                        cSize.height *
                                                                             0.1,
                                                                     decoration:
                                                                         BoxDecoration(
@@ -1103,9 +1107,9 @@ class _MyWidgetState extends State<Mainpage> {
                                                                     ),
                                                                     child: Row(
                                                                       children: [
-                                                                        Container(
+                                                                        SizedBox(
                                                                           width:
-                                                                              c_size.width * 0.85,
+                                                                              cSize.width * 0.85,
                                                                           child:
                                                                               ListTile(
                                                                             title:
@@ -1126,7 +1130,7 @@ class _MyWidgetState extends State<Mainpage> {
                                                                               MainAxisAlignment.start,
                                                                           children: [
                                                                             SizedBox(
-                                                                              width: c_size.width * 0.1,
+                                                                              width: cSize.width * 0.1,
                                                                               // height:
                                                                               //     c_size.height * 0.1,
                                                                               child: IconButton(
@@ -1159,21 +1163,23 @@ class _MyWidgetState extends State<Mainpage> {
                         child: FloatingActionButton(
                           backgroundColor: Colors.grey.shade100,
                           onPressed: () {
+                            print("todo?");
+                            print("$selectedDate_");
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => Set_schedul(
-                                  option: '반복 안 함',
-                                  selectedDate_: DateTime.now(),
-                                  schedule_Write: "",
-                                  selectedHour: 0,
-                                  selectedMinute: 0,
-                                ),
+                                    option: '반복 안 함',
+                                    selectedDate_: selectedDate_,
+                                    schedule_Write: "",
+                                    selectedHour: 0,
+                                    selectedMinute: 0,
+                                    isCheck: false),
                               ),
                             );
                           },
-                          child: Icon(Icons.add),
                           tooltip: 'Add Schedule',
+                          child: const Icon(Icons.add),
                         ),
                       ),
                     ],
@@ -1190,6 +1196,7 @@ class _MyWidgetState extends State<Mainpage> {
     );
   }
 
+  // ignore: non_constant_identifier_names, avoid_types_as_parameter_names
   Future<void> AlertDialog(doc, uniqueID, String option, count) {
     // late String timeText_1 = "오전";
     return showDialog<Void>(
@@ -1241,10 +1248,12 @@ class _MyWidgetState extends State<Mainpage> {
                                         .doc(doc.id)
                                         .delete()
                                         .then((_) {
+                                      // ignore: use_build_context_synchronously
                                       ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
+                                          .showSnackBar(const SnackBar(
                                               content: Text('일정이 삭제되었습니다')));
                                     }).catchError((error) {
+                                      // ignore: use_build_context_synchronously
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(SnackBar(
                                               content:
@@ -1271,23 +1280,23 @@ class _MyWidgetState extends State<Mainpage> {
                                       case "주중":
                                         for (int i = 1; i < 6; i++) {
                                           cancelNotification(uniqueID + i);
-                                          print(uniqueID + i);
+                                          // print(uniqueID + i);
                                         }
                                         break;
 
                                       case "주말":
                                         for (int i = 1; i < 3; i++) {
                                           cancelNotification(uniqueID + i);
-                                          print(uniqueID + i);
+                                          // print(uniqueID + i);
                                         }
                                         break;
                                       case "1년":
                                         cancelNotification(uniqueID + 1000);
-                                        print(uniqueID + 1000);
+                                        // print(uniqueID + 1000);
                                         break;
                                       case "매일":
                                         cancelNotification(uniqueID);
-                                        print(uniqueID);
+                                        // print(uniqueID);
                                         break;
 
                                       // 1년이면  data['uniqueID'] + 1000
@@ -1305,7 +1314,7 @@ class _MyWidgetState extends State<Mainpage> {
                                     Navigator.pop(context);
                                     // 시간대 설정 메소드 들어가야한다.
                                   },
-                                  child: Text("삭제"),
+                                  child: const Text("삭제"),
                                 ),
                                 SizedBox(
                                   width:
@@ -1315,7 +1324,7 @@ class _MyWidgetState extends State<Mainpage> {
                                   onPressed: () {
                                     Navigator.pop(context);
                                   },
-                                  child: Text("돌아가기"),
+                                  child: const Text("돌아가기"),
                                 ),
                               ],
                             ),
@@ -1329,7 +1338,7 @@ class _MyWidgetState extends State<Mainpage> {
 
   Widget _buildEventsMarker(DateTime date, List events) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         shape: BoxShape.circle,
         color: Colors.blueAccent,
       ),
@@ -1338,7 +1347,7 @@ class _MyWidgetState extends State<Mainpage> {
       child: Center(
         child: Text(
           '${events.length}',
-          style: TextStyle().copyWith(
+          style: const TextStyle().copyWith(
               color: Colors.white, fontSize: 10.0, fontWeight: FontWeight.bold),
         ),
       ),

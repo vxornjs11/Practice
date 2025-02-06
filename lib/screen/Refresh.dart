@@ -12,12 +12,14 @@ class Repeat extends StatefulWidget {
   final String schedule_Write;
   final int selectedHour;
   final int selectedMinute;
+  final bool isCheck;
   const Repeat(
       {super.key,
       required this.selectedDate_,
       required this.schedule_Write,
       required this.selectedHour,
-      required this.selectedMinute});
+      required this.selectedMinute,
+      required this.isCheck});
 
   @override
   State<Repeat> createState() => _RepeatState();
@@ -28,8 +30,9 @@ class _RepeatState extends State<Repeat> {
   late String schedule_Write = widget.schedule_Write;
   late int _selectedHour = widget.selectedHour;
   late int _selectedMinute = widget.selectedMinute;
+  late bool _isCheck = widget.isCheck;
 
-  late bool _isCheck;
+  // late bool _isCheck;
   String option = "";
   // 평일
   List<String> repeatOptions_Weekday = [
@@ -57,7 +60,7 @@ class _RepeatState extends State<Repeat> {
     // TODO: implement initState
     repeatCheckList = List.filled(6, false);
 
-    _isCheck = false;
+    // _isCheck = false;
   }
 
   @override
@@ -102,7 +105,8 @@ class _RepeatState extends State<Repeat> {
                       selectedDate_: selectedDate_,
                       schedule_Write: schedule_Write,
                       selectedHour: _selectedHour,
-                      selectedMinute: _selectedMinute));
+                      selectedMinute: _selectedMinute,
+                      isCheck: _isCheck));
                   // 야 이거 페이지 이동으로 해놧더니 달력이 그대로 돌아간다.
                   // 다행이 저장해놓은건 남는데 보기가 이상하구만. - 해결.
                   // Get
@@ -112,7 +116,7 @@ class _RepeatState extends State<Repeat> {
                   //         builder: (context) => Set_schedul(option: option)));
                   // // 시간대 설정 메소드 들어가야한다.
                 },
-                child: Text("OK"),
+                child: const Text("OK"),
               ),
               SizedBox(
                 width: MediaQuery.of(context).size.width * 0.1,
@@ -121,7 +125,7 @@ class _RepeatState extends State<Repeat> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text("back"),
+                child: const Text("back"),
               ),
             ],
           ),
@@ -139,11 +143,11 @@ class _RepeatState extends State<Repeat> {
         weekdays.contains(selectedDay)
             ? Text(
                 repeatOptions_Weekday[index],
-                style: TextStyle(fontSize: 20),
+                style: const TextStyle(fontSize: 20),
               )
             : Text(
                 repeatOptions_Weekend[index],
-                style: TextStyle(fontSize: 20),
+                style: const TextStyle(fontSize: 20),
               ),
         weekdays.contains(selectedDay)
             ? Checkbox(

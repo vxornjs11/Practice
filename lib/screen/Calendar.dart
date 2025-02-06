@@ -305,28 +305,33 @@ class _calendarState extends State<calendar> {
           print("최종 매주 계산: $month => ${monthCounts[month]}");
         }
 
-// ====== "한달" 옵션 ======
+        // ====== "한달" 옵션 ======
         else if (options == "한달") {
           int monthlyCount = 0;
-
+          print("1 한달 계산: $month => ${monthCounts[month]}");
           // 한 달에 지정된 날짜를 반복
           if (month == DateTime.now().month) {
+            print("2 한달 계산: $month => => ${monthCounts[month]}");
             if (DateTime.now().day >= YMD_now.day) {
               monthlyCount++;
+              print("2-1 한달 계산:  $monthlyCount}");
             }
             monthCounts[month] = (monthCounts[month] ?? 0) + monthlyCount;
+            print("3 한달 계산: $month => => ${monthCounts[month]}");
           }
 
           // 다음 달 이상으로 넘어가는 경우
           if (month != DateTime.now().month) {
+            print("4 한달 계산: $month => => ${monthCounts[month]}");
             for (; month != DateTime.now().month; month++) {
               if (month > 12) month = 1;
-
+              print("4-1 한달 계산: $month => => ${monthCounts[month]}");
               int nextMonthDay = YMD_now.day;
               if (nextMonthDay <=
                   DateTime(YMD_now.year, month + 1 > 12 ? 1 : month + 1, 0)
                       .day) {
                 monthCounts[month] = (monthCounts[month] ?? 0) + 1;
+                print("4-3 한달 계산: $month => => ${monthCounts[month]}");
               }
             }
           }
@@ -339,10 +344,11 @@ class _calendarState extends State<calendar> {
           monthCounts[month] = (monthCounts[month] ?? 0) + 1;
           print("1년 2 $month");
           print("1년 2 $month ${monthCounts[month]}");
-        } else {
-          print("아무것도아닌 1 $month // ${monthCounts[month]}");
-          monthCounts[month] = 1;
-          print("아무것도아닌 22 $month // ${monthCounts[month]}");
+        } else if (options == "반복 없음") {
+          print("반복 없음 처리 중: $month");
+          monthCounts[month] =
+              (monthCounts[month] ?? 0) + 1; // 값이 없으면 1, 있으면 누적
+          print("반복 없음 완료: $month => ${monthCounts[month]}");
         }
       } else {
         // print("options, monthCounts 또는 YMD_now가 null입니다.");
