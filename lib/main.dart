@@ -413,7 +413,7 @@ Future<void> scheduleWeeklyNotification() async {
               );
 
               print("예약된 시간 (1년 반복): $scheduledTime");
-
+//dd
               await flutterLocalNotificationsPlugin.zonedSchedule(
                 notificationId,
                 '1년 반복 알람',
