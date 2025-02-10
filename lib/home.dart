@@ -13,6 +13,7 @@ import 'package:practice_01_app/screen/Settings.dart';
 //   }
 // }
 
+// ignore: camel_case_types
 class home extends StatefulWidget {
   const home({super.key});
 

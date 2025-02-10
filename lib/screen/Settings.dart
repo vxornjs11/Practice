@@ -1,8 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
-import 'package:practice_01_app/main.dart';
+// import 'package:practice_01_app/main.dart';
 import 'package:practice_01_app/provinder/color_provinder.dart';
 import 'package:provider/provider.dart';
 
@@ -19,6 +19,7 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
+  // ignore: non_constant_identifier_names
   bool color_select = false;
   @override
   Widget build(BuildContext context) {
@@ -148,7 +149,7 @@ class _SettingsState extends State<Settings> {
                       onTap: () {
                         setState(() {
                           color_select = !color_select;
-                          print(color_select);
+                          // print(color_select);
                         });
                       },
                       child: color_select
@@ -160,15 +161,15 @@ class _SettingsState extends State<Settings> {
                                   borderRadius: BorderRadius.circular(15)),
                               child: Row(
                                 children: [
-                                  Icon(Icons.palette),
+                                  const Icon(Icons.palette),
                                   SizedBox(
                                     width: cSize.width * 0.015,
                                   ),
-                                  Text("색상 설정"),
+                                  const Text("색상 설정"),
                                   SizedBox(
                                     width: cSize.width * 0.65,
                                   ),
-                                  Icon(Icons.arrow_drop_down)
+                                  const Icon(Icons.arrow_drop_down)
                                 ],
                                 //arrow_left_sharp
                               ),
@@ -186,15 +187,15 @@ class _SettingsState extends State<Settings> {
                                   ),
                                   Row(
                                     children: [
-                                      Icon(Icons.palette),
+                                      const Icon(Icons.palette),
                                       SizedBox(
                                         width: cSize.width * 0.015,
                                       ),
-                                      Text("색상 설정"),
+                                      const Text("색상 설정"),
                                       SizedBox(
                                         width: cSize.width * 0.65,
                                       ),
-                                      Icon(Icons.arrow_left_sharp)
+                                      const Icon(Icons.arrow_left_sharp)
                                     ],
                                   ),
                                   SizedBox(
@@ -204,19 +205,23 @@ class _SettingsState extends State<Settings> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       _buildColorButton(
-                                          Color.fromARGB(255, 255, 242, 202),
+                                          const Color.fromARGB(
+                                              255, 255, 242, 202),
                                           "연노랑",
                                           colorProvider),
                                       _buildColorButton(
-                                          Color.fromRGBO(200, 162, 200, 1.0),
+                                          const Color.fromRGBO(
+                                              200, 162, 200, 1.0),
                                           "라일락",
                                           colorProvider),
                                       _buildColorButton(
-                                          Color.fromARGB(255, 230, 242, 255),
+                                          const Color.fromARGB(
+                                              255, 230, 242, 255),
                                           "하늘색",
                                           colorProvider),
                                       _buildColorButton(
-                                          Color.fromRGBO(245, 245, 220, 1.0),
+                                          const Color.fromRGBO(
+                                              245, 245, 220, 1.0),
                                           "베이지",
                                           colorProvider),
                                     ],
@@ -225,19 +230,23 @@ class _SettingsState extends State<Settings> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       _buildColorButton(
-                                          Color.fromRGBO(230, 230, 250, 1.0),
+                                          const Color.fromRGBO(
+                                              230, 230, 250, 1.0),
                                           "연보라",
                                           colorProvider),
                                       _buildColorButton(
-                                          Color.fromRGBO(245, 222, 179, 1.0),
+                                          const Color.fromRGBO(
+                                              245, 222, 179, 1.0),
                                           "밀색",
                                           colorProvider),
                                       _buildColorButton(
-                                          Color.fromRGBO(240, 220, 130, 1.0),
+                                          const Color.fromRGBO(
+                                              240, 220, 130, 1.0),
                                           "버프",
                                           colorProvider),
                                       _buildColorButton(
-                                          Color.fromRGBO(210, 180, 140, 1.0),
+                                          const Color.fromRGBO(
+                                              210, 180, 140, 1.0),
                                           "브라운",
                                           colorProvider),
                                     ],
@@ -246,7 +255,7 @@ class _SettingsState extends State<Settings> {
                               ),
                             ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Container(
@@ -255,32 +264,24 @@ class _SettingsState extends State<Settings> {
                       decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(15)),
-                      child: Row(
+                      child: const Row(
                         children: [
                           Icon(Icons.palette),
                           Text("색 메타"),
                         ],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
-                    ElevatedButton(
-                      onPressed: () async {
-                        // if (flutterLocalNotificationsPlugin == null) {
-                        //   print(
-                        //       'flutterLocalNotificationsPlugin이 초기화되지 않았습니다!');
-                        //   return;
-                        // }
-                        // await flutterLocalNotificationsPlugin.cancelAll();
-                        // print('모든 알람이 삭제되었습니다.');
-                        // testdragon
+                    // ElevatedButton(
+                    //   onPressed: () async {
 
-                        // 현재 등록된 알람 찾기
-                        getScheduledNotifications();
-                      },
-                      child: Text("모든 알람 삭제"),
-                    ),
+                    //     // 현재 등록된 알람 찾기
+                    //     getScheduledNotifications();
+                    //   },
+                    //   child: Text("모든 알람 삭제"),
+                    // ),
                     // Image.asset(
                     //   "images/small.png",
                     // ),
@@ -298,18 +299,18 @@ class _SettingsState extends State<Settings> {
     );
   }
 
-  Future<void> getScheduledNotifications() async {
-    print("object");
-    final pendingNotifications =
-        await flutterLocalNotificationsPlugin.pendingNotificationRequests();
+  // Future<void> getScheduledNotifications() async {
+  //   // print("object");
+  //   final pendingNotifications =
+  //       await flutterLocalNotificationsPlugin.pendingNotificationRequests();
 
-    print("등록된 알림 개수: ${pendingNotifications.length}");
+  //   // print("등록된 알림 개수: ${pendingNotifications.length}");
 
-    for (var notification in pendingNotifications) {
-      print(
-          "알림 ID: ${notification.id}, 제목: ${notification.title}, 내용: ${notification.body}");
-    }
-  }
+  //   for (var notification in pendingNotifications) {
+  //     print(
+  //         "알림 ID: ${notification.id}, 제목: ${notification.title}, 내용: ${notification.body}");
+  //   }
+  // }
 
   Widget _buildColorButton(Color color, String label, colorProvider) {
     return Center(

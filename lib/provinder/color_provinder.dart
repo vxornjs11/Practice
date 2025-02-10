@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ColorProvider extends ChangeNotifier {
-  Color _backgroundColor = Color.fromARGB(255, 230, 242, 255);
+  Color _backgroundColor = const Color.fromARGB(255, 230, 242, 255);
 
   ColorProvider({Color initialColor = const Color.fromARGB(255, 230, 242, 255)})
       : _backgroundColor = initialColor;

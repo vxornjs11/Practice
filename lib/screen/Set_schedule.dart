@@ -14,12 +14,13 @@ import 'package:practice_01_app/provinder/count_provinder.dart';
 import 'package:practice_01_app/provinder/timer_provinder.dart';
 import 'package:practice_01_app/screen/Refresh.dart';
 import 'package:timezone/timezone.dart' as tz;
-import 'package:timezone/data/latest.dart' as tz;
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+// ignore: camel_case_types
 class Set_schedul extends StatefulWidget {
   final DateTime selectedDate_;
+  // ignore: non_constant_identifier_names
   final String schedule_Write;
   final int selectedHour;
   final int selectedMinute;
@@ -29,6 +30,7 @@ class Set_schedul extends StatefulWidget {
     super.key,
     required this.option,
     required this.selectedDate_,
+    // ignore: non_constant_identifier_names
     required this.schedule_Write,
     required this.selectedHour,
     required this.selectedMinute,
@@ -38,6 +40,7 @@ class Set_schedul extends StatefulWidget {
   State<Set_schedul> createState() => __Set_schedulState();
 }
 
+// ignore: camel_case_types
 class __Set_schedulState extends State<Set_schedul> {
   // String get timeText {
   //   return _selectedHour < 12 ? "오전" : "오후";
@@ -190,7 +193,7 @@ class __Set_schedulState extends State<Set_schedul> {
         );
         break;
       case '주중':
-        print("일정 알림 주중 0");
+        // print("일정 알림 주중 0");
         tz.TZDateTime schedule = tz.TZDateTime(
           tz.local,
           dateTime.year,
@@ -199,7 +202,7 @@ class __Set_schedulState extends State<Set_schedul> {
           dateTime.hour,
           dateTime.minute,
         );
-        print("일정 알림 주중 0.5");
+        // print("일정 알림 주중 0.5");
         await flutterLocalNotificationsPlugin.zonedSchedule(
           randomtimestampPart,
           '일정 알림',
@@ -212,7 +215,7 @@ class __Set_schedulState extends State<Set_schedul> {
           matchDateTimeComponents:
               DateTimeComponents.dateAndTime, // 매일 같은 시간에 알림.
         );
-        print("일정 알림 주중 1");
+        // print("일정 알림 주중 1");
         break;
       case '주말':
         tz.TZDateTime schedule = tz.TZDateTime(
@@ -318,16 +321,16 @@ class __Set_schedulState extends State<Set_schedul> {
           platformChannelSpecifics,
           uiLocalNotificationDateInterpretation:
               UILocalNotificationDateInterpretation.absoluteTime,
-          androidAllowWhileIdle: true,
+          // androidAllowWhileIdle: true,
         );
-        print("Scheduled default notification at ${tz.TZDateTime(
-          tz.local,
-          dateTime.year,
-          dateTime.month,
-          dateTime.day,
-          dateTime.hour,
-          dateTime.minute,
-        )}");
+        // print("Scheduled default notification at ${tz.TZDateTime(
+        //   tz.local,
+        //   dateTime.year,
+        //   dateTime.month,
+        //   dateTime.day,
+        //   dateTime.hour,
+        //   dateTime.minute,
+        // )}");
         break;
     }
   }
@@ -656,11 +659,11 @@ class __Set_schedulState extends State<Set_schedul> {
                             if (selectedDateWithoutTime
                                     .isBefore(todayWithoutTime) ||
                                 _isCheck == false) {
-                              print("========================.");
-                              print("1$selectedDate_.");
-                              print("2$schedule_Write.");
-                              print("3$_selectedHour 시$_selectedMinute}.");
-                              print("========================.");
+                              // print("========================.");
+                              // print("1$selectedDate_.");
+                              // print("2$schedule_Write.");
+                              // print("3$_selectedHour 시$_selectedMinute}.");
+                              // print("========================.");
                               // bool error_message = false;
                               AlertDialog_Calendar(_selectedHour);
                             } else {
@@ -697,7 +700,7 @@ class __Set_schedulState extends State<Set_schedul> {
                                     const home()); // 홈 페이지로 이동, 이전 페이지 스택을 모두 제거
                               } catch (e) {}
                               setState(() {
-                                print("+++++++++++++++++option$option");
+                                // print("+++++++++++++++++option$option");
                                 context.read<CounterProvider>().ChangeText(
                                     newYear: '', newMonth: '', newDay: '');
 
@@ -749,6 +752,7 @@ class __Set_schedulState extends State<Set_schedul> {
   Future<void> AlertDialog() {
     // late String timeText_1 = "오전";
     return showDialog<Void>(
+        // ignore: deprecated_member_use
         barrierColor: Colors.black.withOpacity(0.8),
         barrierDismissible: false,
         context: context,
@@ -919,6 +923,7 @@ class __Set_schedulState extends State<Set_schedul> {
   Future<void> AlertDialog_Calendar(int selectedHour) {
     // late String timeText_1 = "오전";
     return showDialog<Void>(
+        // ignore: deprecated_member_use
         barrierColor: Colors.black.withOpacity(0.8),
         barrierDismissible: false,
         context: context,

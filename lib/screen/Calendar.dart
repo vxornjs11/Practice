@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_null_comparison
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +8,7 @@ import 'package:practice_01_app/main.dart';
 import 'package:practice_01_app/provinder/color_provinder.dart';
 import 'package:provider/provider.dart';
 
+// ignore: camel_case_types
 class calendar extends StatefulWidget {
   const calendar({
     super.key,
@@ -14,6 +17,7 @@ class calendar extends StatefulWidget {
   State<calendar> createState() => _calendarState();
 }
 
+// ignore: camel_case_types
 class _calendarState extends State<calendar> {
   double count = 1;
 
@@ -38,7 +42,7 @@ class _calendarState extends State<calendar> {
   }
 
   List<FlSpot> _generateFlSpots2(List<QueryDocumentSnapshot> documents) {
-    Map<int, int> Clear_dateCounts = {};
+    Map<int, int> clearDatecounts = {};
 
     for (var doc in documents) {
       if (doc["year"] == DateTime.now().year) {
@@ -48,26 +52,26 @@ class _calendarState extends State<calendar> {
           // 시간 부분을 제거하고 year, month, day만 사용합니다.
           // DateTime dates = (timestamp as Timestamp).toDate();
           // print("dates${dates.month}");
-          if (Clear_dateCounts.containsKey(dates.month)) {
+          if (clearDatecounts.containsKey(dates.month)) {
             // 특정키가 map에 존재하는지 여부. ??
-            Clear_dateCounts[dates.month] = Clear_dateCounts[dates.month]! + 1;
+            clearDatecounts[dates.month] = clearDatecounts[dates.month]! + 1;
           } else {
-            Clear_dateCounts[dates.month] = 1;
+            clearDatecounts[dates.month] = 1;
           }
           // print("Clear_dateCounts$Clear_dateCounts");
         }
       } else {
-        print("해당 년도에는 데이터가 없습니다.");
+        // print("해당 년도에는 데이터가 없습니다.");
       }
     }
     // FlSpot 리스트 생성
     List<FlSpot> spots2 = [];
     for (int i = 1; i <= 12; i++) {
-      spots2.add(FlSpot(i.toDouble(), (Clear_dateCounts[i] ?? 0).toDouble()));
+      spots2.add(FlSpot(i.toDouble(), (clearDatecounts[i] ?? 0).toDouble()));
     }
-    print("======spots2222");
-    print(spots2);
-    print("======spots222");
+    // print("======spots2222");
+    // print(spots2);
+    // print("======spots222");
     return spots2;
   }
 
@@ -86,41 +90,40 @@ class _calendarState extends State<calendar> {
 // 그럼 안바뀌었으면 해당 달에서 - day하면되네.
     for (var doc in documents) {
       // 다음 달의 첫 번째 날에서 하루를 빼면 현재 월의 마지막 날이 나옵니다.
-      DateTime YMD_now = DateTime(doc['year'], doc['month'], doc['day']);
+      DateTime ymdNow = DateTime(doc['year'], doc['month'], doc['day']);
       String options = doc['option'];
       int month = doc['month'];
-      print("시작입니다 $YMD_now $options");
+      // print("시작입니다 $YMD_now $options");
       if (options != null &&
               monthCounts != null &&
-              YMD_now != null &&
-              YMD_now.year == DateTime.now().year &&
-              YMD_now.isBefore(DateTime.now()) ||
-          YMD_now.isAtSameMomentAs(DateTime.now())) {
-        bool hasMonthChanged =
-            //  DateTime.now().year != YMD_now.year ||
-            DateTime.now().month != YMD_now.month;
-        // print("DateTime.now().month != YMD_now.month; $month");
+              ymdNow != null &&
+              ymdNow.year == DateTime.now().year &&
+              ymdNow.isBefore(DateTime.now()) ||
+          ymdNow.isAtSameMomentAs(DateTime.now())) {
+        // bool hasMonthChanged =
+        //     //  DateTime.now().year != YMD_now.year ||
+        //     DateTime.now().month != YMD_now.month;
+        // // print("DateTime.now().month != YMD_now.month; $month");
 
-        print("매일 첫번째 $month // ${monthCounts[month]}");
-        print("hasMonthChanged $hasMonthChanged");
+        // print("매일 첫번째 $month // ${monthCounts[month]}");
+        // print("hasMonthChanged $hasMonthChanged");
         // 그니까 이건 데이터상 달과 현재의 달이 같냐 다르냐 묻는거고
         // 지금 8월 일정은 현재 달과 다르잖아. 그니까 트루야.
         // 아하 8월 매일이 없지 이제 ㅋㅋ;;
-        print(DateTime.now().month != YMD_now.month);
+        // print(DateTime.now().month != YMD_now.month);
         if (options == "매일") {
           // '매일' 일정에서 현재 날짜와 남은 날짜 계산
           int dayCount = 0;
 
           // 현재 월의 마지막 날짜 계산
-          DateTime lastDayOfMonth =
-              DateTime(YMD_now.year, YMD_now.month + 1, 0);
+          // DateTime lastDayOfMonth =
+          //     DateTime(YMD_now.year, YMD_now.month + 1, 0);
 
           // 현재 월의 '매일' 일정 계산
           if (month == DateTime.now().month) {
-            for (DateTime date = YMD_now;
-                !date
-                    .isAfter(DateTime(YMD_now.year, month, DateTime.now().day));
-                date = date.add(Duration(days: 1))) {
+            for (DateTime date = ymdNow;
+                !date.isAfter(DateTime(ymdNow.year, month, DateTime.now().day));
+                date = date.add(const Duration(days: 1))) {
               dayCount++;
             }
             monthCounts[month] = (monthCounts[month] ?? 0) + dayCount;
@@ -132,15 +135,15 @@ class _calendarState extends State<calendar> {
               if (month > 12) month = 1;
 
               // 다음 달의 날짜 범위 계산
-              DateTime firstDayOfNextMonth = DateTime(YMD_now.year, month, 1);
+              DateTime firstDayOfNextMonth = DateTime(ymdNow.year, month, 1);
               DateTime lastDayOfNextMonth =
-                  DateTime(YMD_now.year, month + 1 > 12 ? 1 : month + 1, 0);
+                  DateTime(ymdNow.year, month + 1 > 12 ? 1 : month + 1, 0);
 
               int nextMonthDayCount = 0;
 
               for (DateTime date = firstDayOfNextMonth;
                   !date.isAfter(lastDayOfNextMonth);
-                  date = date.add(Duration(days: 1))) {
+                  date = date.add(const Duration(days: 1))) {
                 nextMonthDayCount++;
               }
 
@@ -151,7 +154,7 @@ class _calendarState extends State<calendar> {
           }
 
           // 최종 결과 출력
-          print("매일 계산 완료: $month => ${monthCounts[month]}");
+          // print("매일 계산 완료: $month => ${monthCounts[month]}");
         }
 
         // int weeksElapsed =
@@ -168,13 +171,13 @@ class _calendarState extends State<calendar> {
 
           // 현재 월의 마지막 날짜 계산
           DateTime lastDayOfMonth =
-              DateTime(YMD_now.year, YMD_now.month, DateTime.now().day);
+              DateTime(ymdNow.year, ymdNow.month, DateTime.now().day);
 
           // 현재 달 평일 계산
           if (month == DateTime.now().month) {
-            for (DateTime date = YMD_now;
+            for (DateTime date = ymdNow;
                 !date.isAfter(lastDayOfMonth);
-                date = date.add(Duration(days: 1))) {
+                date = date.add(const Duration(days: 1))) {
               if (date.weekday >= DateTime.monday &&
                   date.weekday <= DateTime.friday) {
                 weekdayCount++;
@@ -190,14 +193,14 @@ class _calendarState extends State<calendar> {
 
               // 다음 달의 범위 계산
               DateTime lastDayOfNextMonth =
-                  DateTime(YMD_now.year, month + 1 > 12 ? 1 : month + 1, 0);
-              DateTime firstDayOfNextMonth = DateTime(YMD_now.year, month, 1);
+                  DateTime(ymdNow.year, month + 1 > 12 ? 1 : month + 1, 0);
+              DateTime firstDayOfNextMonth = DateTime(ymdNow.year, month, 1);
 
               int nextMonthWeekdayCount = 0;
 
               for (DateTime date = firstDayOfNextMonth;
                   !date.isAfter(lastDayOfNextMonth);
-                  date = date.add(Duration(days: 1))) {
+                  date = date.add(const Duration(days: 1))) {
                 if (date.weekday >= DateTime.monday &&
                     date.weekday <= DateTime.friday) {
                   nextMonthWeekdayCount++;
@@ -209,7 +212,7 @@ class _calendarState extends State<calendar> {
             }
           }
 
-          print("최종 주중 평일 계산: $month => ${monthCounts[month]}");
+          // print("최종 주중 평일 계산: $month => ${monthCounts[month]}");
         }
 
 // ====== "주말" 옵션 ======
@@ -218,13 +221,13 @@ class _calendarState extends State<calendar> {
 
           // 현재 월의 마지막 날짜 계산
           DateTime lastDayOfMonth =
-              DateTime(YMD_now.year, YMD_now.month, DateTime.now().day);
+              DateTime(ymdNow.year, ymdNow.month, DateTime.now().day);
 
           // 현재 달 주말 계산
           if (month == DateTime.now().month) {
-            for (DateTime date = YMD_now;
+            for (DateTime date = ymdNow;
                 !date.isAfter(lastDayOfMonth);
-                date = date.add(Duration(days: 1))) {
+                date = date.add(const Duration(days: 1))) {
               if (date.weekday == DateTime.saturday ||
                   date.weekday == DateTime.sunday) {
                 weekendCount++;
@@ -239,14 +242,14 @@ class _calendarState extends State<calendar> {
               if (month > 12) month = 1;
 
               DateTime lastDayOfNextMonth =
-                  DateTime(YMD_now.year, month + 1 > 12 ? 1 : month + 1, 0);
-              DateTime firstDayOfNextMonth = DateTime(YMD_now.year, month, 1);
+                  DateTime(ymdNow.year, month + 1 > 12 ? 1 : month + 1, 0);
+              DateTime firstDayOfNextMonth = DateTime(ymdNow.year, month, 1);
 
               int nextMonthWeekendCount = 0;
 
               for (DateTime date = firstDayOfNextMonth;
                   !date.isAfter(lastDayOfNextMonth);
-                  date = date.add(Duration(days: 1))) {
+                  date = date.add(const Duration(days: 1))) {
                 if (date.weekday == DateTime.saturday ||
                     date.weekday == DateTime.sunday) {
                   nextMonthWeekendCount++;
@@ -258,7 +261,7 @@ class _calendarState extends State<calendar> {
             }
           }
 
-          print("최종 주말 계산: $month => ${monthCounts[month]}");
+          // print("최종 주말 계산: $month => ${monthCounts[month]}");
         }
 
 // ====== "매주" 옵션 ======
@@ -267,11 +270,10 @@ class _calendarState extends State<calendar> {
 
           // 현재 달의 특정 요일(알람 요일)을 반복 계산
           if (month == DateTime.now().month) {
-            for (DateTime date = YMD_now;
-                !date
-                    .isAfter(DateTime(YMD_now.year, month, DateTime.now().day));
-                date = date.add(Duration(days: 7))) {
-              if (date.weekday == YMD_now.weekday) {
+            for (DateTime date = ymdNow;
+                !date.isAfter(DateTime(ymdNow.year, month, DateTime.now().day));
+                date = date.add(const Duration(days: 7))) {
+              if (date.weekday == ymdNow.weekday) {
                 weeklyCount++;
               }
             }
@@ -283,16 +285,16 @@ class _calendarState extends State<calendar> {
             for (; month != DateTime.now().month; month++) {
               if (month > 12) month = 1;
 
-              DateTime firstDayOfNextMonth = DateTime(YMD_now.year, month, 1);
+              DateTime firstDayOfNextMonth = DateTime(ymdNow.year, month, 1);
               DateTime lastDayOfNextMonth =
-                  DateTime(YMD_now.year, month + 1 > 12 ? 1 : month + 1, 0);
+                  DateTime(ymdNow.year, month + 1 > 12 ? 1 : month + 1, 0);
 
               int nextMonthWeeklyCount = 0;
 
               for (DateTime date = firstDayOfNextMonth;
                   !date.isAfter(lastDayOfNextMonth);
-                  date = date.add(Duration(days: 7))) {
-                if (date.weekday == YMD_now.weekday) {
+                  date = date.add(const Duration(days: 7))) {
+                if (date.weekday == ymdNow.weekday) {
                   nextMonthWeeklyCount++;
                 }
               }
@@ -302,53 +304,53 @@ class _calendarState extends State<calendar> {
             }
           }
 
-          print("최종 매주 계산: $month => ${monthCounts[month]}");
+          // print("최종 매주 계산: $month => ${monthCounts[month]}");
         }
 
         // ====== "한달" 옵션 ======
         else if (options == "한달") {
           int monthlyCount = 0;
-          print("1 한달 계산: $month => ${monthCounts[month]}");
+          // print("1 한달 계산: $month => ${monthCounts[month]}");
           // 한 달에 지정된 날짜를 반복
           if (month == DateTime.now().month) {
-            print("2 한달 계산: $month => => ${monthCounts[month]}");
-            if (DateTime.now().day >= YMD_now.day) {
+            // print("2 한달 계산: $month => => ${monthCounts[month]}");
+            if (DateTime.now().day >= ymdNow.day) {
               monthlyCount++;
-              print("2-1 한달 계산:  $monthlyCount}");
+              // print("2-1 한달 계산:  $monthlyCount}");
             }
             monthCounts[month] = (monthCounts[month] ?? 0) + monthlyCount;
-            print("3 한달 계산: $month => => ${monthCounts[month]}");
+            // print("3 한달 계산: $month => => ${monthCounts[month]}");
           }
 
           // 다음 달 이상으로 넘어가는 경우
           if (month != DateTime.now().month) {
-            print("4 한달 계산: $month => => ${monthCounts[month]}");
+            // print("4 한달 계산: $month => => ${monthCounts[month]}");
             for (; month != DateTime.now().month; month++) {
               if (month > 12) month = 1;
-              print("4-1 한달 계산: $month => => ${monthCounts[month]}");
-              int nextMonthDay = YMD_now.day;
+              // print("4-1 한달 계산: $month => => ${monthCounts[month]}");
+              int nextMonthDay = ymdNow.day;
               if (nextMonthDay <=
-                  DateTime(YMD_now.year, month + 1 > 12 ? 1 : month + 1, 0)
+                  DateTime(ymdNow.year, month + 1 > 12 ? 1 : month + 1, 0)
                       .day) {
                 monthCounts[month] = (monthCounts[month] ?? 0) + 1;
-                print("4-3 한달 계산: $month => => ${monthCounts[month]}");
+                // print("4-3 한달 계산: $month => => ${monthCounts[month]}");
               }
             }
           }
 
-          print("최종 한달 계산: $month => ${monthCounts[month]}");
+          // print("최종 한달 계산: $month => ${monthCounts[month]}");
         } else if (options == "1년") {
-          print("1년 $month");
-          print("1년 $month ${monthCounts[month]}");
+          // print("1년 $month");
+          // print("1년 $month ${monthCounts[month]}");
           // 매년 반복 - 현재 달에 추가
           monthCounts[month] = (monthCounts[month] ?? 0) + 1;
-          print("1년 2 $month");
-          print("1년 2 $month ${monthCounts[month]}");
-        } else if (options == "반복 없음") {
-          print("반복 없음 처리 중: $month");
+          // print("1년 2 $month");
+          // print("1년 2 $month ${monthCounts[month]}");
+        } else {
+          // print("반복 없음 처리 중: $month");
           monthCounts[month] =
               (monthCounts[month] ?? 0) + 1; // 값이 없으면 1, 있으면 누적
-          print("반복 없음 완료: $month => ${monthCounts[month]}");
+          // print("반복 없음 완료: $month => ${monthCounts[month]}");
         }
       } else {
         // print("options, monthCounts 또는 YMD_now가 null입니다.");
@@ -360,8 +362,8 @@ class _calendarState extends State<calendar> {
     for (int i = 1; i <= 12; i++) {
       spots.add(FlSpot(i.toDouble(), (monthCounts[i] ?? 0).toDouble()));
     }
-    print("======spots");
-    print(spots);
+    // print("======spots");
+    // print(spots);
     return spots;
   }
   // 아니 나 병신인가 월별 달성률은 차트에 보이잖아?
@@ -414,7 +416,7 @@ class _calendarState extends State<calendar> {
       space: 4,
       child: Text(
         text,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 10,
           color: Colors.black,
           fontWeight: FontWeight.bold,
@@ -459,7 +461,6 @@ class _calendarState extends State<calendar> {
 
   @override
   void initState() {
-    // TODO: implement initStatedouble.parse
     count = DateTime.now().month.toDouble() - 1;
     // _updateMonthCount(scheduleCounts2, scheduleCounts);
     super.initState();
@@ -489,22 +490,22 @@ class _calendarState extends State<calendar> {
                       children: [
                         Consumer<ColorProvider>(
                             builder: (context, value, child) {
-                          var c_size = MediaQuery.of(context).size;
+                          var cSize = MediaQuery.of(context).size;
                           return Container(
-                            width: c_size.width * 1,
-                            height: c_size.height * 1,
+                            width: cSize.width * 1,
+                            height: cSize.height * 1,
                             decoration: BoxDecoration(
                               color: value.backgroundColor,
                             ),
                             child: Column(
                               children: [
-                                SizedBox(height: c_size.height * 0.07),
-                                Text(
+                                SizedBox(height: cSize.height * 0.07),
+                                const Text(
                                   "목표달성률",
                                   style: TextStyle(fontSize: 35),
                                 ),
                                 SizedBox(
-                                  height: c_size.height * 0.01,
+                                  height: cSize.height * 0.01,
                                 ),
                                 Stack(
                                   children: [
@@ -598,7 +599,8 @@ class _calendarState extends State<calendar> {
                                                       bottomTitles: AxisTitles(
                                                         axisNameWidget: Text(
                                                           " ${DateTime.now().year}",
-                                                          style: TextStyle(
+                                                          style:
+                                                              const TextStyle(
                                                             fontSize: 10,
                                                             color: Colors.red,
                                                             fontWeight:
@@ -638,7 +640,7 @@ class _calendarState extends State<calendar> {
                                                                       .toInt()
                                                                       .toString(),
                                                                   style:
-                                                                      TextStyle(
+                                                                      const TextStyle(
                                                                     color: Colors
                                                                         .black,
                                                                     fontSize:
@@ -717,7 +719,7 @@ class _calendarState extends State<calendar> {
                                                     bottomTitles: AxisTitles(
                                                       axisNameWidget: Text(
                                                         " ${DateTime.now().year}",
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                           fontSize: 10,
                                                           color: Colors.red,
                                                           fontWeight:
@@ -753,7 +755,7 @@ class _calendarState extends State<calendar> {
                                                                 value
                                                                     .toInt()
                                                                     .toString(),
-                                                                style: TextStyle(
+                                                                style: const TextStyle(
                                                                     color: Colors
                                                                         .black,
                                                                     fontSize:
@@ -842,19 +844,19 @@ class _calendarState extends State<calendar> {
                                           setState(() {
                                             change_Chart = !change_Chart;
                                           });
-                                          print(change_Chart);
+                                          // print(change_Chart);
                                         },
+                                        tooltip: 'Add Schedule',
                                         child: change_Chart
-                                            ? Icon(
+                                            ? const Icon(
                                                 Icons.bar_chart_outlined,
                                                 size: 50,
                                               )
-                                            : Icon(
+                                            : const Icon(
                                                 Icons.line_axis_rounded,
                                                 size: 50,
                                                 // color: Colors.lightBlue[59],
                                               ),
-                                        tooltip: 'Add Schedule',
                                       ),
                                     ),
                                   ],
@@ -884,7 +886,7 @@ class _calendarState extends State<calendar> {
                                                     .height *
                                                 0.035,
                                           ),
-                                          Text(
+                                          const Text(
                                             "년/달성률",
                                             style: TextStyle(fontSize: 30),
                                           ),
@@ -894,7 +896,7 @@ class _calendarState extends State<calendar> {
                                                     .height *
                                                 0.02,
                                           ),
-                                          Text(
+                                          const Text(
                                             "0",
                                             style: TextStyle(fontSize: 40),
                                           )
@@ -938,11 +940,12 @@ class _calendarState extends State<calendar> {
                                                       //     scheduleCounts);
                                                     });
                                                   },
-                                                  icon: Icon(
+                                                  icon: const Icon(
                                                       Icons.arrow_back_ios)),
                                               Text(
                                                 "${(count + 1).toInt()}월",
-                                                style: TextStyle(fontSize: 30),
+                                                style: const TextStyle(
+                                                    fontSize: 30),
                                               ),
                                               IconButton(
                                                   onPressed: () {
@@ -956,7 +959,7 @@ class _calendarState extends State<calendar> {
                                                       //     );
                                                     });
                                                   },
-                                                  icon: Icon(
+                                                  icon: const Icon(
                                                       Icons.arrow_forward_ios)),
                                             ],
                                           ),
@@ -968,7 +971,8 @@ class _calendarState extends State<calendar> {
                                           ),
                                           Text(
                                             " ${monthCount1 >= 0 ? double.parse(monthCount1.toStringAsFixed(1)) : monthCount1 = 0}%",
-                                            style: TextStyle(fontSize: 40),
+                                            style:
+                                                const TextStyle(fontSize: 40),
                                           )
                                         ],
                                       ),
@@ -1023,26 +1027,26 @@ class _calendarState extends State<calendar> {
                   double maxYValue = spots
                       .map((spot) => spot.y)
                       .reduce((a, b) => a > b ? a : b);
-                  var c_size = MediaQuery.of(context).size;
+                  var cSize = MediaQuery.of(context).size;
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Consumer<ColorProvider>(builder: (context, value, child) {
                         return Container(
-                          width: c_size.width * 1,
-                          height: c_size.height * 1,
+                          width: cSize.width * 1,
+                          height: cSize.height * 1,
                           decoration: BoxDecoration(
                             color: value.backgroundColor,
                           ),
                           child: Column(
                             children: [
-                              SizedBox(height: c_size.height * 0.07),
-                              Text(
+                              SizedBox(height: cSize.height * 0.07),
+                              const Text(
                                 "목표달성률",
                                 style: TextStyle(fontSize: 35),
                               ),
                               SizedBox(
-                                height: c_size.height * 0.01,
+                                height: cSize.height * 0.01,
                               ),
                               Stack(
                                 children: [
@@ -1106,7 +1110,7 @@ class _calendarState extends State<calendar> {
                                                     bottomTitles: AxisTitles(
                                                       axisNameWidget: Text(
                                                         " ${DateTime.now().year}",
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                           fontSize: 10,
                                                           color: Colors.red,
                                                           fontWeight:
@@ -1144,7 +1148,7 @@ class _calendarState extends State<calendar> {
                                                                     .toInt()
                                                                     .toString(),
                                                                 style:
-                                                                    TextStyle(
+                                                                    const TextStyle(
                                                                   color: Colors
                                                                       .black,
                                                                   fontSize: 15,
@@ -1223,7 +1227,7 @@ class _calendarState extends State<calendar> {
                                                   bottomTitles: AxisTitles(
                                                     axisNameWidget: Text(
                                                       " ${DateTime.now().year}",
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                         fontSize: 10,
                                                         color: Colors.red,
                                                         fontWeight:
@@ -1258,7 +1262,7 @@ class _calendarState extends State<calendar> {
                                                               value
                                                                   .toInt()
                                                                   .toString(),
-                                                              style: TextStyle(
+                                                              style: const TextStyle(
                                                                   color: Colors
                                                                       .black,
                                                                   fontSize:
@@ -1346,19 +1350,19 @@ class _calendarState extends State<calendar> {
                                         setState(() {
                                           change_Chart = !change_Chart;
                                         });
-                                        print(change_Chart);
+                                        // print(change_Chart);
                                       },
+                                      tooltip: 'Add Schedule',
                                       child: change_Chart
-                                          ? Icon(
+                                          ? const Icon(
                                               Icons.bar_chart_outlined,
                                               size: 50,
                                             )
-                                          : Icon(
+                                          : const Icon(
                                               Icons.line_axis_rounded,
                                               size: 50,
                                               // color: Colors.lightBlue[59],
                                             ),
-                                      tooltip: 'Add Schedule',
                                     ),
                                   ),
                                 ],
@@ -1387,7 +1391,7 @@ class _calendarState extends State<calendar> {
                                                   .height *
                                               0.035,
                                         ),
-                                        Text(
+                                        const Text(
                                           "년/달성률",
                                           style: TextStyle(fontSize: 30),
                                         ),
@@ -1400,11 +1404,13 @@ class _calendarState extends State<calendar> {
                                         Text(
                                           // null 또는 0 체크
                                           totalSchedules == 0 ||
+                                                  // ignore: duplicate_ignore
+                                                  // ignore: unnecessary_null_comparison
                                                   totalSchedules == null ||
                                                   totalSchedules2 == null
                                               ? "0%"
                                               : "${((totalSchedules2 / totalSchedules) * 100).toStringAsFixed(1)}%",
-                                          style: TextStyle(fontSize: 40),
+                                          style: const TextStyle(fontSize: 40),
                                         )
                                       ],
                                     ),
@@ -1445,11 +1451,12 @@ class _calendarState extends State<calendar> {
                                                         scheduleCounts);
                                                   });
                                                 },
-                                                icon:
-                                                    Icon(Icons.arrow_back_ios)),
+                                                icon: const Icon(
+                                                    Icons.arrow_back_ios)),
                                             Text(
                                               "${(count + 1).toInt()}월",
-                                              style: TextStyle(fontSize: 30),
+                                              style:
+                                                  const TextStyle(fontSize: 30),
                                             ),
                                             IconButton(
                                                 onPressed: () {
@@ -1462,7 +1469,7 @@ class _calendarState extends State<calendar> {
                                                         scheduleCounts);
                                                   });
                                                 },
-                                                icon: Icon(
+                                                icon: const Icon(
                                                     Icons.arrow_forward_ios)),
                                           ],
                                         ),
@@ -1474,7 +1481,7 @@ class _calendarState extends State<calendar> {
                                         ),
                                         Text(
                                           " ${monthCount1 >= 0 ? double.parse(monthCount1.toStringAsFixed(1)) : monthCount1 = 0}%",
-                                          style: TextStyle(fontSize: 40),
+                                          style: const TextStyle(fontSize: 40),
                                         )
                                       ],
                                     ),

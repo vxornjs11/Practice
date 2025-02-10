@@ -43,11 +43,11 @@ class UserManager {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('userId');
     if (id == null) {
-      print("id = null");
-      id = Uuid().v4();
+      // print("id = null");
+      id = const Uuid().v4();
       await saveUserId(id);
     } else {
-      print("id not null");
+      // print("id not null");
       userId = id;
     }
   }
@@ -94,7 +94,7 @@ void main() async {
   await flutterLocalNotificationsPlugin.initialize(
     initializationSettings,
     onDidReceiveNotificationResponse: (details) {
-      print('알림 클릭됨: ${details.payload}');
+      // print('알림 클릭됨: ${details.payload}');
     },
   );
 
@@ -106,7 +106,7 @@ void main() async {
   // 캘린더 쪽에 버튼 누를때마다 ui 엄청 반짝거리는데 별로임 눈아픔
   // 백그라운드 작업 초기화
   // initBackgroundFetch();
-  print('백그라운드 앞');
+  // print('백그라운드 앞');
   // Background Fetch 초기화
   BackgroundFetch.configure(
     BackgroundFetchConfig(
@@ -117,19 +117,19 @@ void main() async {
       forceAlarmManager: true,
     ),
     (taskId) async {
-      print('포그라운드에서 BackgroundFetch 실행: $taskId');
+      // print('포그라운드에서 BackgroundFetch 실행: $taskId');
       await scheduleWeeklyNotification(); // 알림 예약 작업
       BackgroundFetch.finish(taskId); // 항상 호출
-      print('finally b');
+      // print('finally b');
     },
     // ahfnfprtjddy.
     // 매일 옵션이 현재시간보다 이전이면 제대로 작동 안하는듯.
     (taskId) async {
-      print('헤드리스 모드에서 BackgroundFetch 실행: $taskId');
+      // print('헤드리스 모드에서 BackgroundFetch 실행: $taskId');
       await scheduleWeeklyNotification();
-      print('finally 1');
+      // print('finally 1');
       BackgroundFetch.finish(taskId);
-      print('finally 2');
+      // print('finally 2');
     },
   );
 // 🔹 백그라운드 작업 강제 시작
@@ -137,23 +137,23 @@ void main() async {
   // 헤드리스 작업 등록
 
   BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
-  print('백그라운드 뒤');
+  // print('백그라운드 뒤');
 
   // Splash 제거
-  Duration(seconds: 2);
+  const Duration(seconds: 2);
   FlutterNativeSplash.remove();
   // 앱 실행
   runApp(MyApp());
 } // main /////=======
 
 void backgroundFetchHeadlessTask(String taskId) async {
-  print("헤드리스 작업 실행: $taskId");
+  // print("헤드리스 작업 실행: $taskId");
 
   // 백그라운드 작업 실행
   try {
     await scheduleWeeklyNotification(); // 사용자 작업
   } catch (e) {
-    print("헤드리스 작업 오류: $e");
+    // print("헤드리스 작업 오류: $e");
   }
 
   // 작업 완료 알림
@@ -170,12 +170,12 @@ Future<void> requestExactAlarmsPermission() async {
         await platform.invokeMethod<bool>('requestExactAlarmsPermission') ??
             false;
     if (granted) {
-      print("정확한 알람 권한이 허용되었습니다.");
+      // print("정확한 알람 권한이 허용되었습니다.");
     } else {
-      print("정확한 알람 권한이 거부되었습니다.");
+      // print("정확한 알람 권한이 거부되었습니다.");
     }
   } on PlatformException catch (e) {
-    print("정확한 알람 권한 요청 중 오류 발생: ${e.message}");
+    // print("정확한 알람 권한 요청 중 오류 발생: ${e.message}");
   }
 }
 
@@ -213,12 +213,12 @@ Future<void> scheduleWeeklyNotification() async {
           presentBadge: true,
           presentSound: true,
           badgeNumber: 1));
-  print("메인실행시발동하는건가");
+  // print("메인실행시발동하는건가");
   // day로 하면 아닌 날에도 반복되는건 멈출거야.
   // 하지만 그날 내내 알람을 재설정 하는 개찐빠가 벌어지겠지
   // 어쩌면 기존알람과 함께 2번 울릴지도.
   //
-  print('[scheduleWeeklyNotification] 실행 시작');
+  // print('[scheduleWeeklyNotification] 실행 시작');
 
   try {
     final snapshot = await FirebaseFirestore.instance
@@ -229,18 +229,19 @@ Future<void> scheduleWeeklyNotification() async {
         .get();
 
     if (snapshot.docs.isEmpty) {
-      print('[scheduleWeeklyNotification] Firestore 결과 없음');
+      // print('[scheduleWeeklyNotification] Firestore 결과 없음');
       return;
     }
 
     for (var doc in snapshot.docs) {
+      // ignore: unnecessary_cast
       final data = doc.data() as Map<String, dynamic>;
-      print('[scheduleWeeklyNotification] 데이터: $data');
-      print('[scheduleWeeklyNotification] 데이터 옵션: ${data['option']}');
-      print(
-          '[scheduleWeeklyNotification] 데이터 option_day: ${data['option_day']}');
-      print('[scheduleWeeklyNotification] 데이터 uniqueID: ${data['uniqueID']}');
-      print('===========================');
+      // print('[scheduleWeeklyNotification] 데이터: $data');
+      // print('[scheduleWeeklyNotification] 데이터 옵션: ${data['option']}');
+      // print(
+      //     '[scheduleWeeklyNotification] 데이터 option_day: ${data['option_day']}');
+      // print('[scheduleWeeklyNotification] 데이터 uniqueID: ${data['uniqueID']}');
+      // print('===========================');
 
       /// 아 이거 요일별로 하는거 있지 않았나>?????????
       /// 날짜로 하는거 아니라 흐미ㅣㅣㅣㅣ;아ㅏ아아아아ㅏㅣ;;;
@@ -262,14 +263,14 @@ Future<void> scheduleWeeklyNotification() async {
               // 알림 ID와 예약 시간 디버깅
               try {
                 final notificationId = data['uniqueID'] + weekday2;
-                print("알림 ID: $notificationId");
+                // print("알림 ID: $notificationId");
 
                 final scheduledTime = _nextInstanceOfWeekday(
                   weekday2,
                   hour,
                   minit,
                 );
-                print("예약된 시간: $scheduledTime");
+                // print("예약된 시간: $scheduledTime");
 
                 // 알림 예약
                 await flutterLocalNotificationsPlugin.zonedSchedule(
@@ -284,9 +285,9 @@ Future<void> scheduleWeeklyNotification() async {
                   matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
                 );
 
-                print("알림 예약 성공: $notificationId");
+                // print("알림 예약 성공: $notificationId");
               } catch (e) {
-                print("zonedSchedule 실행 중 오류 발생: $e");
+                // print("zonedSchedule 실행 중 오류 발생: $e");
               }
             }
           }
@@ -308,14 +309,14 @@ Future<void> scheduleWeeklyNotification() async {
               // 알림 ID와 예약 시간 디버깅
               try {
                 final notificationId = data['uniqueID'] + weekday;
-                print("알림 ID: $notificationId");
+                // print("알림 ID: $notificationId");
 
                 final scheduledTime = _nextInstanceOfWeekday(
                   weekday,
                   hour,
                   minit,
                 );
-                print("예약된 시간: $scheduledTime");
+                // print("예약된 시간: $scheduledTime");
 
                 // 알림 예약
                 await flutterLocalNotificationsPlugin.zonedSchedule(
@@ -324,15 +325,15 @@ Future<void> scheduleWeeklyNotification() async {
                   data['Schedule'],
                   scheduledTime,
                   platformChannelSpecifics,
-                  androidAllowWhileIdle: true,
+                  // androidAllowWhileIdle: true,
                   uiLocalNotificationDateInterpretation:
                       UILocalNotificationDateInterpretation.absoluteTime,
                   matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
                 );
 
-                print("알림 예약 성공: $notificationId");
+                // print("알림 예약 성공: $notificationId");
               } catch (e) {
-                print("zonedSchedule 실행 중 오류 발생: $e");
+                // print("zonedSchedule 실행 중 오류 발생: $e");
               }
             }
           }
@@ -349,7 +350,7 @@ Future<void> scheduleWeeklyNotification() async {
               DateTime.now().month == data['month'] &&
               DateTime.now().day == data['day']) {
             final notificationId = data['uniqueID']; // 고유 ID 생성
-            print("알림 ID: $notificationId");
+            // print("알림 ID: $notificationId");
 
             final now = tz.TZDateTime.now(tz.local);
 
@@ -363,7 +364,7 @@ Future<void> scheduleWeeklyNotification() async {
               minit,
             );
 
-            print("예약된 시간 (매주): $scheduledTime");
+            // print("예약된 시간 (매주): $scheduledTime");
 
             try {
               await flutterLocalNotificationsPlugin.zonedSchedule(
@@ -372,14 +373,14 @@ Future<void> scheduleWeeklyNotification() async {
                 data['Schedule'],
                 scheduledTime,
                 platformChannelSpecifics,
-                androidAllowWhileIdle: true,
+                // androidAllowWhileIdle: true,
                 uiLocalNotificationDateInterpretation:
                     UILocalNotificationDateInterpretation.absoluteTime,
                 matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
               );
-              print("매주 반복 알림 예약 성공: $scheduledTime");
+              // print("매주 반복 알림 예약 성공: $scheduledTime");
             } catch (e) {
-              print("매주 반복 알림 예약 실패: $e");
+              // print("매주 반복 알림 예약 실패: $e");
             }
           }
           break;
@@ -398,7 +399,7 @@ Future<void> scheduleWeeklyNotification() async {
               int month = data['month']; // 반복할 특정 월
 
               final notificationId = data['uniqueID'] + 1000; // 고유 ID 생성
-              print("알림 ID: $notificationId");
+              // print("알림 ID: $notificationId");
 
               final now = tz.TZDateTime.now(tz.local);
 
@@ -412,7 +413,7 @@ Future<void> scheduleWeeklyNotification() async {
                 minit,
               );
 
-              print("예약된 시간 (1년 반복): $scheduledTime");
+              // print("예약된 시간 (1년 반복): $scheduledTime");
 //dd
               await flutterLocalNotificationsPlugin.zonedSchedule(
                 notificationId,
@@ -420,14 +421,14 @@ Future<void> scheduleWeeklyNotification() async {
                 data['Schedule'],
                 scheduledTime,
                 platformChannelSpecifics,
-                androidAllowWhileIdle: true,
+                // androidAllowWhileIdle: true,
                 uiLocalNotificationDateInterpretation:
                     UILocalNotificationDateInterpretation.absoluteTime,
               );
 
-              print("1년 반복 알림 예약 성공: $notificationId");
+              // print("1년 반복 알림 예약 성공: $notificationId");
             } catch (e) {
-              print("1년 반복 zonedSchedule 실행 중 오류 발생: $e");
+              // print("1년 반복 zonedSchedule 실행 중 오류 발생: $e");
             }
           } else {
             // 1년 반복 실행할 필요 없는 경우.
@@ -435,7 +436,7 @@ Future<void> scheduleWeeklyNotification() async {
 
           break;
         case "매일":
-          print("매일매일");
+          // print("매일매일");
           if (DateTime.now().year == data['year'] &&
               DateTime.now().month == data['month'] &&
               DateTime.now().day == data['day']) {
@@ -443,7 +444,7 @@ Future<void> scheduleWeeklyNotification() async {
             // 근데 그래도 1월31일 금요일에 DateTimeComponents.time으로 작동해서
             // 매일알람이 되어야 하는거 아닌감?
             final now = tz.TZDateTime.now(tz.local);
-            print("매일매일$now");
+            // print("매일매일$now");
 
             // 알림 예약 시간 계산 (현재 시간보다 이후로 설정)
             final scheduledTime = tz.TZDateTime(tz.local, now.year, now.month,
@@ -454,7 +455,7 @@ Future<void> scheduleWeeklyNotification() async {
               data['Schedule'],
               scheduledTime,
               platformChannelSpecifics,
-              androidAllowWhileIdle: true,
+              // androidAllowWhileIdle: true,
               uiLocalNotificationDateInterpretation:
                   UILocalNotificationDateInterpretation.absoluteTime,
               matchDateTimeComponents: DateTimeComponents.time, // 매일 같은 시간 반복
@@ -472,36 +473,38 @@ Future<void> scheduleWeeklyNotification() async {
       }
     }
   } catch (e) {
-    print('[scheduleWeeklyNotification] 오류: $e');
+    // print('[scheduleWeeklyNotification] 오류: $e');
   } finally {
-    print('[scheduleWeeklyNotification] 실행 완료');
+    // print('[scheduleWeeklyNotification] 실행 완료');
   }
 }
 // 237318673
 //593466206
 
 _nextInstanceOfWeekday(int weekday, int hour, int minute) {
-  print("디버디버깅: now");
+  // print("디버디버깅: now");
   final now = DateTime.now();
-  print("디버디버깅: now222");
-  print("디버디버깅111 : ${tz.local}");
+  // print("디버디버깅: now222");
+  // print("디버디버깅111 : ${tz.local}");
 
   tz.TZDateTime scheduledDate =
       tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
-  print("디버디버깅: $scheduledDate");
+  // print("디버디버깅: $scheduledDate");
   // 현재 시간이 예약 시간보다 늦은 경우, 다음 주로 이동
   if (scheduledDate.isBefore(now) || scheduledDate.weekday != weekday) {
-    print("디버디버깅: 이프문 통과");
+    // print("디버디버깅: 이프문 통과");
     scheduledDate = scheduledDate.add(const Duration(days: 1));
     while (scheduledDate.weekday != weekday) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
   }
-  print("ㅡ끄끄끝>");
+  // print("ㅡ끄끄끝>");
   return scheduledDate;
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {

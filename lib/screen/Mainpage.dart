@@ -22,9 +22,12 @@ class _MyWidgetState extends State<Mainpage> {
   late DateTime selectedDate_;
   bool _isMounted = false;
   final List<String> week = ["월", "화", "수", "목", "금", "토", "일"];
+  // ignore: non_constant_identifier_names
   late int ListCount = 0;
   final today = DateTime.now();
+  // ignore: non_constant_identifier_names
   late bool delete_list = false;
+  // ignore: non_constant_identifier_names
   late bool Calender_switch = false;
   List<Map<String, dynamic>> list = [];
   // Map<DateTime, List<String>> _events = {};
@@ -38,7 +41,6 @@ class _MyWidgetState extends State<Mainpage> {
   );
   @override
   void initState() {
-    // TODO: implement initState
     _isMounted = true;
     selectedDate_ = DateTime.now();
     invitaionList();
@@ -344,14 +346,15 @@ class _MyWidgetState extends State<Mainpage> {
 
             // 시작 날짜가 선택한 요일에 맞지 않으면, 해당 요일로 이동
             while (currentDate.weekday != selectedWeekday) {
-              currentDate = currentDate.add(Duration(days: 1));
+              currentDate = currentDate.add(const Duration(days: 1));
             }
 
             // 매주 반복
             for (var i = 0; i < 52; i++) {
               // 최대 52주
               _addEvent(events, currentDate, event);
-              currentDate = currentDate.add(Duration(days: 7)); // 다음 주로 이동
+              currentDate =
+                  currentDate.add(const Duration(days: 7)); // 다음 주로 이동
             }
           }
         }
@@ -429,11 +432,13 @@ class _MyWidgetState extends State<Mainpage> {
     });
   }
 
+  // ignore: slash_for_doc_comments
   /** 
      * titleText : 텍스트 내용 입력 
      * Size : 폰트 사이즈 double값 넣을것.
      * FontWeight.bold
     */
+  // ignore: non_constant_identifier_names
   Widget TitleText(String titleText, double Size) {
     return Text(
       titleText,
@@ -598,7 +603,7 @@ class _MyWidgetState extends State<Mainpage> {
                                                     uniqueDocuments.length);
                                       });
 
-                                      print(uniqueDocuments);
+                                      // print(uniqueDocuments);
                                       // 시간과 분을 기준으로 정렬
                                       uniqueDocuments.sort((a, b) {
                                         final dataA =
@@ -634,9 +639,9 @@ class _MyWidgetState extends State<Mainpage> {
                                           final data = doc.data()
                                               as Map<String, dynamic>;
                                           DateTime now = DateTime.now();
-                                          print(data);
-                                          print(DateTime(data["year"],
-                                              data["month"], data["day"]));
+                                          // print(data);
+                                          // print(DateTime(data["year"],
+                                          //     data["month"], data["day"]));
                                           // DateTime(data["year"],data["month"],data["day"]);
                                           // if (data[""])
                                           DateTime scheduleTime = DateTime(
@@ -764,8 +769,8 @@ class _MyWidgetState extends State<Mainpage> {
                                                                                   ymdNow
                                                                                 ])
                                                                               });
-                                                                              print("${uniqueDocuments[index].id}");
-                                                                              print(ymdNow);
+                                                                              // print("${uniqueDocuments[index].id}");
+                                                                              // print(ymdNow);
                                                                             },
                                                                             child:
                                                                                 const Text(
@@ -832,6 +837,12 @@ class _MyWidgetState extends State<Mainpage> {
                                                                             .red,
                                                                         onPressed:
                                                                             () {
+                                                                          // print(
+                                                                          //     "1");
+                                                                          // print(
+                                                                          //     doc.id);
+                                                                          // print(
+                                                                          //     "2");
                                                                           AlertDialog(
                                                                               doc,
                                                                               data["uniqueID"],
@@ -985,7 +996,7 @@ class _MyWidgetState extends State<Mainpage> {
                                                 return Center(
                                                   child: ElevatedButton(
                                                     onPressed: () {
-                                                      print("아무데이터없을때?");
+                                                      // print("아무데이터없을때?");
                                                       Navigator.push(
                                                         context,
                                                         MaterialPageRoute(
@@ -1163,8 +1174,8 @@ class _MyWidgetState extends State<Mainpage> {
                         child: FloatingActionButton(
                           backgroundColor: Colors.grey.shade100,
                           onPressed: () {
-                            print("todo?");
-                            print("$selectedDate_");
+                            // print("todo?");
+                            // print("$selectedDate_");
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -1200,6 +1211,7 @@ class _MyWidgetState extends State<Mainpage> {
   Future<void> AlertDialog(doc, uniqueID, String option, count) {
     // late String timeText_1 = "오전";
     return showDialog<Void>(
+        // ignore: deprecated_member_use
         barrierColor: Colors.black.withOpacity(0.8),
         barrierDismissible: false,
         context: context,
@@ -1274,13 +1286,14 @@ class _MyWidgetState extends State<Mainpage> {
                                     //     print(uniqueID + i);
                                     //   }
                                     // }
-
+                                    // print(uniqueID);
                                     // 매주 한달 1년은 어떻게 한다?
                                     switch (option) {
                                       case "주중":
                                         for (int i = 1; i < 6; i++) {
                                           cancelNotification(uniqueID + i);
                                           // print(uniqueID + i);
+                                          // print("==156369270==");
                                         }
                                         break;
 
@@ -1291,6 +1304,7 @@ class _MyWidgetState extends State<Mainpage> {
                                         }
                                         break;
                                       case "1년":
+                                        // cancelNotification(uniqueID);
                                         cancelNotification(uniqueID + 1000);
                                         // print(uniqueID + 1000);
                                         break;
@@ -1322,6 +1336,9 @@ class _MyWidgetState extends State<Mainpage> {
                                 ),
                                 ElevatedButton(
                                   onPressed: () {
+                                    // print("doc.id");
+                                    // print(doc.id);
+                                    // print("doc.id");
                                     Navigator.pop(context);
                                   },
                                   child: const Text("돌아가기"),
