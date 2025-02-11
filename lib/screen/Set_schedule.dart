@@ -182,6 +182,7 @@ class __Set_schedulState extends State<Set_schedul> {
         await flutterLocalNotificationsPlugin.zonedSchedule(
           randomtimestampPart,
           '일정 알림',
+          //??수정??
           message,
           schedule,
           platformChannelSpecifics,
