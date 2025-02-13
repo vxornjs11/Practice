@@ -275,7 +275,7 @@ Future<void> scheduleWeeklyNotification() async {
                 // 알림 예약
                 await flutterLocalNotificationsPlugin.zonedSchedule(
                   notificationId,
-                  '반복 알람',
+                  '',
                   data['Schedule'],
                   scheduledTime,
                   platformChannelSpecifics,
@@ -321,7 +321,7 @@ Future<void> scheduleWeeklyNotification() async {
                 // 알림 예약
                 await flutterLocalNotificationsPlugin.zonedSchedule(
                   notificationId,
-                  '주말 반복 알람',
+                  '',
                   data['Schedule'],
                   scheduledTime,
                   platformChannelSpecifics,
@@ -369,7 +369,7 @@ Future<void> scheduleWeeklyNotification() async {
             try {
               await flutterLocalNotificationsPlugin.zonedSchedule(
                 notificationId,
-                '매주 반복 알림',
+                '',
                 data['Schedule'],
                 scheduledTime,
                 platformChannelSpecifics,
@@ -417,7 +417,7 @@ Future<void> scheduleWeeklyNotification() async {
 //dd
               await flutterLocalNotificationsPlugin.zonedSchedule(
                 notificationId,
-                '1년 반복 알람',
+                '',
                 data['Schedule'],
                 scheduledTime,
                 platformChannelSpecifics,
@@ -451,7 +451,7 @@ Future<void> scheduleWeeklyNotification() async {
                 now.day, data['hour'], data['minit']);
             await flutterLocalNotificationsPlugin.zonedSchedule(
               data['uniqueID'], // 알림 ID
-              '매일 반복 알림',
+              '',
               data['Schedule'],
               scheduledTime,
               platformChannelSpecifics,

@@ -181,7 +181,7 @@ class __Set_schedulState extends State<Set_schedul> {
         );
         await flutterLocalNotificationsPlugin.zonedSchedule(
           randomtimestampPart,
-          '일정 알림',
+          '',
           //??수정??
           message,
           schedule,
@@ -206,7 +206,7 @@ class __Set_schedulState extends State<Set_schedul> {
         // print("일정 알림 주중 0.5");
         await flutterLocalNotificationsPlugin.zonedSchedule(
           randomtimestampPart,
-          '일정 알림',
+          '',
           message,
           schedule,
           platformChannelSpecifics,
@@ -229,7 +229,7 @@ class __Set_schedulState extends State<Set_schedul> {
         );
         await flutterLocalNotificationsPlugin.zonedSchedule(
           randomtimestampPart,
-          '일정 알림',
+          '',
           message,
           schedule,
           platformChannelSpecifics,
@@ -243,7 +243,7 @@ class __Set_schedulState extends State<Set_schedul> {
       case '한달':
         await flutterLocalNotificationsPlugin.zonedSchedule(
           randomtimestampPart,
-          '일정 알림',
+          '',
           message,
           tz.TZDateTime(
             tz.local,
@@ -270,7 +270,7 @@ class __Set_schedulState extends State<Set_schedul> {
         );
         await flutterLocalNotificationsPlugin.zonedSchedule(
           randomtimestampPart,
-          '일정 알림',
+          '',
           message,
           schedule,
           platformChannelSpecifics,
@@ -294,7 +294,7 @@ class __Set_schedulState extends State<Set_schedul> {
         );
         await flutterLocalNotificationsPlugin.zonedSchedule(
           randomtimestampPart,
-          '일정 알림',
+          '',
           message,
           schedule,
           platformChannelSpecifics,
@@ -309,7 +309,7 @@ class __Set_schedulState extends State<Set_schedul> {
       default:
         await flutterLocalNotificationsPlugin.zonedSchedule(
           randomtimestampPart,
-          '일정 알림',
+          '',
           message,
           tz.TZDateTime(
             tz.local,

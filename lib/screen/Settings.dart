@@ -1,7 +1,7 @@
 // import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:intl/intl.dart';
+// import 'package:intl/intl.dart';
 // import 'package:practice_01_app/main.dart';
 import 'package:practice_01_app/provinder/color_provinder.dart';
 import 'package:provider/provider.dart';
@@ -258,19 +258,19 @@ class _SettingsState extends State<Settings> {
                     const SizedBox(
                       height: 10,
                     ),
-                    Container(
-                      height: cSize.height * 0.075,
-                      width: cSize.width * 1,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(15)),
-                      child: const Row(
-                        children: [
-                          Icon(Icons.palette),
-                          Text("색 메타"),
-                        ],
-                      ),
-                    ),
+                    // Container(
+                    //   height: cSize.height * 0.075,
+                    //   width: cSize.width * 1,
+                    //   decoration: BoxDecoration(
+                    //       color: Colors.white,
+                    //       borderRadius: BorderRadius.circular(15)),
+                    //   child: const Row(
+                    //     children: [
+                    //       Icon(Icons.palette),
+                    //       Text("색 메타"),
+                    //     ],
+                    //   ),
+                    // ),
                     const SizedBox(
                       height: 10,
                     ),
