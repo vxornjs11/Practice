@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -12,8 +13,8 @@ import 'package:practice_01_app/provinder/scheduleCount_provinder.dart';
 import 'package:practice_01_app/provinder/timer_provinder.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:uuid/uuid.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:uuid/uuid.dart';
 import 'package:background_fetch/background_fetch.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
@@ -24,33 +25,34 @@ import 'package:permission_handler/permission_handler.dart';
 
 class UserManager {
   static String? userId;
+// final FirebaseAuth _auth = FirebaseAuth.instance;
+//   User? _user;
+//   // 유저 아이디를 SharedPreferences에 저장
+//   static Future<void> saveUserId(String id) async {
+//     SharedPreferences prefs = await SharedPreferences.getInstance();
+//     await prefs.setString('userId', id);
+//     userId = id;
+//   }
 
-  // 유저 아이디를 SharedPreferences에 저장
-  static Future<void> saveUserId(String id) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('userId', id);
-    userId = id;
-  }
+//   // 유저 아이디를 SharedPreferences에서 불러오기
+//   static Future<void> loadUserId() async {
+//     SharedPreferences prefs = await SharedPreferences.getInstance();
+//     userId = prefs.getString('userId');
+//   }
 
-  // 유저 아이디를 SharedPreferences에서 불러오기
-  static Future<void> loadUserId() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    userId = prefs.getString('userId');
-  }
-
-  // 유저 아이디를 생성 (없을 경우)
-  static Future<void> initializeUserId() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString('userId');
-    if (id == null) {
-      // print("id = null");
-      id = const Uuid().v4();
-      await saveUserId(id);
-    } else {
-      // print("id not null");
-      userId = id;
-    }
-  }
+//   // 유저 아이디를 생성 (없을 경우)
+//   static Future<void> initializeUserId() async {
+//     SharedPreferences prefs = await SharedPreferences.getInstance();
+//     String? id = prefs.getString('userId');
+//     if (id == null) {
+//       // print("id = null");
+//       id = const Uuid().v4();
+//       await saveUserId(id);
+//     } else {
+//       // print("id not null");
+//       userId = id;
+//     }
+//   }
 }
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -58,7 +60,20 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // 익명로그인
+  await Firebase.initializeApp();
 
+  // 익명 로그인 실행
+  await FirebaseAuth.instance.signInAnonymously();
+  // 익명 로그인
+  UserCredential userCredential =
+      await FirebaseAuth.instance.signInAnonymously();
+  UserManager.userId = userCredential.user?.uid; // UserManager에 저장
+  print("UserManager.userId");
+  print("${UserManager.userId}");
+  print("UserManager.userId");
+  saveUserToFirestore();
+  // 파이어베이스 익명 로그인 추가
   // Flutter Native Splash 유지
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
@@ -101,8 +116,8 @@ void main() async {
   /////// Set_schedule.dart에서 알람 실행시 발동하는 함수 옮겨왔음. 여기에 있는게 맞는듯
   ////// 그럼 Set_~~에 있는거는 어떻게 해야 할지 생각.. 없어도 되나?
 
-  // 사용자 ID 초기화
-  await UserManager.initializeUserId();
+  // // 사용자 ID 초기화
+  // await UserManager.initializeUserId();
   // 캘린더 쪽에 버튼 누를때마다 ui 엄청 반짝거리는데 별로임 눈아픔
   // 백그라운드 작업 초기화
   // initBackgroundFetch();
@@ -143,7 +158,7 @@ void main() async {
   const Duration(seconds: 2);
   FlutterNativeSplash.remove();
   // 앱 실행
-  runApp(MyApp());
+  runApp(const MyApp());
 } // main /////=======
 
 void backgroundFetchHeadlessTask(String taskId) async {
@@ -187,6 +202,24 @@ Future<void> requestNotificationsPermission() async {
   if (await Permission.notification.isDenied) {
     await Permission.notification.request();
   }
+}
+
+void saveUserToFirestore() async {
+  // void saveUserToFirestore() async {
+  User? user = FirebaseAuth.instance.currentUser;
+  print("1 2 3!");
+  if (user != null) {
+    await FirebaseFirestore.instance.collection('Users').doc(user.uid).set({
+      "userid": user.uid, // ✅ 사용자 인증 ID
+      // "email": "익명 사용자",
+      // "name": "익명 유저" // 필요시 사용자 정보 추가 가능
+    }, SetOptions(merge: true)); // 기존 데이터가 있으면 업데이트
+    print("✅ Firestore에 사용자 정보 저장 완료!");
+  } else {
+    print("🚨 로그인되지 않음!");
+  }
+  print("1 2  4443!");
+// }
 }
 
 ///dd
