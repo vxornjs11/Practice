@@ -1,0 +1,2 @@
+/Users/ptk/Desktop/practice/practice_01_app/android/app/.cxx/RelWithDebInfo/2dn4s5s3/x86/CMakeFiles/edit_cache.dir
+/Users/ptk/Desktop/practice/practice_01_app/android/app/.cxx/RelWithDebInfo/2dn4s5s3/x86/CMakeFiles/rebuild_cache.dir

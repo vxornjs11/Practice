@@ -25,13 +25,11 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
-
 android {
     compileSdkVersion 33
     namespace "practice_01_app"
     compileSdk flutter.compileSdkVersion
-    ndkVersion flutter.ndkVersion
-
+    ndkVersion "28.0.13004108"
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -51,7 +49,7 @@ android {
         applicationId "com.example.practice_01_app"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
