@@ -19,7 +19,7 @@ import 'package:background_fetch/background_fetch.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:flutter/services.dart';
-import 'package:app_settings/app_settings.dart';
+// import 'package:app_settings/app_settings.dart';
 import 'package:permission_handler/permission_handler.dart';
 // import 'package:flutter_native_splash/flutter_native_splash.dart';
 
@@ -69,9 +69,9 @@ void main() async {
   UserCredential userCredential =
       await FirebaseAuth.instance.signInAnonymously();
   UserManager.userId = userCredential.user?.uid; // UserManager에 저장
-  print("UserManager.userId");
-  print("${UserManager.userId}");
-  print("UserManager.userId");
+  // print("UserManager.userId");
+  // print("${UserManager.userId}");
+  // print("UserManager.userId");
   saveUserToFirestore();
   // 파이어베이스 익명 로그인 추가
   // Flutter Native Splash 유지
@@ -150,9 +150,9 @@ void main() async {
 // 🔹 백그라운드 작업 강제 시작
   BackgroundFetch.start();
   // 헤드리스 작업 등록
-
+  print('백그라운드 앞뒤');
   BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
-  // print('백그라운드 뒤');
+  print('백그라운드 뒤');
 
   // Splash 제거
   const Duration(seconds: 2);
@@ -161,8 +161,9 @@ void main() async {
   runApp(const MyApp());
 } // main /////=======
 
+@pragma('vm:entry-point')
 void backgroundFetchHeadlessTask(String taskId) async {
-  // print("헤드리스 작업 실행: $taskId");
+  print("헤드리스 작업 실행: $taskId");
 
   // 백그라운드 작업 실행
   try {
@@ -194,9 +195,9 @@ Future<void> requestExactAlarmsPermission() async {
   }
 }
 
-void openAppSettings() {
-  AppSettings.openAppSettings();
-}
+// void openAppSettings() {
+//   AppSettings.openAppSettings();
+// }
 
 Future<void> requestNotificationsPermission() async {
   if (await Permission.notification.isDenied) {

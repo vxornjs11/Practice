@@ -1,5 +1,6 @@
 // import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:practice_01_app/main.dart';
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 // import 'package:intl/intl.dart';
 // import 'package:practice_01_app/main.dart';
@@ -274,14 +275,13 @@ class _SettingsState extends State<Settings> {
                     const SizedBox(
                       height: 10,
                     ),
-                    // ElevatedButton(
-                    //   onPressed: () async {
-
-                    //     // 현재 등록된 알람 찾기
-                    //     getScheduledNotifications();
-                    //   },
-                    //   child: Text("모든 알람 삭제"),
-                    // ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        // 현재 등록된 알람 찾기
+                        getScheduledNotifications();
+                      },
+                      child: Text("모든 알람 삭제"),
+                    ),
                     // Image.asset(
                     //   "images/small.png",
                     // ),
@@ -299,18 +299,18 @@ class _SettingsState extends State<Settings> {
     );
   }
 
-  // Future<void> getScheduledNotifications() async {
-  //   // print("object");
-  //   final pendingNotifications =
-  //       await flutterLocalNotificationsPlugin.pendingNotificationRequests();
+  Future<void> getScheduledNotifications() async {
+    // print("object");
+    final pendingNotifications =
+        await flutterLocalNotificationsPlugin.pendingNotificationRequests();
 
-  //   // print("등록된 알림 개수: ${pendingNotifications.length}");
+    // print("등록된 알림 개수: ${pendingNotifications.length}");
 
-  //   for (var notification in pendingNotifications) {
-  //     print(
-  //         "알림 ID: ${notification.id}, 제목: ${notification.title}, 내용: ${notification.body}");
-  //   }
-  // }
+    for (var notification in pendingNotifications) {
+      print(
+          "알림 ID: ${notification.id}, 제목: ${notification.title}, 내용: ${notification.body}");
+    }
+  }
 
   Widget _buildColorButton(Color color, String label, colorProvider) {
     return Center(

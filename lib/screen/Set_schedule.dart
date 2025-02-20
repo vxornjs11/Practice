@@ -188,7 +188,7 @@ class __Set_schedulState extends State<Set_schedul> {
           platformChannelSpecifics,
           uiLocalNotificationDateInterpretation:
               UILocalNotificationDateInterpretation.absoluteTime,
-          // androidAllowWhileIdle: true,
+          androidAllowWhileIdle: true,
           matchDateTimeComponents:
               DateTimeComponents.dateAndTime, // 매일 같은 시간에 알림.
         );
