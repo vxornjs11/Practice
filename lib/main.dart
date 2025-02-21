@@ -150,9 +150,9 @@ void main() async {
 // 🔹 백그라운드 작업 강제 시작
   BackgroundFetch.start();
   // 헤드리스 작업 등록
-  print('백그라운드 앞뒤');
+  // print('백그라운드 앞뒤');
   BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
-  print('백그라운드 뒤');
+  // print('백그라운드 뒤');
 
   // Splash 제거
   const Duration(seconds: 2);
@@ -163,7 +163,7 @@ void main() async {
 
 @pragma('vm:entry-point')
 void backgroundFetchHeadlessTask(String taskId) async {
-  print("헤드리스 작업 실행: $taskId");
+  // print("헤드리스 작업 실행: $taskId");
 
   // 백그라운드 작업 실행
   try {
@@ -208,18 +208,18 @@ Future<void> requestNotificationsPermission() async {
 void saveUserToFirestore() async {
   // void saveUserToFirestore() async {
   User? user = FirebaseAuth.instance.currentUser;
-  print("1 2 3!");
+  // print("1 2 3!");
   if (user != null) {
     await FirebaseFirestore.instance.collection('Users').doc(user.uid).set({
       "userid": user.uid, // ✅ 사용자 인증 ID
       // "email": "익명 사용자",
       // "name": "익명 유저" // 필요시 사용자 정보 추가 가능
     }, SetOptions(merge: true)); // 기존 데이터가 있으면 업데이트
-    print("✅ Firestore에 사용자 정보 저장 완료!");
+    // print("✅ Firestore에 사용자 정보 저장 완료!");
   } else {
-    print("🚨 로그인되지 않음!");
+    // print("🚨 로그인되지 않음!");
   }
-  print("1 2  4443!");
+  // print("1 2  4443!");
 // }
 }
 
@@ -237,6 +237,7 @@ Future<void> scheduleWeeklyNotification() async {
     importance: Importance.max,
     priority: Priority.high,
     showWhen: false,
+    icon: '@drawable/alarmicon', // ✅ 아이콘을 명확하게 지정
   );
 
   // alarms&reminders에서 테스트어플의 Allow setting alarms and reminders 버튼이 비활성화

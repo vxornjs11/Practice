@@ -150,6 +150,7 @@ class __Set_schedulState extends State<Set_schedul> {
       importance: Importance.max,
       priority: Priority.high,
       showWhen: false,
+      icon: '@drawable/alarmicon', // ✅ 아이콘을 명확하게 지정
     );
 
     // tz.TZDateTime scheduledDate = tz.TZDateTime(
@@ -182,7 +183,7 @@ class __Set_schedulState extends State<Set_schedul> {
         await flutterLocalNotificationsPlugin.zonedSchedule(
           randomtimestampPart,
           '',
-          //??수정??
+          //??수정AlarmIcon.png??
           message,
           schedule,
           platformChannelSpecifics,
