@@ -208,18 +208,18 @@ Future<void> requestNotificationsPermission() async {
 void saveUserToFirestore() async {
   // void saveUserToFirestore() async {
   User? user = FirebaseAuth.instance.currentUser;
-  // print("1 2 3!");
+  print("1 2 3!");
   if (user != null) {
     await FirebaseFirestore.instance.collection('Users').doc(user.uid).set({
       "userid": user.uid, // ✅ 사용자 인증 ID
       // "email": "익명 사용자",
       // "name": "익명 유저" // 필요시 사용자 정보 추가 가능
     }, SetOptions(merge: true)); // 기존 데이터가 있으면 업데이트
-    // print("✅ Firestore에 사용자 정보 저장 완료!");
+    print("✅ Firestore에 사용자 정보 저장 완료!");
   } else {
-    // print("🚨 로그인되지 않음!");
+    print("🚨 로그인되지 않음!");
   }
-  // print("1 2  4443!");
+  print("1 2  4443!");
 // }
 }
 
