@@ -458,7 +458,7 @@ class _MyWidgetState extends State<Mainpage> {
         child: Column(
           children: [
             SizedBox(
-              height: cSize.height * 0.06,
+              height: cSize.height * 0.03,
             ),
             SizedBox(
               width: cSize.width * 1,
@@ -511,7 +511,7 @@ class _MyWidgetState extends State<Mainpage> {
               child: Consumer<ColorProvider>(builder: (context, value, child) {
                 return Container(
                   width: cSize.width * 1,
-                  height: cSize.height * 0.8,
+                  height: cSize.height * 0.85,
                   decoration: BoxDecoration(
                     color: value.backgroundColor,
                   ),
@@ -710,12 +710,48 @@ class _MyWidgetState extends State<Mainpage> {
                                                                         fontSize:
                                                                             25),
                                                               ),
-                                                              subtitle: Text(
-                                                                'Option: ${data['option'] ?? 'No Date'}\nTime: ${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
-                                                                style:
-                                                                    const TextStyle(
-                                                                        fontSize:
-                                                                            12),
+                                                              subtitle: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Row(
+                                                                    children: [
+                                                                      const Icon(
+                                                                          Icons
+                                                                              .timer,
+                                                                          size:
+                                                                              16),
+                                                                      const SizedBox(
+                                                                          width:
+                                                                              5),
+                                                                      Text(
+                                                                        '${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
+                                                                        style: const TextStyle(
+                                                                            fontSize:
+                                                                                12),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  Row(
+                                                                    children: [
+                                                                      const Icon(
+                                                                          Icons
+                                                                              .restore_rounded,
+                                                                          size:
+                                                                              16),
+                                                                      const SizedBox(
+                                                                          width:
+                                                                              5),
+                                                                      Text(
+                                                                        '${data['option'] ?? 'No Date'}',
+                                                                        style: const TextStyle(
+                                                                            fontSize:
+                                                                                12),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ],
                                                               ),
                                                             )
                                                           : ListTile(
@@ -735,49 +771,77 @@ class _MyWidgetState extends State<Mainpage> {
                                                                     MainAxisAlignment
                                                                         .spaceBetween,
                                                                 children: [
-                                                                  Text(
-                                                                    'Option: ${data['option'] ?? 'No Date'}\nTime: ${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
-                                                                    style: const TextStyle(
-                                                                        fontSize:
-                                                                            12),
+                                                                  Row(
+                                                                    children: [
+                                                                      Column(
+                                                                        children: [
+                                                                          Row(
+                                                                            children: [
+                                                                              const Icon(Icons.timer, size: 16),
+                                                                              const SizedBox(width: 5),
+                                                                              Text(
+                                                                                '${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
+                                                                                style: const TextStyle(fontSize: 12),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                          Row(
+                                                                            children: [
+                                                                              const Icon(Icons.restore_rounded, size: 16),
+                                                                              const SizedBox(width: 5),
+                                                                              Text(
+                                                                                '${data['option'] ?? 'No Date'}',
+                                                                                style: const TextStyle(fontSize: 12),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ],
                                                                   ),
                                                                   showButton
-                                                                      ? const Text(
-                                                                          "축하합니다")
-                                                                      : Container(
-                                                                          width:
-                                                                              80,
-                                                                          height:
-                                                                              30,
-                                                                          decoration:
-                                                                              BoxDecoration(
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(10),
-                                                                          ),
-                                                                          child:
-                                                                              ElevatedButton(
-                                                                            style:
-                                                                                ElevatedButton.styleFrom(
-                                                                              backgroundColor: Colors.white,
+                                                                      ? const Column(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.start,
+                                                                          children: [
+                                                                            Icon(
+                                                                              Icons.check,
+                                                                              color: Colors.green,
                                                                             ),
-                                                                            onPressed:
-                                                                                () {
-                                                                              DateTime ymdNow;
-                                                                              ymdNow = DateTime(now.year, now.month, now.day);
-                                                                              firebase.collection("Calender").doc(uniqueDocuments[index].id).update({
-                                                                                'dates': FieldValue.arrayUnion([
-                                                                                  ymdNow
-                                                                                ])
-                                                                              });
-                                                                              // print("${uniqueDocuments[index].id}");
-                                                                              // print(ymdNow);
-                                                                            },
-                                                                            child:
-                                                                                const Text(
-                                                                              "완료",
-                                                                              style: TextStyle(fontSize: 18),
+                                                                          ],
+                                                                        )
+                                                                      : Column(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.start,
+                                                                          children: [
+                                                                            Container(
+                                                                              width: 60,
+                                                                              height: 30,
+                                                                              decoration: BoxDecoration(
+                                                                                borderRadius: BorderRadius.circular(10),
+                                                                              ),
+                                                                              child: ElevatedButton(
+                                                                                style: ElevatedButton.styleFrom(
+                                                                                  backgroundColor: Colors.white,
+                                                                                ),
+                                                                                onPressed: () {
+                                                                                  DateTime ymdNow;
+                                                                                  ymdNow = DateTime(now.year, now.month, now.day);
+                                                                                  firebase.collection("Calender").doc(uniqueDocuments[index].id).update({
+                                                                                    'dates': FieldValue.arrayUnion([
+                                                                                      ymdNow
+                                                                                    ])
+                                                                                  });
+                                                                                  // print("${uniqueDocuments[index].id}");
+                                                                                  // print(ymdNow);
+                                                                                },
+                                                                                child: const Text(
+                                                                                  "완료",
+                                                                                  style: TextStyle(fontSize: 15),
+                                                                                ),
+                                                                              ),
                                                                             ),
-                                                                          ),
+                                                                          ],
                                                                         ),
                                                                 ],
                                                               ),
@@ -811,12 +875,48 @@ class _MyWidgetState extends State<Mainpage> {
                                                                         fontSize:
                                                                             25),
                                                               ),
-                                                              subtitle: Text(
-                                                                'Option: ${data['option'] ?? 'No Date'}\nTime: ${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
-                                                                style:
-                                                                    const TextStyle(
-                                                                        fontSize:
-                                                                            12),
+                                                              subtitle: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Row(
+                                                                    children: [
+                                                                      const Icon(
+                                                                          Icons
+                                                                              .timer,
+                                                                          size:
+                                                                              16),
+                                                                      const SizedBox(
+                                                                          width:
+                                                                              5),
+                                                                      Text(
+                                                                        '${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
+                                                                        style: const TextStyle(
+                                                                            fontSize:
+                                                                                12),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  Row(
+                                                                    children: [
+                                                                      const Icon(
+                                                                          Icons
+                                                                              .restore_rounded,
+                                                                          size:
+                                                                              16),
+                                                                      const SizedBox(
+                                                                          width:
+                                                                              5),
+                                                                      Text(
+                                                                        '${data['option'] ?? 'No Date'}',
+                                                                        style: const TextStyle(
+                                                                            fontSize:
+                                                                                12),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ],
                                                               ),
                                                             ),
                                                           ),
@@ -882,7 +982,7 @@ class _MyWidgetState extends State<Mainpage> {
                                   padding: const EdgeInsets.all(3.0),
                                   child: Container(
                                     width: cSize.width * 1,
-                                    height: cSize.height * 0.7,
+                                    height: cSize.height * 0.75,
                                     decoration: BoxDecoration(
                                         // 달력순간이동
                                         borderRadius:
@@ -1039,6 +1139,34 @@ class _MyWidgetState extends State<Mainpage> {
                                                                 .length);
                                               });
 
+                                              // print(uniqueDocuments);
+                                              // 시간과 분을 기준으로 정렬
+                                              uniqueDocuments.sort((a, b) {
+                                                final dataA = a.data()
+                                                    as Map<String, dynamic>;
+                                                final dataB = b.data()
+                                                    as Map<String, dynamic>;
+
+                                                final scheduleHourA =
+                                                    dataA['hour'] ?? 0;
+                                                final scheduleMinuteA =
+                                                    dataA['minit'] ?? 0;
+                                                final scheduleTimeA =
+                                                    scheduleHourA * 60 +
+                                                        scheduleMinuteA;
+
+                                                final scheduleHourB =
+                                                    dataB['hour'] ?? 0;
+                                                final scheduleMinuteB =
+                                                    dataB['minit'] ?? 0;
+                                                final scheduleTimeB =
+                                                    scheduleHourB * 60 +
+                                                        scheduleMinuteB;
+
+                                                return scheduleTimeA
+                                                    .compareTo(scheduleTimeB);
+                                              });
+
                                               return ListView.builder(
                                                 padding: EdgeInsets.zero,
                                                 itemCount:
@@ -1092,11 +1220,31 @@ class _MyWidgetState extends State<Mainpage> {
                                                                                 25),
                                                                       ),
                                                                       subtitle:
-                                                                          Text(
-                                                                        'Option: ${data['option'] ?? 'No Date'}\nTime: ${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
-                                                                        style: const TextStyle(
-                                                                            fontSize:
-                                                                                12),
+                                                                          Column(
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment.start,
+                                                                        children: [
+                                                                          Row(
+                                                                            children: [
+                                                                              const Icon(Icons.timer, size: 16),
+                                                                              const SizedBox(width: 5),
+                                                                              Text(
+                                                                                '${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
+                                                                                style: const TextStyle(fontSize: 12),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                          Row(
+                                                                            children: [
+                                                                              const Icon(Icons.restore_rounded, size: 16),
+                                                                              const SizedBox(width: 5),
+                                                                              Text(
+                                                                                '${data['option'] ?? 'No Date'}',
+                                                                                style: const TextStyle(fontSize: 12),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ],
                                                                       ),
                                                                     ),
                                                                   )
@@ -1130,9 +1278,30 @@ class _MyWidgetState extends State<Mainpage> {
                                                                               style: const TextStyle(fontSize: 25),
                                                                             ),
                                                                             subtitle:
-                                                                                Text(
-                                                                              'Option: ${data['option'] ?? 'No Date'}\nTime: ${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
-                                                                              style: const TextStyle(fontSize: 12),
+                                                                                Column(
+                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                              children: [
+                                                                                Row(
+                                                                                  children: [
+                                                                                    const Icon(Icons.timer, size: 16),
+                                                                                    const SizedBox(width: 5),
+                                                                                    Text(
+                                                                                      '${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
+                                                                                      style: const TextStyle(fontSize: 12),
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
+                                                                                Row(
+                                                                                  children: [
+                                                                                    const Icon(Icons.restore_rounded, size: 16),
+                                                                                    const SizedBox(width: 5),
+                                                                                    Text(
+                                                                                      '${data['option'] ?? 'No Date'}',
+                                                                                      style: const TextStyle(fontSize: 12),
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
+                                                                              ],
                                                                             ),
                                                                           ),
                                                                         ),
@@ -1199,7 +1368,7 @@ class _MyWidgetState extends State<Mainpage> {
               }),
             ),
             const SizedBox(
-              height: 5,
+              height: 3,
             ),
           ],
         ),

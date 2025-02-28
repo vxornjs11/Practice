@@ -125,7 +125,7 @@ void main() async {
   // Background Fetch 초기화
   BackgroundFetch.configure(
     BackgroundFetchConfig(
-      minimumFetchInterval: 2, // 최소 실행 간격
+      minimumFetchInterval: 5, // 최소 실행 간격
       stopOnTerminate: false, // 앱 종료 후에도 유지
       enableHeadless: true, // 헤드리스 모드 활성화
       startOnBoot: true, // 디바이스 재부팅후 다시 작업.
@@ -176,8 +176,19 @@ void backgroundFetchHeadlessTask(String taskId) async {
   BackgroundFetch.finish(taskId);
 }
 
-///// 권한설정 ./////
-Future<void> requestExactAlarmsPermission() async {
+Future<void> requestPermissions() async {
+  // 정확한 알람 권한 요청
+  bool exactAlarmGranted = await requestExactAlarmsPermission();
+  if (!exactAlarmGranted) {
+    print("정확한 알람 권한이 거부됨");
+    return; // 정확한 알람 권한이 거부되면 알림 권한 요청을 실행하지 않음
+  }
+
+  // 알림 권한 요청
+  await requestNotificationsPermission();
+}
+
+Future<bool> requestExactAlarmsPermission() async {
   const MethodChannel platform =
       MethodChannel('dexterous.com/flutter/local_notifications');
 
@@ -185,19 +196,12 @@ Future<void> requestExactAlarmsPermission() async {
     final bool granted =
         await platform.invokeMethod<bool>('requestExactAlarmsPermission') ??
             false;
-    if (granted) {
-      // print("정확한 알람 권한이 허용되었습니다.");
-    } else {
-      // print("정확한 알람 권한이 거부되었습니다.");
-    }
+    return granted;
   } on PlatformException catch (e) {
-    // print("정확한 알람 권한 요청 중 오류 발생: ${e.message}");
+    print("정확한 알람 권한 요청 중 오류 발생: ${e.message}");
+    return false;
   }
 }
-
-// void openAppSettings() {
-//   AppSettings.openAppSettings();
-// }
 
 Future<void> requestNotificationsPermission() async {
   if (await Permission.notification.isDenied) {
@@ -226,8 +230,8 @@ void saveUserToFirestore() async {
 ///dd
 Future<void> scheduleWeeklyNotification() async {
   //// 알람권한 그냥 애뮬레이터에 있는 앱 설정 열어서 하니까 되던데 다시 해볼까?
-  await requestExactAlarmsPermission(); // 정확한 알람 권한 요청
-  await requestNotificationsPermission(); // 알림 권한 요청
+
+  await requestPermissions();
   const AndroidNotificationDetails androidPlatformChannelSpecifics =
       AndroidNotificationDetails(
     'high_importance_channel', // channelId

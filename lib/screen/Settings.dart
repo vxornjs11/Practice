@@ -29,12 +29,12 @@ class _SettingsState extends State<Settings> {
     return Scaffold(
       body: Column(
         children: [
-          SizedBox(
-            height: cSize.height * 0.08,
-          ),
+          // SizedBox(
+          //   height: cSize.height * 0.08,
+          // ),
           Consumer<ColorProvider>(builder: (context, colorProvider, child) {
             return Container(
-              height: cSize.height * 0.8,
+              height: cSize.height * 0.95,
               width: cSize.width * 1,
               decoration: BoxDecoration(
                 color: colorProvider.backgroundColor,
