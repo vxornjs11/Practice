@@ -1,14 +1,15 @@
 // import 'dart:ffi';
 
-import 'package:flutter/cupertino.dart';
+// import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+// import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_01_app/screen/Set_schedule.dart';
 
 class Repeat extends StatefulWidget {
   final DateTime selectedDate_;
+  // ignore: non_constant_identifier_names
   final String schedule_Write;
   final int selectedHour;
   final int selectedMinute;
@@ -16,6 +17,7 @@ class Repeat extends StatefulWidget {
   const Repeat(
       {super.key,
       required this.selectedDate_,
+      // ignore: non_constant_identifier_names
       required this.schedule_Write,
       required this.selectedHour,
       required this.selectedMinute,
@@ -27,14 +29,16 @@ class Repeat extends StatefulWidget {
 
 class _RepeatState extends State<Repeat> {
   late DateTime selectedDate_ = widget.selectedDate_;
+  // ignore: non_constant_identifier_names
   late String schedule_Write = widget.schedule_Write;
-  late int _selectedHour = widget.selectedHour;
-  late int _selectedMinute = widget.selectedMinute;
-  late bool _isCheck = widget.isCheck;
+  late final int _selectedHour = widget.selectedHour;
+  late final int _selectedMinute = widget.selectedMinute;
+  late final bool _isCheck = widget.isCheck;
 
   // late bool _isCheck;
   String option = "";
   // 평일
+  // ignore: non_constant_identifier_names
   List<String> repeatOptions_Weekday = [
     "반복 안함",
     "매일",
@@ -44,6 +48,7 @@ class _RepeatState extends State<Repeat> {
     "1년",
   ];
 //주말
+  // ignore: non_constant_identifier_names
   List<String> repeatOptions_Weekend = [
     "반복 안함",
     "매일",
@@ -134,6 +139,7 @@ class _RepeatState extends State<Repeat> {
     );
   }
 
+  // ignore: non_constant_identifier_names
   Widget row_Repeat(int index) {
     List<String> weekdays = ["월", "화", "수", "목", "금"];
     String selectedDay = DateFormat('E', 'ko_KO').format(selectedDate_);
@@ -178,7 +184,7 @@ class _RepeatState extends State<Repeat> {
                       option = repeatOptions_Weekday[0];
                       repeatCheckList[0] = true;
                     }
-                    print("option : $option /n value : $value");
+                    // print("option : $option /n value : $value");
                   });
                 })
             : Checkbox(
@@ -209,7 +215,7 @@ class _RepeatState extends State<Repeat> {
                       option = repeatOptions_Weekend[0];
                       repeatCheckList[0] = true;
                     }
-                    print("option : $option /n value : $value");
+                    // print("option : $option /n value : $value");
                   });
                 })
       ],
