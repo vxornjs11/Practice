@@ -34,7 +34,7 @@ class _SettingsState extends State<Settings> {
           // ),
           Consumer<ColorProvider>(builder: (context, colorProvider, child) {
             return Container(
-              height: cSize.height * 0.95,
+              height: cSize.height * 0.935,
               width: cSize.width * 1,
               decoration: BoxDecoration(
                 color: colorProvider.backgroundColor,

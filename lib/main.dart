@@ -62,7 +62,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // 익명로그인
   await Firebase.initializeApp();
-
+  await requestPermissions();
   // 익명 로그인 실행
   await FirebaseAuth.instance.signInAnonymously();
   // 익명 로그인
@@ -177,6 +177,7 @@ void backgroundFetchHeadlessTask(String taskId) async {
 }
 
 Future<void> requestPermissions() async {
+  print("정확한 알람 권한 요청");
   // 정확한 알람 권한 요청
   bool exactAlarmGranted = await requestExactAlarmsPermission();
   if (!exactAlarmGranted) {
@@ -189,10 +190,12 @@ Future<void> requestPermissions() async {
 }
 
 Future<bool> requestExactAlarmsPermission() async {
+  print("정확한 알람 권한 요청 2");
   const MethodChannel platform =
       MethodChannel('dexterous.com/flutter/local_notifications');
 
   try {
+    print("정확한 알람 권한 요청 3");
     final bool granted =
         await platform.invokeMethod<bool>('requestExactAlarmsPermission') ??
             false;
@@ -204,6 +207,7 @@ Future<bool> requestExactAlarmsPermission() async {
 }
 
 Future<void> requestNotificationsPermission() async {
+  print("정확한 알람 권한 요청 b");
   if (await Permission.notification.isDenied) {
     await Permission.notification.request();
   }
@@ -231,7 +235,6 @@ void saveUserToFirestore() async {
 Future<void> scheduleWeeklyNotification() async {
   //// 알람권한 그냥 애뮬레이터에 있는 앱 설정 열어서 하니까 되던데 다시 해볼까?
 
-  await requestPermissions();
   const AndroidNotificationDetails androidPlatformChannelSpecifics =
       AndroidNotificationDetails(
     'high_importance_channel', // channelId

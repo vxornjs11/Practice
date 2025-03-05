@@ -815,7 +815,7 @@ class _MyWidgetState extends State<Mainpage> {
                                                                               MainAxisAlignment.start,
                                                                           children: [
                                                                             Container(
-                                                                              width: 60,
+                                                                              width: 75,
                                                                               height: 30,
                                                                               decoration: BoxDecoration(
                                                                                 borderRadius: BorderRadius.circular(10),
@@ -837,7 +837,7 @@ class _MyWidgetState extends State<Mainpage> {
                                                                                 },
                                                                                 child: const Text(
                                                                                   "완료",
-                                                                                  style: TextStyle(fontSize: 15),
+                                                                                  style: TextStyle(fontSize: 13.5),
                                                                                 ),
                                                                               ),
                                                                             ),
