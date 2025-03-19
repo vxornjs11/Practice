@@ -11,6 +11,7 @@ import 'package:practice_01_app/home.dart';
 import 'package:practice_01_app/main.dart';
 import 'package:practice_01_app/provinder/color_provinder.dart';
 import 'package:practice_01_app/provinder/count_provinder.dart';
+import 'package:practice_01_app/provinder/scheduleCount_provinder.dart';
 import 'package:practice_01_app/provinder/timer_provinder.dart';
 import 'package:practice_01_app/screen/Refresh.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -45,6 +46,7 @@ class __Set_schedulState extends State<Set_schedul> {
   // String get timeText {
   //   return _selectedHour < 12 ? "오전" : "오후";
   // }
+  CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _selectedDate = DateTime.now();
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -373,361 +375,377 @@ class __Set_schedulState extends State<Set_schedul> {
                   decoration: BoxDecoration(
                     color: value.backgroundColor,
                   ),
-                  child: Column(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                            // 달력순간이동
-                            borderRadius: BorderRadius.circular(8.0),
-                            color: Colors.white),
-                        child: TableCalendar(
-                          onDaySelected: onDaySelected,
-                          selectedDayPredicate: (date) {
-                            return isSameDay(selectedDate_, date);
-                          },
-                          firstDay: DateTime.utc(2010, 10, 16),
-                          lastDay: DateTime.utc(2030, 3, 14),
-                          focusedDay: DateTime.now(),
-                          calendarBuilders: CalendarBuilders(
-                            markerBuilder: (context, date, events) {
-                              if (events.isNotEmpty) {
-                                return Positioned(
-                                  right: 20,
-                                  bottom: 1,
-                                  child: _buildEventsMarker(date, events),
-                                );
-                              }
-                              return null;
+                  child: Consumer<ScheduleCountProvider>(
+                      builder: (context, provider, child) {
+                    return Column(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                              // 달력순간이동
+                              borderRadius: BorderRadius.circular(8.0),
+                              color: Colors.white),
+                          child: TableCalendar(
+                            locale: provider.locale, // 언어 설정
+                            calendarFormat: _calendarFormat, //
+                            onDaySelected: onDaySelected,
+                            selectedDayPredicate: (date) {
+                              return isSameDay(selectedDate_, date);
                             },
-                          ),
-                          calendarStyle: CalendarStyle(
-                            defaultDecoration: BoxDecoration(
-                              color: Colors.grey.shade200, // 기본 날짜 셀 배경색
+                            firstDay: DateTime.utc(2010, 10, 16),
+                            lastDay: DateTime.utc(2030, 3, 14),
+                            focusedDay: DateTime.now(),
+                            headerStyle: HeaderStyle(
+                              formatButtonVisible: false,
+                              titleCentered: true,
+                              titleTextFormatter: (date, locale) =>
+                                  DateFormat.yMMMM(locale)
+                                      .format(date), // 월을 해당 언어로 표시
                             ),
-                            weekendDecoration: BoxDecoration(
-                              color: Colors.red.shade100, // 주말 날짜 셀 배경색
-                            ),
-                            selectedDecoration: const BoxDecoration(
-                              color: Colors.blueAccent, // 선택된 날짜 셀 배경색
-                              shape: BoxShape.circle,
-                            ),
-                            todayDecoration: const BoxDecoration(
-                              color: Colors.orangeAccent, // 오늘 날짜 셀 배경색
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12.0),
-                            color: Colors.white),
-                        width: size.width * 1,
-                        height: size.height * 0.05,
-                        child: context.watch<CounterProvider>().day != ""
-                            ? Consumer<CounterProvider>(
-                                builder: (context, value, child) {
-                                  return Center(
-                                      child:
-                                          Text("${value.month}월${value.day}일"));
-                                },
-                              )
-                            : Center(
-                                child: Text(
-                                    "${selectedDate_.month}월${selectedDate_.day}일")),
-                      ),
-                      // Text(schedule_Write),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12.0),
-                            color: Colors.white),
-                        width: size.width * 1,
-                        height: size.height * 0.05,
-                        child: TextField(
-                          // textAlignVertical: TextAlignVertical.center,
-                          decoration: const InputDecoration(
-                            hintStyle: TextStyle(
-                              fontSize: 20,
-                              color: Colors.black,
-                            ),
-                            contentPadding: EdgeInsets.symmetric(
-                                vertical: 0.0, horizontal: 10.0),
-                            hintText: '일정을 등록하세요',
-                            border: InputBorder.none,
-                            // suffixIcon: IconButton(
-                            //     onPressed: () {
-                            //       setState(() {
-                            //         _isSwitch = !_isSwitch;
-                            //         if (_isSwitch == false) {
-                            //         } else {
-                            //           AlertDialog();
-                            //         }
-                            //       });
-                            //     },
-                            //     style: ElevatedButton.styleFrom(
-                            //         backgroundColor: _isSwitch
-                            //             ? Colors.grey.shade200
-                            //             : Colors.grey.shade200),
-                            //     icon: _isSwitch
-                            //         ? Icon(Icons.notifications_active_outlined)
-                            //         : Icon(Icons.notifications_off_outlined)
-                            //     //  Text(_isSwitch ? "ON" : "OFF"),
-                            //     ),
-                          ),
-                          controller: titlecontroller,
-                          onChanged: (value) {
-                            setState(() {
-                              schedule_Write = titlecontroller.text;
-                              // checkDuplicateTitle(); // 중복 확인 함수 호출
-                            });
-                          },
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          const Icon(
-                            Icons.notifications_outlined,
-                            size: 25,
-                            color: Colors.black54,
-                          ),
-                          const SizedBox(
-                            width: 20,
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _isSwitch = !_isSwitch;
-                                if (_isSwitch == false) {
-                                } else {
-                                  AlertDialog();
+                            calendarBuilders: CalendarBuilders(
+                              markerBuilder: (context, date, events) {
+                                if (events.isNotEmpty) {
+                                  return Positioned(
+                                    right: 20,
+                                    bottom: 1,
+                                    child: _buildEventsMarker(date, events),
+                                  );
                                 }
-                              });
-                            },
-                            child: Container(
-                              width: size.width * 0.8,
-                              height: size.height * 0.045,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12.0),
-                                  color: Colors.white),
-                              child: Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child:
-                                    // _selectedHour == 0
-                                    //     ? const Text(
-                                    //         "알림 없음",
-                                    //         style: TextStyle(
-                                    //             fontSize: 20,
-                                    //             fontWeight: FontWeight.w200,
-                                    //             color: Colors.black
-                                    //             // fontFamily: 'roboto'
-                                    //             ),
-                                    //       )
-                                    //     :
-                                    _isCheck
-                                        ? Text(
-                                            "$_selectedHour시 $_selectedMinute분",
-                                            style: const TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.w400,
-                                                color: Colors.black
-                                                // fontFamily: 'roboto'
-                                                ),
-                                          )
-                                        : const Text(
-                                            "알람 없음",
-                                            style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.w400,
-                                                color: Colors.black
-                                                // fontFamily: 'roboto'
-                                                ),
-                                          ),
+                                return null;
+                              },
+                            ),
+                            calendarStyle: CalendarStyle(
+                              defaultDecoration: BoxDecoration(
+                                color: Colors.grey.shade200, // 기본 날짜 셀 배경색
+                              ),
+                              weekendDecoration: BoxDecoration(
+                                color: Colors.red.shade100, // 주말 날짜 셀 배경색
+                              ),
+                              selectedDecoration: const BoxDecoration(
+                                color: Colors.blueAccent, // 선택된 날짜 셀 배경색
+                                shape: BoxShape.circle,
+                              ),
+                              todayDecoration: const BoxDecoration(
+                                color: Colors.orangeAccent, // 오늘 날짜 셀 배경색
+                                shape: BoxShape.circle,
                               ),
                             ),
                           ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          const Icon(
-                            Icons.refresh,
-                            size: 25,
-                            color: Colors.black54,
-                          ),
-                          const SizedBox(
-                            width: 20,
-                          ),
-                          GestureDetector(
-                            onTap: () {
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12.0),
+                              color: Colors.white),
+                          width: size.width * 1,
+                          height: size.height * 0.05,
+                          child: context.watch<CounterProvider>().day != ""
+                              ? Consumer<CounterProvider>(
+                                  builder: (context, value, child) {
+                                    return Center(
+                                        child: Text(
+                                            "${value.month}월${value.day}일"));
+                                  },
+                                )
+                              : Center(
+                                  child: Text(
+                                      "${selectedDate_.month}월${selectedDate_.day}일")),
+                        ),
+                        // Text(schedule_Write),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12.0),
+                              color: Colors.white),
+                          width: size.width * 1,
+                          height: size.height * 0.05,
+                          child: TextField(
+                            // textAlignVertical: TextAlignVertical.center,
+                            decoration: const InputDecoration(
+                              hintStyle: TextStyle(
+                                fontSize: 20,
+                                color: Colors.black,
+                              ),
+                              contentPadding: EdgeInsets.symmetric(
+                                  vertical: 0.0, horizontal: 10.0),
+                              hintText: '일정을 등록하세요',
+                              border: InputBorder.none,
+                              // suffixIcon: IconButton(
+                              //     onPressed: () {
+                              //       setState(() {
+                              //         _isSwitch = !_isSwitch;
+                              //         if (_isSwitch == false) {
+                              //         } else {
+                              //           AlertDialog();
+                              //         }
+                              //       });
+                              //     },
+                              //     style: ElevatedButton.styleFrom(
+                              //         backgroundColor: _isSwitch
+                              //             ? Colors.grey.shade200
+                              //             : Colors.grey.shade200),
+                              //     icon: _isSwitch
+                              //         ? Icon(Icons.notifications_active_outlined)
+                              //         : Icon(Icons.notifications_off_outlined)
+                              //     //  Text(_isSwitch ? "ON" : "OFF"),
+                              //     ),
+                            ),
+                            controller: titlecontroller,
+                            onChanged: (value) {
                               setState(() {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => (Repeat(
-                                        selectedDate_: selectedDate_,
-                                        schedule_Write: schedule_Write,
-                                        selectedHour: _selectedHour,
-                                        selectedMinute: _selectedMinute,
-                                        isCheck: _isCheck)),
-                                  ),
-                                );
-                                // AlertDialog_Refresh();
+                                schedule_Write = titlecontroller.text;
+                                // checkDuplicateTitle(); // 중복 확인 함수 호출
                               });
                             },
-                            child: Container(
-                              width: size.width * 0.8,
-                              height: size.height * 0.045,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12.0),
-                                  color: Colors.white),
-                              child: Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: option == ""
-                                    ? const Text(
-                                        "반복 안 함",
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w100,
-                                          // fontFamily: 'roboto'
-                                        ),
-                                      )
-                                    : Text(
-                                        option,
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w100,
-                                          // fontFamily: 'roboto'
-                                        ),
-                                      ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          children: [
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            const Icon(
+                              Icons.notifications_outlined,
+                              size: 25,
+                              color: Colors.black54,
+                            ),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _isSwitch = !_isSwitch;
+                                  if (_isSwitch == false) {
+                                  } else {
+                                    AlertDialog();
+                                  }
+                                });
+                              },
+                              child: Container(
+                                width: size.width * 0.8,
+                                height: size.height * 0.045,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12.0),
+                                    color: Colors.white),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child:
+                                      // _selectedHour == 0
+                                      //     ? const Text(
+                                      //         "알림 없음",
+                                      //         style: TextStyle(
+                                      //             fontSize: 20,
+                                      //             fontWeight: FontWeight.w200,
+                                      //             color: Colors.black
+                                      //             // fontFamily: 'roboto'
+                                      //             ),
+                                      //       )
+                                      //     :
+                                      _isCheck
+                                          ? Text(
+                                              "$_selectedHour시 $_selectedMinute분",
+                                              style: const TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: Colors.black
+                                                  // fontFamily: 'roboto'
+                                                  ),
+                                            )
+                                          : const Text(
+                                              "알람 없음",
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: Colors.black
+                                                  // fontFamily: 'roboto'
+                                                  ),
+                                            ),
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      ElevatedButton(
-                          onPressed: () async {
-                            final random = Random();
-                            int randomPart = random.nextInt(1000); // 0~999 난수
-                            int timestampPart =
-                                DateTime.now().millisecondsSinceEpoch; // 타임스탬프
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          children: [
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            const Icon(
+                              Icons.refresh,
+                              size: 25,
+                              color: Colors.black54,
+                            ),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => (Repeat(
+                                          selectedDate_: selectedDate_,
+                                          schedule_Write: schedule_Write,
+                                          selectedHour: _selectedHour,
+                                          selectedMinute: _selectedMinute,
+                                          isCheck: _isCheck)),
+                                    ),
+                                  );
+                                  // AlertDialog_Refresh();
+                                });
+                              },
+                              child: Container(
+                                width: size.width * 0.8,
+                                height: size.height * 0.045,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12.0),
+                                    color: Colors.white),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: option == ""
+                                      ? const Text(
+                                          "반복 안 함",
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w100,
+                                            // fontFamily: 'roboto'
+                                          ),
+                                        )
+                                      : Text(
+                                          option,
+                                          style: const TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w100,
+                                            // fontFamily: 'roboto'
+                                          ),
+                                        ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        ElevatedButton(
+                            onPressed: () async {
+                              final random = Random();
+                              int randomPart = random.nextInt(1000); // 0~999 난수
+                              int timestampPart = DateTime.now()
+                                  .millisecondsSinceEpoch; // 타임스탬프
 
-                            // 고유 ID 생성: 해시 기반 또는 Modulo 기반으로 선택 가능
-                            String combined = "$timestampPart$randomPart";
+                              // 고유 ID 생성: 해시 기반 또는 Modulo 기반으로 선택 가능
+                              String combined = "$timestampPart$randomPart";
 
-                            String day = context.read<CounterProvider>().day;
-                            String year = context.read<CounterProvider>().year;
-                            String month =
-                                context.read<CounterProvider>().month;
-                            // _addNewSchedule();
-                            DateTime today = DateTime.now();
+                              String day = context.read<CounterProvider>().day;
+                              String year =
+                                  context.read<CounterProvider>().year;
+                              String month =
+                                  context.read<CounterProvider>().month;
+                              // _addNewSchedule();
+                              DateTime today = DateTime.now();
 
-                            // 오늘 날짜에서 시간 정보(시, 분, 초)를 제외한 날짜만 비교
-                            DateTime todayWithoutTime = DateTime(
-                                today.year,
-                                today.month,
-                                today.day,
-                                today.hour,
-                                today.minute);
-                            DateTime selectedDateWithoutTime = DateTime(
-                                selectedDate_.year,
-                                selectedDate_.month,
-                                selectedDate_.day,
-                                _selectedHour,
-                                _selectedMinute);
+                              // 오늘 날짜에서 시간 정보(시, 분, 초)를 제외한 날짜만 비교
+                              DateTime todayWithoutTime = DateTime(
+                                  today.year,
+                                  today.month,
+                                  today.day,
+                                  today.hour,
+                                  today.minute);
+                              DateTime selectedDateWithoutTime = DateTime(
+                                  selectedDate_.year,
+                                  selectedDate_.month,
+                                  selectedDate_.day,
+                                  _selectedHour,
+                                  _selectedMinute);
 
-                            // 비교: selectedDate_가 오늘 이전인지 확인
-                            //
-                            if (selectedDateWithoutTime
-                                    .isBefore(todayWithoutTime) ||
-                                _isCheck == false) {
-                              // print("========================.");
-                              // print("1$selectedDate_.");
-                              // print("2$schedule_Write.");
-                              // print("3$_selectedHour 시$_selectedMinute}.");
-                              // print("========================.");
-                              // bool error_message = false;
-                              AlertDialog_Calendar(_selectedHour);
-                            } else {
-                              try {
-                                await _firestore.collection("Calender").add(
-                                  {
-                                    "Schedule": schedule_Write,
-                                    "year": year == ""
+                              // 비교: selectedDate_가 오늘 이전인지 확인
+                              //
+                              if (selectedDateWithoutTime
+                                      .isBefore(todayWithoutTime) ||
+                                  _isCheck == false) {
+                                // print("========================.");
+                                // print("1$selectedDate_.");
+                                // print("2$schedule_Write.");
+                                // print("3$_selectedHour 시$_selectedMinute}.");
+                                // print("========================.");
+                                // bool error_message = false;
+                                AlertDialog_Calendar(_selectedHour);
+                              } else {
+                                try {
+                                  await _firestore.collection("Calender").add(
+                                    {
+                                      "Schedule": schedule_Write,
+                                      "year": year == ""
+                                          ? selectedDate.year
+                                          : int.parse(year),
+                                      "month": month == ""
+                                          ? selectedDate.month
+                                          : int.parse(month),
+                                      "day": day == ""
+                                          ? selectedDate.day
+                                          : int.parse(day),
+                                      "hour": _selectedHour,
+                                      "minit": _selectedMinute,
+                                      "option": option,
+                                      "option_day": option == "주말"
+                                          ? ["토", "일"]
+                                          : option == "주중"
+                                              ? ["월", "화", "수", "목", "금"]
+                                              : [
+                                                  DateFormat('E', 'ko_KO')
+                                                      .format(selectedDate_)
+                                                ],
+                                      "userid": UserManager.userId,
+                                      "dates": [],
+                                      "uniqueID":
+                                          combined.hashCode & 0x7FFFFFFF,
+                                    },
+                                  );
+                                  Get.offAll(
+                                      const home()); // 홈 페이지로 이동, 이전 페이지 스택을 모두 제거
+                                } catch (e) {}
+                                setState(() {
+                                  // print("+++++++++++++++++option$option");
+                                  context.read<CounterProvider>().ChangeText(
+                                      newYear: '', newMonth: '', newDay: '');
+
+                                  _selectedDate = DateTime(
+                                    year == ""
                                         ? selectedDate.year
                                         : int.parse(year),
-                                    "month": month == ""
+                                    month == ""
                                         ? selectedDate.month
                                         : int.parse(month),
-                                    "day": day == ""
+                                    day == ""
                                         ? selectedDate.day
                                         : int.parse(day),
-                                    "hour": _selectedHour,
-                                    "minit": _selectedMinute,
-                                    "option": option,
-                                    "option_day": option == "주말"
-                                        ? ["토", "일"]
-                                        : option == "주중"
-                                            ? ["월", "화", "수", "목", "금"]
-                                            : [
-                                                DateFormat('E', 'ko_KO')
-                                                    .format(selectedDate_)
-                                              ],
-                                    "userid": UserManager.userId,
-                                    "dates": [],
-                                    "uniqueID": combined.hashCode & 0x7FFFFFFF,
-                                  },
-                                );
-                                Get.offAll(
-                                    const home()); // 홈 페이지로 이동, 이전 페이지 스택을 모두 제거
-                              } catch (e) {}
-                              setState(() {
-                                // print("+++++++++++++++++option$option");
-                                context.read<CounterProvider>().ChangeText(
-                                    newYear: '', newMonth: '', newDay: '');
-
-                                _selectedDate = DateTime(
-                                  year == ""
-                                      ? selectedDate.year
-                                      : int.parse(year),
-                                  month == ""
-                                      ? selectedDate.month
-                                      : int.parse(month),
-                                  day == "" ? selectedDate.day : int.parse(day),
-                                  _selectedHour,
-                                  _selectedMinute,
-                                );
-                              });
-                              _scheduleNotification(
-                                  combined.hashCode & 0x7FFFFFFF,
-                                  _selectedDate,
-                                  schedule_Write,
-                                  option);
-                            }
-                          },
-                          child: const Text("등록하기")),
-                    ],
-                  ),
+                                    _selectedHour,
+                                    _selectedMinute,
+                                  );
+                                });
+                                _scheduleNotification(
+                                    combined.hashCode & 0x7FFFFFFF,
+                                    _selectedDate,
+                                    schedule_Write,
+                                    option);
+                              }
+                            },
+                            child: const Text("등록하기")),
+                      ],
+                    );
+                  }),
                 );
               }),
             ),

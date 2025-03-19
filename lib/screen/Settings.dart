@@ -5,6 +5,7 @@ import 'package:practice_01_app/main.dart';
 // import 'package:intl/intl.dart';
 // import 'package:practice_01_app/main.dart';
 import 'package:practice_01_app/provinder/color_provinder.dart';
+import 'package:practice_01_app/provinder/scheduleCount_provinder.dart';
 import 'package:provider/provider.dart';
 
 class Settings extends StatefulWidget {
@@ -20,6 +21,15 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
+  String _locale = 'ko_KR'; // 기본 언어 설정
+
+  // 언어 변경 함수
+  void _toggleLanguage() {
+    setState(() {
+      _locale = _locale == 'ko_KR' ? 'en_US' : 'ko_KR';
+    });
+  }
+
   // ignore: non_constant_identifier_names
   bool color_select = false;
   @override
@@ -48,104 +58,7 @@ class _SettingsState extends State<Settings> {
                         height: 100,
                         decoration: BoxDecoration(
                             color: colorProvider.backgroundColor)),
-                    // GestureDetector(
-                    //   onTap: () {
-                    //     setState(() {
-                    //       color_select = !color_select;
-                    //       print(color_select);
-                    //     });
-                    //   },
-                    //   child: Container(
-                    //     height: cSize.height * 0.075,
-                    //     width: cSize.width * 1,
-                    //     decoration: BoxDecoration(
-                    //         color: Colors.white,
-                    //         borderRadius: BorderRadius.circular(15)),
-                    //     child: Row(
-                    //       children: [
-                    //         Icon(Icons.palette),
-                    //         Text("색 메타"),
-                    //       ],
-                    //     ),
-                    //   ),
-                    // ),
-                    // GestureDetector(
-                    //   onTap: () {
-                    //     setState(() {
-                    //       color_select = !color_select;
-                    //       print(color_select);
-                    //     });
-                    //   },
-                    //   child: AnimatedContainer(
-                    //     duration: Duration(milliseconds: 300),
-                    //     height: color_select
-                    //         ? cSize.height * 0.3
-                    //         : cSize.height * 0.1, // 애니메이션으로 등장할 높이
-                    //     // 이거보다 그냥 색 메타 저기를 밀고 내려오는게 더 나을듯.
-                    //     curve: Curves.easeInOut, // 부드러운 등장 효과
-                    //     child: color_select
-                    //         ? Column(
-                    //             children: [
-                    //               Container(
-                    //                 height: cSize.height * 0.3,
-                    //                 width: cSize.width * 1,
-                    //                 decoration: BoxDecoration(
-                    //                     color: Colors.white,
-                    //                     borderRadius:
-                    //                         BorderRadius.circular(15)),
-                    //                 child: Column(
-                    //                   children: [
-                    //                     Row(
-                    //                       children: [
-                    //                         Icon(Icons.palette),
-                    //                         Text("색 메타"),
-                    //                       ],
-                    //                     ),
-                    //                     SizedBox(
-                    //                       height: cSize.height * 0.05,
-                    //                     ),
-                    //                     _buildColorButton(Colors.amber,
-                    //                         "yellow", colorProvider),
-                    //                     _buildColorButton(
-                    //                         Colors.blue, "blue", colorProvider),
-                    //                     _buildColorButton(
-                    //                         Color.fromARGB(255, 230, 242, 255),
-                    //                         "기본 약하늘",
-                    //                         colorProvider),
-                    //                   ],
-                    //                 ),
-                    //               ),
-                    //             ],
-                    //           )
-                    //         : Container(
-                    //             height: cSize.height * 0.075,
-                    //             width: cSize.width * 1,
-                    //             decoration: BoxDecoration(
-                    //                 color: Colors.white,
-                    //                 borderRadius: BorderRadius.circular(15)),
-                    //             child: Row(
-                    //               children: [
-                    //                 Icon(Icons.palette),
-                    //                 Text("색 메타"),
-                    //               ],
-                    //             ),
-                    //           ),
-                    //   ),
-                    // ),
-                    // // color_select == false
-                    // //     ? SizedBox()
-                    // //     : Column(
-                    // //         children: [
-                    // //           _buildColorButton(
-                    // //               Colors.amber, "yellow", colorProvider),
-                    // //           _buildColorButton(
-                    // //               Colors.blue, "blue", colorProvider),
-                    // //           _buildColorButton(
-                    // //               Color.fromARGB(255, 230, 242, 255),
-                    // //               "기본 약하늘",
-                    // //               colorProvider),
-                    //         ],
-                    //       )
+
                     GestureDetector(
                       onTap: () {
                         setState(() {
@@ -272,16 +185,156 @@ class _SettingsState extends State<Settings> {
                     //     ],
                     //   ),
                     // ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          color_select = !color_select;
+                          // print(color_select);
+                        });
+                      },
+                      child: color_select
+                          ? Container(
+                              height: cSize.height * 0.075,
+                              width: cSize.width * 1,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(15)),
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.translate),
+                                  SizedBox(
+                                    width: cSize.width * 0.015,
+                                  ),
+                                  const Text("언어 설정"),
+                                  SizedBox(
+                                    width: cSize.width * 0.65,
+                                  ),
+                                  const Icon(Icons.arrow_drop_down)
+                                ],
+                                //arrow_left_sharp
+                              ),
+                            )
+                          : Container(
+                              height: cSize.height * 0.275,
+                              width: cSize.width * 1,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(15)),
+                              child: Column(
+                                children: [
+                                  SizedBox(
+                                    height: cSize.height * 0.025,
+                                  ),
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.translate),
+                                      SizedBox(
+                                        width: cSize.width * 0.015,
+                                      ),
+                                      const Text("언어 설정"),
+                                      SizedBox(
+                                        width: cSize.width * 0.65,
+                                      ),
+                                      const Icon(Icons.arrow_left_sharp)
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: cSize.height * 0.025,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Consumer<ScheduleCountProvider>(
+                                        builder: (context, provider, child) {
+                                          return Column(
+                                            children: [
+                                              Text(
+                                                '현재 언어: ${provider.locale}',
+                                                style: const TextStyle(
+                                                    fontSize: 20),
+                                              ),
+                                              Row(
+                                                children: [
+                                                  ElevatedButton(
+                                                    onPressed: () {
+                                                      context
+                                                          .read<
+                                                              ScheduleCountProvider>()
+                                                          .toggleLocale(
+                                                              'ko_KR');
+                                                      // 언어 변경
+                                                    },
+                                                    child: const Text('한국어'),
+                                                  ),
+                                                  const SizedBox(
+                                                      width: 10), // 버튼 간격 조정
+                                                  ElevatedButton(
+                                                    onPressed: () {
+                                                      context
+                                                          .read<
+                                                              ScheduleCountProvider>()
+                                                          .toggleLocale(
+                                                              'en_US');
+                                                      // 언어 변경
+                                                    },
+                                                    child: const Text('영어'),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  // Row(
+                                  //   mainAxisAlignment: MainAxisAlignment.center,
+                                  //   children: [
+                                  //     _buildColorButton(
+                                  //         const Color.fromRGBO(
+                                  //             230, 230, 250, 1.0),
+                                  //         "연보라",
+                                  //         colorProvider),
+                                  //     _buildColorButton(
+                                  //         const Color.fromRGBO(
+                                  //             245, 222, 179, 1.0),
+                                  //         "밀색",
+                                  //         colorProvider),
+                                  //     _buildColorButton(
+                                  //         const Color.fromRGBO(
+                                  //             240, 220, 130, 1.0),
+                                  //         "버프",
+                                  //         colorProvider),
+                                  //     _buildColorButton(
+                                  //         const Color.fromRGBO(
+                                  //             210, 180, 140, 1.0),
+                                  //         "브라운",
+                                  //         colorProvider),
+                                  //   ],
+                                  // )
+                                ],
+                              ),
+                            ),
+                    ),
+                    // Row(
+                    //   children: [
+                    //     IconButton(
+                    //       icon: Icon(Icons.language),
+                    //       onPressed: _toggleLanguage, // 언어 변경 버튼
+                    //     ),
+                    //     Text(_locale)
+                    //   ],
+                    // ),
                     const SizedBox(
                       height: 10,
                     ),
-                    ElevatedButton(
-                      onPressed: () async {
-                        // 현재 등록된 알람 찾기
-                        getScheduledNotifications();
-                      },
-                      child: Text("모든 알람 삭제"),
-                    ),
+                    // ElevatedButton(
+                    //   onPressed: () async {
+                    //     // 현재 등록된 알람 찾기
+                    //     getScheduledNotifications();
+                    //   },
+                    //   child: Text("모든 알람 삭제"),
+                    // ),
                     // Image.asset(
                     //   "images/small.png",
                     // ),

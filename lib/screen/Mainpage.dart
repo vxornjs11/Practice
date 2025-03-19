@@ -32,6 +32,8 @@ class _MyWidgetState extends State<Mainpage> {
   List<Map<String, dynamic>> list = [];
   // Map<DateTime, List<String>> _events = {};
   late Map<DateTime, List<String>> _events;
+  CalendarFormat _calendarFormat = CalendarFormat.month;
+  // String _locale = 'ko_KR'; // 기본 언어 설정
 
   final firebase = FirebaseFirestore.instance;
   DateTime selectedDate = DateTime.utc(
@@ -988,351 +990,371 @@ class _MyWidgetState extends State<Mainpage> {
                                         borderRadius:
                                             BorderRadius.circular(8.0),
                                         color: value.backgroundColor),
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                          decoration: BoxDecoration(
-                                              // 달력순간이동
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                              color: Colors.white),
-                                          child: TableCalendar(
-                                            firstDay:
-                                                DateTime.utc(2010, 10, 16),
-                                            lastDay: DateTime.utc(2030, 3, 14),
-                                            focusedDay: selectedDate_,
-                                            selectedDayPredicate: (date) =>
-                                                isSameDay(selectedDate_, date),
-                                            onDaySelected: _onDaySelected,
-                                            eventLoader: _getEventsForDay,
-                                            calendarBuilders: CalendarBuilders(
-                                              markerBuilder:
-                                                  (context, date, events) {
-                                                if (events.isNotEmpty) {
-                                                  return Positioned(
-                                                    right: 20,
-                                                    bottom: 1,
-                                                    child: _buildEventsMarker(
-                                                        date, events),
-                                                  );
-                                                }
-                                                return null;
-                                              },
-                                            ),
-                                            calendarStyle: CalendarStyle(
-                                              defaultDecoration: BoxDecoration(
-                                                color: Colors.grey
-                                                    .shade200, // 기본 날짜 셀 배경색
+                                    child: Consumer<ScheduleCountProvider>(
+                                        builder: (context, provider, child) {
+                                      return Column(
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                                // 달력순간이동
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                                color: Colors.white),
+                                            child: TableCalendar(
+                                              locale: provider.locale, // 언어 설정
+                                              calendarFormat:
+                                                  _calendarFormat, //
+                                              firstDay:
+                                                  DateTime.utc(2010, 10, 16),
+                                              lastDay:
+                                                  DateTime.utc(2030, 3, 14),
+                                              focusedDay: selectedDate_,
+                                              selectedDayPredicate: (date) =>
+                                                  isSameDay(
+                                                      selectedDate_, date),
+                                              onDaySelected: _onDaySelected,
+                                              eventLoader: _getEventsForDay,
+                                              headerStyle: HeaderStyle(
+                                                formatButtonVisible: false,
+                                                titleCentered: true,
+                                                titleTextFormatter: (date,
+                                                        locale) =>
+                                                    DateFormat.yMMMM(locale)
+                                                        .format(
+                                                            date), // 월을 해당 언어로 표시
                                               ),
-                                              weekendDecoration: BoxDecoration(
-                                                color: Colors.red
-                                                    .shade100, // 주말 날짜 셀 배경색
+                                              calendarBuilders:
+                                                  CalendarBuilders(
+                                                markerBuilder:
+                                                    (context, date, events) {
+                                                  if (events.isNotEmpty) {
+                                                    return Positioned(
+                                                      right: 20,
+                                                      bottom: 1,
+                                                      child: _buildEventsMarker(
+                                                          date, events),
+                                                    );
+                                                  }
+                                                  return null;
+                                                },
                                               ),
-                                              selectedDecoration:
-                                                  const BoxDecoration(
-                                                color: Colors
-                                                    .blueAccent, // 선택된 날짜 셀 배경색
-                                                shape: BoxShape.circle,
-                                              ),
-                                              todayDecoration:
-                                                  const BoxDecoration(
-                                                color: Colors
-                                                    .orangeAccent, // 오늘 날짜 셀 배경색
-                                                shape: BoxShape.circle,
+                                              calendarStyle: CalendarStyle(
+                                                defaultDecoration:
+                                                    BoxDecoration(
+                                                  color: Colors.grey
+                                                      .shade200, // 기본 날짜 셀 배경색
+                                                ),
+                                                weekendDecoration:
+                                                    BoxDecoration(
+                                                  color: Colors.red
+                                                      .shade100, // 주말 날짜 셀 배경색
+                                                ),
+                                                selectedDecoration:
+                                                    const BoxDecoration(
+                                                  color: Colors
+                                                      .blueAccent, // 선택된 날짜 셀 배경색
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                todayDecoration:
+                                                    const BoxDecoration(
+                                                  color: Colors
+                                                      .orangeAccent, // 오늘 날짜 셀 배경색
+                                                  shape: BoxShape.circle,
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        // Expanded(
-                                        //   child: ListView(
-                                        //     children: _getEventsForDay(
-                                        //             selectedDate_)
-                                        //         .map((event) => Padding(
-                                        //               padding:
-                                        //                   const EdgeInsets.all(
-                                        //                       4.0),
-                                        //               child: Container(
-                                        //                 height:
-                                        //                     c_size.height * 0.1,
-                                        //                 // width: c_size.width * 0.1,
-                                        //                 decoration: BoxDecoration(
-                                        //                   borderRadius:
-                                        //                       BorderRadius
-                                        //                           .circular(10.0),
-                                        //                   color: const Color
-                                        //                       .fromARGB(
-                                        //                       255, 255, 255, 255),
-                                        //                 ),
-                                        //                 child: ListTile(
-                                        //                   title: Text(
-                                        //                       event.toString(),
-                                        //                       overflow:
-                                        //                           TextOverflow
-                                        //                               .ellipsis,
-                                        //                       style:
-                                        //                           const TextStyle(
-                                        //                               fontSize:
-                                        //                                   25)),
-                                        //                 ),
-                                        //               ),
-                                        //             ))
-                                        //         .toList(),
-                                        //   ),
-                                        // ),
-                                        Expanded(
-                                          child: StreamBuilder<
-                                              List<DocumentSnapshot>>(
-                                            stream: select_combineStreams(),
-                                            builder: (context, snapshot) {
-                                              if (snapshot.connectionState ==
-                                                  ConnectionState.waiting) {
-                                                return const Center(
-                                                    child:
-                                                        CircularProgressIndicator());
-                                              }
+                                          // Expanded(
+                                          //   child: ListView(
+                                          //     children: _getEventsForDay(
+                                          //             selectedDate_)
+                                          //         .map((event) => Padding(
+                                          //               padding:
+                                          //                   const EdgeInsets.all(
+                                          //                       4.0),
+                                          //               child: Container(
+                                          //                 height:
+                                          //                     c_size.height * 0.1,
+                                          //                 // width: c_size.width * 0.1,
+                                          //                 decoration: BoxDecoration(
+                                          //                   borderRadius:
+                                          //                       BorderRadius
+                                          //                           .circular(10.0),
+                                          //                   color: const Color
+                                          //                       .fromARGB(
+                                          //                       255, 255, 255, 255),
+                                          //                 ),
+                                          //                 child: ListTile(
+                                          //                   title: Text(
+                                          //                       event.toString(),
+                                          //                       overflow:
+                                          //                           TextOverflow
+                                          //                               .ellipsis,
+                                          //                       style:
+                                          //                           const TextStyle(
+                                          //                               fontSize:
+                                          //                                   25)),
+                                          //                 ),
+                                          //               ),
+                                          //             ))
+                                          //         .toList(),
+                                          //   ),
+                                          // ),
+                                          Expanded(
+                                            child: StreamBuilder<
+                                                List<DocumentSnapshot>>(
+                                              stream: select_combineStreams(),
+                                              builder: (context, snapshot) {
+                                                if (snapshot.connectionState ==
+                                                    ConnectionState.waiting) {
+                                                  return const Center(
+                                                      child:
+                                                          CircularProgressIndicator());
+                                                }
 
-                                              if (!snapshot.hasData ||
-                                                  snapshot.data!.isEmpty) {
-                                                return Center(
-                                                  child: ElevatedButton(
-                                                    onPressed: () {
-                                                      // print("아무데이터없을때?");
-                                                      Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              Set_schedul(
-                                                            option: '반복 안 함',
-                                                            selectedDate_:
-                                                                selectedDate_,
-                                                            schedule_Write: "",
-                                                            selectedHour: 0,
-                                                            selectedMinute: 0,
-                                                            isCheck: false,
+                                                if (!snapshot.hasData ||
+                                                    snapshot.data!.isEmpty) {
+                                                  return Center(
+                                                    child: ElevatedButton(
+                                                      onPressed: () {
+                                                        // print("아무데이터없을때?");
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder:
+                                                                (context) =>
+                                                                    Set_schedul(
+                                                              option: '반복 안 함',
+                                                              selectedDate_:
+                                                                  selectedDate_,
+                                                              schedule_Write:
+                                                                  "",
+                                                              selectedHour: 0,
+                                                              selectedMinute: 0,
+                                                              isCheck: false,
+                                                            ),
                                                           ),
-                                                        ),
-                                                      );
-                                                    },
-                                                    child:
-                                                        const Text("일정을 등록하세요"),
-                                                  ),
-                                                );
-                                              }
+                                                        );
+                                                      },
+                                                      child: const Text(
+                                                          "일정을 등록하세요"),
+                                                    ),
+                                                  );
+                                                }
 
-                                              // 두 쿼리의 결과 병합
-                                              List<DocumentSnapshot> documents =
-                                                  snapshot.data!;
-                                              // 필요시 중복 문서 제거
-                                              final uniqueDocuments = {
-                                                for (var doc in documents)
-                                                  doc.id: doc
-                                              }.values.toList();
+                                                // 두 쿼리의 결과 병합
+                                                List<DocumentSnapshot>
+                                                    documents = snapshot.data!;
+                                                // 필요시 중복 문서 제거
+                                                final uniqueDocuments = {
+                                                  for (var doc in documents)
+                                                    doc.id: doc
+                                                }.values.toList();
 
-                                              WidgetsBinding.instance
-                                                  .addPostFrameCallback((_) {
-                                                context
-                                                    .read<
-                                                        ScheduleCountProvider>()
-                                                    .changeScheduleCount(
-                                                        initialCount:
-                                                            uniqueDocuments
-                                                                .length);
-                                              });
+                                                WidgetsBinding.instance
+                                                    .addPostFrameCallback((_) {
+                                                  context
+                                                      .read<
+                                                          ScheduleCountProvider>()
+                                                      .changeScheduleCount(
+                                                          initialCount:
+                                                              uniqueDocuments
+                                                                  .length);
+                                                });
 
-                                              // print(uniqueDocuments);
-                                              // 시간과 분을 기준으로 정렬
-                                              uniqueDocuments.sort((a, b) {
-                                                final dataA = a.data()
-                                                    as Map<String, dynamic>;
-                                                final dataB = b.data()
-                                                    as Map<String, dynamic>;
-
-                                                final scheduleHourA =
-                                                    dataA['hour'] ?? 0;
-                                                final scheduleMinuteA =
-                                                    dataA['minit'] ?? 0;
-                                                final scheduleTimeA =
-                                                    scheduleHourA * 60 +
-                                                        scheduleMinuteA;
-
-                                                final scheduleHourB =
-                                                    dataB['hour'] ?? 0;
-                                                final scheduleMinuteB =
-                                                    dataB['minit'] ?? 0;
-                                                final scheduleTimeB =
-                                                    scheduleHourB * 60 +
-                                                        scheduleMinuteB;
-
-                                                return scheduleTimeA
-                                                    .compareTo(scheduleTimeB);
-                                              });
-
-                                              return ListView.builder(
-                                                padding: EdgeInsets.zero,
-                                                itemCount:
-                                                    uniqueDocuments.length,
-                                                itemBuilder: (context, index) {
-                                                  final doc =
-                                                      uniqueDocuments[index];
-                                                  final data = doc.data()
+                                                // print(uniqueDocuments);
+                                                // 시간과 분을 기준으로 정렬
+                                                uniqueDocuments.sort((a, b) {
+                                                  final dataA = a.data()
+                                                      as Map<String, dynamic>;
+                                                  final dataB = b.data()
                                                       as Map<String, dynamic>;
 
-                                                  return Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            3.0),
-                                                    child: GestureDetector(
-                                                        onDoubleTap: () {
-                                                          // 파이어베이스에서 문서 삭제
-                                                          setState(() {
-                                                            delete_list =
-                                                                !delete_list;
-                                                          });
-                                                        },
-                                                        child:
-                                                            delete_list == false
-                                                                ? Container(
-                                                                    height:
-                                                                        cSize.height *
-                                                                            0.1,
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              10.0),
-                                                                      color: const Color
-                                                                          .fromARGB(
-                                                                          255,
-                                                                          255,
-                                                                          255,
-                                                                          255),
-                                                                    ),
-                                                                    child:
-                                                                        ListTile(
-                                                                      title:
-                                                                          Text(
-                                                                        data['Schedule'] ??
-                                                                            'No Schedule',
-                                                                        overflow:
-                                                                            TextOverflow.ellipsis,
-                                                                        style: const TextStyle(
-                                                                            fontSize:
-                                                                                25),
+                                                  final scheduleHourA =
+                                                      dataA['hour'] ?? 0;
+                                                  final scheduleMinuteA =
+                                                      dataA['minit'] ?? 0;
+                                                  final scheduleTimeA =
+                                                      scheduleHourA * 60 +
+                                                          scheduleMinuteA;
+
+                                                  final scheduleHourB =
+                                                      dataB['hour'] ?? 0;
+                                                  final scheduleMinuteB =
+                                                      dataB['minit'] ?? 0;
+                                                  final scheduleTimeB =
+                                                      scheduleHourB * 60 +
+                                                          scheduleMinuteB;
+
+                                                  return scheduleTimeA
+                                                      .compareTo(scheduleTimeB);
+                                                });
+
+                                                return ListView.builder(
+                                                  padding: EdgeInsets.zero,
+                                                  itemCount:
+                                                      uniqueDocuments.length,
+                                                  itemBuilder:
+                                                      (context, index) {
+                                                    final doc =
+                                                        uniqueDocuments[index];
+                                                    final data = doc.data()
+                                                        as Map<String, dynamic>;
+
+                                                    return Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              3.0),
+                                                      child: GestureDetector(
+                                                          onDoubleTap: () {
+                                                            // 파이어베이스에서 문서 삭제
+                                                            setState(() {
+                                                              delete_list =
+                                                                  !delete_list;
+                                                            });
+                                                          },
+                                                          child:
+                                                              delete_list ==
+                                                                      false
+                                                                  ? Container(
+                                                                      height:
+                                                                          cSize.height *
+                                                                              0.1,
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(10.0),
+                                                                        color: const Color
+                                                                            .fromARGB(
+                                                                            255,
+                                                                            255,
+                                                                            255,
+                                                                            255),
                                                                       ),
-                                                                      subtitle:
-                                                                          Column(
-                                                                        crossAxisAlignment:
-                                                                            CrossAxisAlignment.start,
+                                                                      child:
+                                                                          ListTile(
+                                                                        title:
+                                                                            Text(
+                                                                          data['Schedule'] ??
+                                                                              'No Schedule',
+                                                                          overflow:
+                                                                              TextOverflow.ellipsis,
+                                                                          style:
+                                                                              const TextStyle(fontSize: 25),
+                                                                        ),
+                                                                        subtitle:
+                                                                            Column(
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.start,
+                                                                          children: [
+                                                                            Row(
+                                                                              children: [
+                                                                                const Icon(Icons.timer, size: 16),
+                                                                                const SizedBox(width: 5),
+                                                                                Text(
+                                                                                  '${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
+                                                                                  style: const TextStyle(fontSize: 12),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            Row(
+                                                                              children: [
+                                                                                const Icon(Icons.restore_rounded, size: 16),
+                                                                                const SizedBox(width: 5),
+                                                                                Text(
+                                                                                  '${data['option'] ?? 'No Date'}',
+                                                                                  style: const TextStyle(fontSize: 12),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    )
+                                                                  : Container(
+                                                                      height:
+                                                                          cSize.height *
+                                                                              0.1,
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(10.0),
+                                                                        color: const Color
+                                                                            .fromARGB(
+                                                                            255,
+                                                                            255,
+                                                                            255,
+                                                                            255),
+                                                                      ),
+                                                                      child:
+                                                                          Row(
                                                                         children: [
-                                                                          Row(
-                                                                            children: [
-                                                                              const Icon(Icons.timer, size: 16),
-                                                                              const SizedBox(width: 5),
-                                                                              Text(
-                                                                                '${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
-                                                                                style: const TextStyle(fontSize: 12),
+                                                                          SizedBox(
+                                                                            width:
+                                                                                cSize.width * 0.85,
+                                                                            child:
+                                                                                ListTile(
+                                                                              title: Text(
+                                                                                data['Schedule'] ?? 'No Schedule',
+                                                                                overflow: TextOverflow.ellipsis,
+                                                                                style: const TextStyle(fontSize: 25),
                                                                               ),
-                                                                            ],
+                                                                              subtitle: Column(
+                                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                children: [
+                                                                                  Row(
+                                                                                    children: [
+                                                                                      const Icon(Icons.timer, size: 16),
+                                                                                      const SizedBox(width: 5),
+                                                                                      Text(
+                                                                                        '${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
+                                                                                        style: const TextStyle(fontSize: 12),
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                  Row(
+                                                                                    children: [
+                                                                                      const Icon(Icons.restore_rounded, size: 16),
+                                                                                      const SizedBox(width: 5),
+                                                                                      Text(
+                                                                                        '${data['option'] ?? 'No Date'}',
+                                                                                        style: const TextStyle(fontSize: 12),
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
                                                                           ),
-                                                                          Row(
+                                                                          Column(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.start,
                                                                             children: [
-                                                                              const Icon(Icons.restore_rounded, size: 16),
-                                                                              const SizedBox(width: 5),
-                                                                              Text(
-                                                                                '${data['option'] ?? 'No Date'}',
-                                                                                style: const TextStyle(fontSize: 12),
+                                                                              SizedBox(
+                                                                                width: cSize.width * 0.1,
+                                                                                // height:
+                                                                                //     c_size.height * 0.1,
+                                                                                child: IconButton(
+                                                                                    color: Colors.red,
+                                                                                    onPressed: () {
+                                                                                      AlertDialog(doc, data['uniqueID'], data['option'], uniqueDocuments.length);
+                                                                                    },
+                                                                                    icon: const Icon(Icons.close)),
                                                                               ),
                                                                             ],
                                                                           ),
                                                                         ],
                                                                       ),
-                                                                    ),
-                                                                  )
-                                                                : Container(
-                                                                    height:
-                                                                        cSize.height *
-                                                                            0.1,
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              10.0),
-                                                                      color: const Color
-                                                                          .fromARGB(
-                                                                          255,
-                                                                          255,
-                                                                          255,
-                                                                          255),
-                                                                    ),
-                                                                    child: Row(
-                                                                      children: [
-                                                                        SizedBox(
-                                                                          width:
-                                                                              cSize.width * 0.85,
-                                                                          child:
-                                                                              ListTile(
-                                                                            title:
-                                                                                Text(
-                                                                              data['Schedule'] ?? 'No Schedule',
-                                                                              overflow: TextOverflow.ellipsis,
-                                                                              style: const TextStyle(fontSize: 25),
-                                                                            ),
-                                                                            subtitle:
-                                                                                Column(
-                                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                                              children: [
-                                                                                Row(
-                                                                                  children: [
-                                                                                    const Icon(Icons.timer, size: 16),
-                                                                                    const SizedBox(width: 5),
-                                                                                    Text(
-                                                                                      '${data['hour'] ?? 'No Hour'}:${data['minit'] ?? 'No Minute'}',
-                                                                                      style: const TextStyle(fontSize: 12),
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
-                                                                                Row(
-                                                                                  children: [
-                                                                                    const Icon(Icons.restore_rounded, size: 16),
-                                                                                    const SizedBox(width: 5),
-                                                                                    Text(
-                                                                                      '${data['option'] ?? 'No Date'}',
-                                                                                      style: const TextStyle(fontSize: 12),
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
-                                                                              ],
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                        Column(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.start,
-                                                                          children: [
-                                                                            SizedBox(
-                                                                              width: cSize.width * 0.1,
-                                                                              // height:
-                                                                              //     c_size.height * 0.1,
-                                                                              child: IconButton(
-                                                                                  color: Colors.red,
-                                                                                  onPressed: () {
-                                                                                    AlertDialog(doc, data['uniqueID'], data['option'], uniqueDocuments.length);
-                                                                                  },
-                                                                                  icon: const Icon(Icons.close)),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  )),
-                                                  );
-                                                },
-                                              );
-                                            },
-                                          ),
-                                        )
-                                      ],
-                                    ),
+                                                                    )),
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                            ),
+                                          )
+                                        ],
+                                      );
+                                    }),
                                   ),
                                 ),
                         ],
