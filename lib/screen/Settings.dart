@@ -21,17 +21,18 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
-  String _locale = 'ko_KR'; // 기본 언어 설정
+  // String _locale = 'ko_KR'; // 기본 언어 설정
 
   // 언어 변경 함수
-  void _toggleLanguage() {
-    setState(() {
-      _locale = _locale == 'ko_KR' ? 'en_US' : 'ko_KR';
-    });
-  }
+  // void _toggleLanguage() {
+  //   setState(() {
+  //     _locale = _locale == 'ko_KR' ? 'en_US' : 'ko_KR';
+  //   });
+  // }
 
   // ignore: non_constant_identifier_names
   bool color_select = false;
+  bool lcale_select = false;
   @override
   Widget build(BuildContext context) {
     // ignore: unused_local_variable
@@ -185,137 +186,119 @@ class _SettingsState extends State<Settings> {
                     //     ],
                     //   ),
                     // ),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          color_select = !color_select;
-                          // print(color_select);
-                        });
-                      },
-                      child: color_select
-                          ? Container(
-                              height: cSize.height * 0.075,
-                              width: cSize.width * 1,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(15)),
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.translate),
-                                  SizedBox(
-                                    width: cSize.width * 0.015,
-                                  ),
-                                  const Text("언어 설정"),
-                                  SizedBox(
-                                    width: cSize.width * 0.65,
-                                  ),
-                                  const Icon(Icons.arrow_drop_down)
-                                ],
-                                //arrow_left_sharp
-                              ),
-                            )
-                          : Container(
-                              height: cSize.height * 0.275,
-                              width: cSize.width * 1,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(15)),
-                              child: Column(
-                                children: [
-                                  SizedBox(
-                                    height: cSize.height * 0.025,
-                                  ),
-                                  Row(
-                                    children: [
-                                      const Icon(Icons.translate),
-                                      SizedBox(
-                                        width: cSize.width * 0.015,
-                                      ),
-                                      const Text("언어 설정"),
-                                      SizedBox(
-                                        width: cSize.width * 0.65,
-                                      ),
-                                      const Icon(Icons.arrow_left_sharp)
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: cSize.height * 0.025,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Consumer<ScheduleCountProvider>(
-                                        builder: (context, provider, child) {
-                                          return Column(
-                                            children: [
-                                              Text(
-                                                '현재 언어: ${provider.locale}',
-                                                style: const TextStyle(
-                                                    fontSize: 20),
-                                              ),
-                                              Row(
-                                                children: [
-                                                  ElevatedButton(
-                                                    onPressed: () {
-                                                      context
-                                                          .read<
-                                                              ScheduleCountProvider>()
-                                                          .toggleLocale(
-                                                              'ko_KR');
-                                                      // 언어 변경
-                                                    },
-                                                    child: const Text('한국어'),
-                                                  ),
-                                                  const SizedBox(
-                                                      width: 10), // 버튼 간격 조정
-                                                  ElevatedButton(
-                                                    onPressed: () {
-                                                      context
-                                                          .read<
-                                                              ScheduleCountProvider>()
-                                                          .toggleLocale(
-                                                              'en_US');
-                                                      // 언어 변경
-                                                    },
-                                                    child: const Text('영어'),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                  // Row(
-                                  //   mainAxisAlignment: MainAxisAlignment.center,
-                                  //   children: [
-                                  //     _buildColorButton(
-                                  //         const Color.fromRGBO(
-                                  //             230, 230, 250, 1.0),
-                                  //         "연보라",
-                                  //         colorProvider),
-                                  //     _buildColorButton(
-                                  //         const Color.fromRGBO(
-                                  //             245, 222, 179, 1.0),
-                                  //         "밀색",
-                                  //         colorProvider),
-                                  //     _buildColorButton(
-                                  //         const Color.fromRGBO(
-                                  //             240, 220, 130, 1.0),
-                                  //         "버프",
-                                  //         colorProvider),
-                                  //     _buildColorButton(
-                                  //         const Color.fromRGBO(
-                                  //             210, 180, 140, 1.0),
-                                  //         "브라운",
-                                  //         colorProvider),
-                                  //   ],
-                                  // )
-                                ],
-                              ),
-                            ),
-                    ),
+                    // 언어 번역 추가할지 말지 나중에 하자고.
+                    // GestureDetector(
+                    //   onTap: () {
+                    //     setState(() {
+                    //       lcale_select = !lcale_select;
+                    //       // print(color_select);
+                    //     });
+                    //   },
+                    //   child: lcale_select
+                    //       ? Container(
+                    //           height: cSize.height * 0.075,
+                    //           width: cSize.width * 1,
+                    //           decoration: BoxDecoration(
+                    //               color: Colors.white,
+                    //               borderRadius: BorderRadius.circular(15)),
+                    //           child: Row(
+                    //             children: [
+                    //               const Icon(Icons.translate),
+                    //               SizedBox(
+                    //                 width: cSize.width * 0.015,
+                    //               ),
+                    //               const Text("언어 설정"),
+                    //               SizedBox(
+                    //                 width: cSize.width * 0.65,
+                    //               ),
+                    //               const Icon(Icons.arrow_drop_down)
+                    //             ],
+                    //             //arrow_left_sharp
+                    //           ),
+                    //         )
+                    //       : Container(
+                    //           height: cSize.height * 0.275,
+                    //           width: cSize.width * 1,
+                    //           decoration: BoxDecoration(
+                    //               color: Colors.white,
+                    //               borderRadius: BorderRadius.circular(15)),
+                    //           child: Column(
+                    //             children: [
+                    //               SizedBox(
+                    //                 height: cSize.height * 0.025,
+                    //               ),
+                    //               Row(
+                    //                 children: [
+                    //                   const Icon(Icons.translate),
+                    //                   SizedBox(
+                    //                     width: cSize.width * 0.015,
+                    //                   ),
+                    //                   const Text("언어 설정"),
+                    //                   SizedBox(
+                    //                     width: cSize.width * 0.65,
+                    //                   ),
+                    //                   const Icon(Icons.arrow_left_sharp)
+                    //                 ],
+                    //               ),
+                    //               SizedBox(
+                    //                 height: cSize.height * 0.025,
+                    //               ),
+                    //               Row(
+                    //                 mainAxisAlignment: MainAxisAlignment.center,
+                    //                 children: [
+                    //                   Consumer<ScheduleCountProvider>(
+                    //                     builder: (context, provider, child) {
+                    //                       return Column(
+                    //                         children: [
+                    //                           provider.locale == "ko_KR"
+                    //                               ? Text(
+                    //                                   '현재 언어: ${provider.locale}',
+                    //                                   style: const TextStyle(
+                    //                                       fontSize: 20),
+                    //                                 )
+                    //                               : Text(
+                    //                                   'ENG: ${provider.locale}',
+                    //                                   style: const TextStyle(
+                    //                                       fontSize: 20),
+                    //                                 ),
+                    //                           Row(
+                    //                             children: [
+                    //                               ElevatedButton(
+                    //                                 onPressed: () {
+                    //                                   context
+                    //                                       .read<
+                    //                                           ScheduleCountProvider>()
+                    //                                       .toggleLocale(
+                    //                                           'ko_KR');
+                    //                                   // 언어 변경
+                    //                                 },
+                    //                                 child: const Text('한국어'),
+                    //                               ),
+                    //                               const SizedBox(
+                    //                                   width: 10), // 버튼 간격 조정
+                    //                               ElevatedButton(
+                    //                                 onPressed: () {
+                    //                                   context
+                    //                                       .read<
+                    //                                           ScheduleCountProvider>()
+                    //                                       .toggleLocale(
+                    //                                           'en_US');
+                    //                                   // 언어 변경
+                    //                                 },
+                    //                                 child: const Text('영어'),
+                    //                               ),
+                    //                             ],
+                    //                           ),
+                    //                         ],
+                    //                       );
+                    //                     },
+                    //                   ),
+                    //                 ],
+                    //               ),
+                    //             ],
+                    //           ),
+                    //         ),
+                    // ),
                     // Row(
                     //   children: [
                     //     IconButton(

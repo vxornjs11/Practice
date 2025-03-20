@@ -177,11 +177,11 @@ void backgroundFetchHeadlessTask(String taskId) async {
 }
 
 Future<void> requestPermissions() async {
-  print("정확한 알람 권한 요청");
+  // print("정확한 알람 권한 요청");
   // 정확한 알람 권한 요청
   bool exactAlarmGranted = await requestExactAlarmsPermission();
   if (!exactAlarmGranted) {
-    print("정확한 알람 권한이 거부됨");
+    // print("정확한 알람 권한이 거부됨");
     return; // 정확한 알람 권한이 거부되면 알림 권한 요청을 실행하지 않음
   }
 
@@ -190,24 +190,24 @@ Future<void> requestPermissions() async {
 }
 
 Future<bool> requestExactAlarmsPermission() async {
-  print("정확한 알람 권한 요청 2");
+  // print("정확한 알람 권한 요청 2");
   const MethodChannel platform =
       MethodChannel('dexterous.com/flutter/local_notifications');
 
   try {
-    print("정확한 알람 권한 요청 3");
+    // print("정확한 알람 권한 요청 3");
     final bool granted =
         await platform.invokeMethod<bool>('requestExactAlarmsPermission') ??
             false;
     return granted;
   } on PlatformException catch (e) {
-    print("정확한 알람 권한 요청 중 오류 발생: ${e.message}");
+    // print("정확한 알람 권한 요청 중 오류 발생: ${e.message}");
     return false;
   }
 }
 
 Future<void> requestNotificationsPermission() async {
-  print("정확한 알람 권한 요청 b");
+  // print("정확한 알람 권한 요청 b");
   if (await Permission.notification.isDenied) {
     await Permission.notification.request();
   }
@@ -216,18 +216,18 @@ Future<void> requestNotificationsPermission() async {
 void saveUserToFirestore() async {
   // void saveUserToFirestore() async {
   User? user = FirebaseAuth.instance.currentUser;
-  print("1 2 3!");
+  // print("1 2 3!");
   if (user != null) {
     await FirebaseFirestore.instance.collection('Users').doc(user.uid).set({
       "userid": user.uid, // ✅ 사용자 인증 ID
       // "email": "익명 사용자",
       // "name": "익명 유저" // 필요시 사용자 정보 추가 가능
     }, SetOptions(merge: true)); // 기존 데이터가 있으면 업데이트
-    print("✅ Firestore에 사용자 정보 저장 완료!");
+    // print("✅ Firestore에 사용자 정보 저장 완료!");
   } else {
-    print("🚨 로그인되지 않음!");
+    // print("🚨 로그인되지 않음!");
   }
-  print("1 2  4443!");
+  // print("1 2  4443!");
 // }
 }
 
