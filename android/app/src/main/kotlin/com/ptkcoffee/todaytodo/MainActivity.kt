@@ -1,4 +1,4 @@
-package practice_01_app
+package com.ptkcoffee.todaytodo
 
 import io.flutter.embedding.android.FlutterActivity
 

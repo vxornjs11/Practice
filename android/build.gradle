@@ -23,7 +23,7 @@ buildscript {
 
 ext {
  compileSdkVersion   = 33  
-    targetSdkVersion    = 33  
+    targetSdkVersion    = 34  
 }
 
 rootProject.buildDir = '../build'

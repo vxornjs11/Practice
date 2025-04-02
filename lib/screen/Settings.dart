@@ -343,8 +343,8 @@ class _SettingsState extends State<Settings> {
     // print("등록된 알림 개수: ${pendingNotifications.length}");
 
     for (var notification in pendingNotifications) {
-      print(
-          "알림 ID: ${notification.id}, 제목: ${notification.title}, 내용: ${notification.body}");
+      // print(
+      //     "알림 ID: ${notification.id}, 제목: ${notification.title}, 내용: ${notification.body}");
     }
   }
 

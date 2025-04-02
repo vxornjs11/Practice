@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
-import 'package:practice_01_app/firebase_options.dart';
+// import 'package:practice_01_app/firebase_options.dart';
 import 'package:practice_01_app/home.dart';
 import 'package:practice_01_app/provinder/color_provinder.dart';
 import 'package:practice_01_app/provinder/count_provinder.dart';
@@ -78,9 +78,9 @@ void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   // Firebase 초기화
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  // await Firebase.initializeApp(
+  //   options: DefaultFirebaseOptions.currentPlatform,
+  // );
   tz.initializeTimeZones(); // 시간대 데이터 초기화
   tz.setLocalLocation(tz.getLocation('Asia/Seoul'));
   const AndroidInitializationSettings initializationSettingsAndroid =
